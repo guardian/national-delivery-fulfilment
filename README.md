@@ -23,3 +23,6 @@ $ npm test -- -u # accepting a new cdk snapshot
   1. Read the instructions in the file
   1. `$ npx ts-node src/examples/learning-s3-main.ts`
 
+- running main.ts
+  
+  1. `$ npx ts-node src/main.ts`

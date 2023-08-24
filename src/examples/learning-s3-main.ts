@@ -1,4 +1,4 @@
-import { example_s3 } from './learning-s3-lib';
+import { publish_to_s3_v1 } from './learning-s3-lib';
 
 // ---------------------------------------------------------------------------------------
 // This file was created by Pascal to illustrate how to write a file to S3 from TypeScript
@@ -23,6 +23,9 @@ import {
 	Credentials,
 } from 'aws-sdk/lib/core';
 
+// The credentials setting here is not great, but this was just to illustrate
+// TODO: read from the aws config
+
 const credentials = new Credentials({
   accessKeyId: '[REMOVED]',
   secretAccessKey: '[REMOVED]',
@@ -31,4 +34,4 @@ const credentials = new Credentials({
 
 const client = new S3Client({ credentials: credentials, region: "eu-west-1" });
 
-example_s3(client);
+publish_to_s3_v1(client);
