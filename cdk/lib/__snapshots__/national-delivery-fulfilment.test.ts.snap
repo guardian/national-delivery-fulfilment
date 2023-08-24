@@ -27,6 +27,10 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
             "Value": "TEST",
           },
           {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
             "Key": "Stack",
             "Value": "membership",
           },
@@ -79,6 +83,10 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
             "Value": "TEST",
           },
           {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
             "Key": "Stack",
             "Value": "membership",
           },
@@ -127,6 +135,10 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
           {
             "Key": "gu:cdk:version",
             "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
           },
           {
             "Key": "Stack",
@@ -279,6 +291,10 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
             "Value": "TEST",
           },
           {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
             "Key": "Stack",
             "Value": "membership",
           },
@@ -331,6 +347,10 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
             "Value": "TEST",
           },
           {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
             "Key": "Stack",
             "Value": "membership",
           },
@@ -379,6 +399,10 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
           {
             "Key": "gu:cdk:version",
             "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
           },
           {
             "Key": "Stack",
