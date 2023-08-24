@@ -36,6 +36,7 @@ jobs:
         with:
           configPath: riff-raff.yaml
           projectName: MemSub::Fulfilment::NationalDelivery
+          buildNumberOffset: 60
           contentDirectories: |
             cloudformation:
               - cdk/cdk.out/NationalDeliveryFulfilment-CODE.template.json
