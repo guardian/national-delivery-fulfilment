@@ -17,6 +17,32 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
     },
   },
   "Resources": {
+    "DataBucketE3889A50": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": "gu-national-delivery-fulfilment-code",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "CODE",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
     "nationaldeliveryfulfilmentlambda2870F422": {
       "DependsOn": [
         "nationaldeliveryfulfilmentlambdaServiceRoleDefaultPolicy8EA432E5",
@@ -217,7 +243,20 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
             {
               "Action": "s3:PutObject",
               "Effect": "Allow",
-              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-code/*",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "DataBucketE3889A50",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
@@ -252,6 +291,32 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
     },
   },
   "Resources": {
+    "DataBucketE3889A50": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": "gu-national-delivery-fulfilment-prod",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "PROD",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
     "nationaldeliveryfulfilmentlambda2870F422": {
       "DependsOn": [
         "nationaldeliveryfulfilmentlambdaServiceRoleDefaultPolicy8EA432E5",
@@ -452,7 +517,20 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
             {
               "Action": "s3:PutObject",
               "Effect": "Allow",
-              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-prod/*",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "DataBucketE3889A50",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",

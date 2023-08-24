@@ -33,11 +33,15 @@ export class NationalDeliveryFulfilment extends GuStack {
 
     const bucketName = `gu-national-delivery-fulfilment-${this.stage.toLowerCase()}`
 
+    const dataBucket = new Bucket(this, 'DataBucket', {
+      bucketName: bucketName,
+    });
+
     nationalDeliveryFulfilmentLambda.addToRolePolicy(
       new PolicyStatement({
         actions: ['s3:PutObject'],
         effect: Effect.ALLOW,
-        resources: [`arn:aws:s3:::${bucketName}/*`],
+        resources: [dataBucket.arnForObjects('*')],
       }),
     );
   }
