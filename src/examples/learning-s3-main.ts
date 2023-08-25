@@ -18,7 +18,7 @@ import { publish_to_s3_v1 } from './learning-s3-lib';
 // A nice source of information about connecting to S3 from TypeScript can be found here:
 // https://github.com/guardian/tracker/
 
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 import {
 	Credentials,
 } from 'aws-sdk/lib/core';

@@ -15,7 +15,7 @@ export class NationalDeliveryFulfilment extends GuStack {
 
     const app = 'national-delivery-fulfilment';
 
-	  const nationalDeliveryFulfilmentLambda = new GuScheduledLambda(
+    const nationalDeliveryFulfilmentLambda = new GuScheduledLambda(
       this,
       'national-delivery-fulfilment-lambda',
       {
