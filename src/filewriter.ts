@@ -8,7 +8,7 @@ export async function publish1(client: S3Client, contents: string) {
   const command = new PutObjectCommand({
     Bucket: "gu-national-delivery-fulfilment-code",
     Key: "hello-world.txt",
-    Body: "testing 1558",
+    Body: contents,
   });
 
   try {
