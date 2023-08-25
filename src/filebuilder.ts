@@ -1,13 +1,21 @@
 import moment from 'moment';
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 export function make1() {
-  const csvWriter = createCsvWriter({
-    path: 'path/to/file.csv',
+  const csvStringifier = createCsvStringifier({
     header: [
         {id: 'name', title: 'NAME'},
         {id: 'lang', title: 'LANGUAGE'}
     ]
   });
-  return moment().format('MMMM Do YYYY, h:mm:ss a');
+
+  const records = [
+    {name: 'Bob',  lang: 'French, English'},
+    {name: 'Mary', lang: 'English'}
+  ];
+
+  console.log(csvStringifier.getHeaderString());
+  console.log(csvStringifier.stringifyRecords(records));
+
+  return csvStringifier.stringifyRecords(records);
 }

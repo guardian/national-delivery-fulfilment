@@ -1,4 +1,3 @@
-import * as csv from 'fast-csv'
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 // currently hardcoded to code
@@ -7,7 +6,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 export async function publish1(client: S3Client, contents: string) {
   const command = new PutObjectCommand({
     Bucket: "gu-national-delivery-fulfilment-code",
-    Key: "hello-world.txt",
+    Key: "hello-world.csv",
     Body: contents,
   });
 
