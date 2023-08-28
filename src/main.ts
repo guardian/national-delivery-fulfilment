@@ -7,17 +7,25 @@ import { publish2 } from './filewriter'
 import { Stage } from './config'
 import { ZuoraSubscription, query1 as zuoraQuery } from './zuora'
 
+import moment from 'moment';
+
 import {
 	Credentials,
 } from 'aws-sdk/lib/core';
 
-export const main = async () => {
-  console.log("main function: start");
+
+async function generateDay(year: string, month: string, day: string) {
   const client = new S3Client({ region: "eu-west-1" });
   const subscriptions: ZuoraSubscription[] = await zuoraQuery(); 
   const records: FileRecord[] = transform1(subscriptions);
   const filecontents = transform2(records);
   console.log(filecontents);
-  await publish2(client, Stage, "fulfilment/2023/2023-08/2023-08-28.csv", filecontents);
+  await publish2(client, Stage, `fulfilment/${year}/${month}/${day}.csv`, filecontents);
+}
+
+export const main = async () => {
+  console.log("main function: start");
+  const cursor = moment();
+  await generateDay(cursor.format("YYYY"), cursor.format("YYYY-MM"), cursor.format("YYYY-MM-DD"));
   console.log("main function: completed");
 };
