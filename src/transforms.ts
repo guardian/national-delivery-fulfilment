@@ -15,8 +15,11 @@ export function transform1(subscriptions: ZuoraSubscription[]): FileRecord[] {
     ]
   });
 
-  const records = subscriptions.map(() => {
-    return {name: 'Mary', lang: 'English'}
+  const records = subscriptions.map((subscription) => {
+    return {
+      name: subscription.subscription_number, 
+      lang: subscription.address
+    }
   })
 
   return records;
