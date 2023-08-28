@@ -1,0 +1,1 @@
+export const Stage = process.env.Stage ?? "CODE";
