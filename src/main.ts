@@ -25,7 +25,10 @@ async function generateDay(year: string, month: string, day: string) {
 
 export const main = async () => {
   console.log("main function: start");
-  const cursor = moment();
-  await generateDay(cursor.format("YYYY"), cursor.format("YYYY-MM"), cursor.format("YYYY-MM-DD"));
+  for (const i of Array(14).keys()) {
+    const cursor = moment().add(i, "days");
+    console.log(cursor.format("YYYY-MM-DD"));
+    await generateDay(cursor.format("YYYY"), cursor.format("YYYY-MM"), cursor.format("YYYY-MM-DD"));
+  }
   console.log("main function: completed");
 };
