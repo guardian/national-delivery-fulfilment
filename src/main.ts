@@ -1,4 +1,4 @@
-
+         
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 import { publish_to_s3_v1 } from './examples/learning-s3-lib'

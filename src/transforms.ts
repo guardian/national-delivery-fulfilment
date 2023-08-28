@@ -19,7 +19,7 @@ export function transform1(subscriptions: ZuoraSubscription[]): FileRecord[] {
     return {name: 'Mary', lang: 'English'}
   })
 
-  return csvStringifier.stringifyRecords(records);
+  return records;
 }
 
 export function transform2(records: FileRecord[]): string {
