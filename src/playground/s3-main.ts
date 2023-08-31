@@ -1,4 +1,4 @@
-import { publish_to_s3_v1 } from './learning-s3-lib';
+import { publish_to_s3_v1 } from './s3-lib';
 
 // ---------------------------------------------------------------------------------------
 // This file was created by Pascal to illustrate how to write a file to S3 from TypeScript
