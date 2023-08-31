@@ -1,5 +1,3 @@
-import { publish_to_s3_v1 } from './s3-lib';
-
 // ---------------------------------------------------------------------------------------
 // This file was created by Pascal to illustrate how to write a file to S3 from TypeScript
 // To run it write your credentials that you can get from Janus and run 
@@ -18,9 +16,29 @@ import { publish_to_s3_v1 } from './s3-lib';
 // A nice source of information about connecting to S3 from TypeScript can be found here:
 // https://github.com/guardian/tracker/
 
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+// Here we are passing the client to the function. To see how to build 
+// the client (and the credentials if you are running this on local) see 
+// learning-s3-main.ts
+
+export const publish_to_s3_v1 = async (client: S3Client) => {
+  const command = new PutObjectCommand({
+    Bucket: "gu-national-delivery-fulfilment-code",
+    Key: "hello-world.txt",
+    Body: "Hello World!",
+  });
+
+  try {
+    const response = await client.send(command);
+    console.log(response);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 import {
-	Credentials,
+  Credentials,
 } from 'aws-sdk/lib/core';
 
 // The credentials setting here is not great, but this was just to illustrate
