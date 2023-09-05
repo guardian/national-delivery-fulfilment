@@ -2,7 +2,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { FileRecord, transform1, transform2 } from './libs/transforms'
 import { publish2 } from './libs/filewriter'
-import { Stage } from './config'
+import { Stage } from './utils/appConfig'
 import { ZuoraSubscription, query1 as zuoraQuery } from './libs/zuora'
 
 import moment from 'moment';
