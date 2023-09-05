@@ -1,12 +1,13 @@
 
 import axios from 'axios';
+import { FileRecord, transform1, transform2 } from './transforms'
 
 export interface ZuoraSubscription {
     subscription_number: string,
     address: string
 }
 
-export async function query1(): Promise<ZuoraSubscription[]> {
+export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
 
   const subscription1 = {
     subscription_number: "A000001",
@@ -21,7 +22,7 @@ export async function query1(): Promise<ZuoraSubscription[]> {
   return Promise.resolve([subscription1, subscription2]);
 }
 
-export async function getFile (authorization: string): Promise<string> {
+export async function getFileFromZuora (authorization: string): Promise<string> {
 
   console.log(`fetching file from zuora`);
   
@@ -36,4 +37,11 @@ export async function getFile (authorization: string): Promise<string> {
 
   const response = await axios.get(url, params);
   return await response.data;
+}
+
+async function constructFile(): Promise<string> {
+  const subscriptions: ZuoraSubscription[] = await mockZuoraAquaQuery(); 
+  const records: FileRecord[] = transform1(subscriptions);
+  const filecontents = transform2(records);
+  return filecontents;
 }

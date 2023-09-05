@@ -26,16 +26,11 @@ export function transform1(subscriptions: ZuoraSubscription[]): FileRecord[] {
 }
 
 export function transform2(records: FileRecord[]): string {
-
   const csvStringifier = createCsvStringifier({
     header: [
         {id: 'name', title: 'NAME'},
         {id: 'lang', title: 'LANGUAGE'}
     ]
   });
-  // console.log(csvStringifier.getHeaderString());
-
-  // console.log(csvStringifier.stringifyRecords(records));
-
   return csvStringifier.stringifyRecords(records);
 }
