@@ -44,5 +44,13 @@ export class NationalDeliveryFulfilment extends GuStack {
         resources: [dataBucket.arnForObjects('*')],
       }),
     );
+
+    nationalDeliveryFulfilmentLambda.addToRolePolicy(
+      new PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        effect: Effect.ALLOW,
+        resources: ['*'],
+      }),
+    );
   }
 }

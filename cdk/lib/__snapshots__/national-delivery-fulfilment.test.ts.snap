@@ -258,6 +258,11 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
                 ],
               },
             },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -531,6 +536,11 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
                   ],
                 ],
               },
+            },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": "*",
             },
           ],
           "Version": "2012-10-17",

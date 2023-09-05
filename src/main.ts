@@ -10,6 +10,7 @@ import moment from 'moment';
 import {
 	Credentials,
 } from 'aws-sdk/lib/core';
+import { testSsm } from "./utils/ssmConfig";
 
 
 async function generateDay(year: string, month: string, day: string) {
@@ -23,6 +24,7 @@ async function generateDay(year: string, month: string, day: string) {
 
 export const main = async () => {
   console.log("main function: start");
+  console.log(await testSsm())
   for (const i of Array(14).keys()) {
     const cursor = moment().add(i, "days");
     console.log(cursor.format("YYYY-MM-DD"));
