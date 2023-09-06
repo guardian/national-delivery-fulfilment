@@ -6,7 +6,7 @@ import { Stage } from './utils/appConfig'
 import { ZuoraSubscription, getFileFromZuora, mockZuoraAquaQuery as zuoraQuery } from './libs/zuora'
 import moment from 'moment';
 import { Credentials } from 'aws-sdk/lib/core';
-import { testSsm } from "./utils/ssmConfig";
+import { testSsm, getSsmValue } from "./utils/ssmConfig";
 
 async function commitFileToS3(year: string, month: string, day: string, file: string) {
   const client = new S3Client({ region: "eu-west-1" });
@@ -15,6 +15,8 @@ async function commitFileToS3(year: string, month: string, day: string, file: st
 
 export const main = async () => {
   console.log("main function: start");
+  const zClientId = await getSsmValue("CODE", "zuora-client-id"); 
+  console.log(zClientId);
   const authorization = await testSsm();
   if (authorization) {
     const file = await getFileFromZuora(authorization);
