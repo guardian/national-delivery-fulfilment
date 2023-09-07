@@ -45,3 +45,20 @@ async function constructFile(): Promise<string> {
   const filecontents = transform2(records);
   return filecontents;
 }
+
+export async function fetchZuoraBearerToken(){
+  console.log(`fetching zuora bearer token`);
+  const url = `https://rest.apisandbox.zuora.com/oauth/token`;
+  const data = {
+    client_id: "[removed]",
+    grant_type: "client_credentials",
+    client_secret: "[removed]"
+  }
+  const params = {
+    headers: {
+      "Content-Type": 'application/x-www-form-urlencoded',
+    }
+  };
+  const response = await axios.post(url, data, params);
+  return await response.data;
+}
