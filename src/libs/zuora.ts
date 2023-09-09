@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 import { FileRecord, transform1, transform2 } from './transforms'
+import { getSsmValue } from '../utils/ssmConfig';
 
 export interface ZuoraSubscription {
     subscription_number: string,
@@ -46,14 +47,25 @@ async function constructFile(): Promise<string> {
   return filecontents;
 }
 
-export async function fetchZuoraBearerToken(){
-  console.log(`fetching zuora bearer token`);
-  const url = `https://rest.apisandbox.zuora.com/oauth/token`;
-  const data = {
-    client_id: "[removed]",
-    grant_type: "client_credentials",
-    client_secret: "[removed]"
+function stageToAuthTokenUrl(stage) {
+  var url = 'https://rest.apisandbox.zuora.com/oauth/token'; // this is the code url
+  if (stage === "PROD") {
+    url = 'https://rest.zuora.com/oauth/token';
   }
+  return url;
+}
+
+export async function fetchZuoraBearerToken(stage) {
+  console.log(`fetching zuora bearer token for stage: ${stage}`);
+  const url = stageToAuthTokenUrl(stage);
+  const client_id = await getSsmValue(stage, "zuora-client-id");
+  const client_secret = await getSsmValue(stage, "zuora-client-secret");
+  const data = {
+    client_id: client_id,
+    client_secret: client_secret,
+    grant_type: "client_credentials"
+  }
+  console.log(data);
   const params = {
     headers: {
       "Content-Type": 'application/x-www-form-urlencoded',

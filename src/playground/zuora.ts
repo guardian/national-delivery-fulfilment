@@ -17,7 +17,7 @@ export async function getFile (): Promise<string> {
 //  console.log(file);
 //})
 
-export async function fetchZuoraBearerToken(){
+export async function fetchZuoraBearerToken() {
   console.log(`fetching zuora bearer token`);
   const url = `https://rest.apisandbox.zuora.com/oauth/token`;
   const data = {
