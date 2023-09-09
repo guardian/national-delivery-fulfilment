@@ -15,7 +15,7 @@ async function commitFileToS3(year: string, month: string, day: string, file: st
 
 export const main = async () => {
   console.log("main function: start");
-  const answer = fetchZuoraBearerToken(Stage); 
+  const answer = await fetchZuoraBearerToken(Stage); 
   console.log(answer);
   const authorization = await testSsm();
   if (authorization) {
