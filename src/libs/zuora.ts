@@ -27,7 +27,7 @@ export async function getFileFromZuora (authorization: string): Promise<string> 
 
   console.log(`fetching file from zuora`);
   
-  const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad080d88a44581b018a51562f281fed`;
+  const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad09bd38a83a1ba018a84e983400e4d`;
   const params = {
     method: 'GET',
     headers: {
