@@ -47,7 +47,7 @@ async function constructFile(): Promise<string> {
   return filecontents;
 }
 
-function stageToAuthTokenUrl(stage) {
+function stageToAuthTokenUrl(stage: string) {
   var url = 'https://rest.apisandbox.zuora.com/oauth/token'; // this is the code url
   if (stage === "PROD") {
     url = 'https://rest.zuora.com/oauth/token';
@@ -55,7 +55,13 @@ function stageToAuthTokenUrl(stage) {
   return url;
 }
 
-export async function fetchZuoraBearerToken(stage) {
+interface ZuoraBearerToken1 {
+  access_token: string;
+}
+
+export async function fetchZuoraBearerToken1(stage: string): Promise<ZuoraBearerToken1> {
+  // This function returns the entire answer object from zuora
+  // To retrieve the bearer token itself see fetchZuoraBearerToken2
   console.log(`fetching zuora bearer token for stage: ${stage}`);
   const url = stageToAuthTokenUrl(stage);
   const client_id = await getSsmValue(stage, "zuora-client-id");
@@ -73,4 +79,9 @@ export async function fetchZuoraBearerToken(stage) {
   };
   const response = await axios.post(url, data, params);
   return await response.data;
+}
+
+export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
+  const token1 = await fetchZuoraBearerToken1(stage);
+  return token1.access_token;
 }

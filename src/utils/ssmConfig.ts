@@ -13,7 +13,7 @@ export async function testSsm() {
     return response.Parameter?.Value;
 }
 
-export async function getSsmValue(stage: "CODE" | "PROD", id: string) {
+export async function getSsmValue(stage: string, id: string) {
     const name = `/membership/national-delivery-fulfilment/${stage}/${id}`;
     const client = new SSMClient({ region: Region });
     const input = {

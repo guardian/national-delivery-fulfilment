@@ -34,6 +34,6 @@ export async function fetchZuoraBearerToken() {
   return await response.data;
 }
 
-//fetchZuoraBearerToken().then(data => {
+// fetchZuoraBearerToken().then(data => {
 //  console.log(data);
-//})
+// })
