@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { FileRecord, transform1, transform2 } from './transforms'
+import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile } from './transforms'
 import { getSsmValue } from '../utils/ssm';
 import { sleep } from '../utils/sleep';
 
@@ -65,21 +65,6 @@ async function fetchZuoraBearerToken1(stage: string): Promise<ZuoraBearerToken1>
 export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
   const token1 = await fetchZuoraBearerToken1(stage);
   return token1.access_token;
-}
-
-export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
-
-  const subscription1 = {
-    subscription_number: "A000001",
-    address: "90 York way"
-  }
-
-  const subscription2 = {
-    subscription_number: "A000002",
-    address: "1 Alice Road"
-  }
-
-  return Promise.resolve([subscription1, subscription2]);
 }
 
 async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
@@ -149,8 +134,8 @@ async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fi
 
 async function constructFile(): Promise<string> {
   const subscriptions: ZuoraSubscription[] = await mockZuoraAquaQuery(); 
-  const records: FileRecord[] = transform1(subscriptions);
-  const filecontents = transform2(records);
+  const records: FileRecord[] = subscriptionsToFileRecords(subscriptions);
+  const filecontents = fileRecordsToCSVFile(records);
   return filecontents;
 }
 
@@ -185,3 +170,18 @@ export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken): P
   const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId);
   return file;
 } 
+
+export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
+
+  const subscription1 = {
+    subscription_number: "A000001",
+    address: "90 York way"
+  }
+
+  const subscription2 = {
+    subscription_number: "A000002",
+    address: "1 Alice Road"
+  }
+
+  return Promise.resolve([subscription1, subscription2]);
+}
