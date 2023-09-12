@@ -13,6 +13,11 @@ interface ZuoraBatchSubmissionReceipt {
   id: string;
 }
 
+interface ZuoraBatchJobStatusReceipt {
+  status: boolean;
+  fileId?: string;
+}
+
 export interface ZuoraSubscription {
   subscription_number: string,
   address: string
@@ -92,6 +97,30 @@ export async function submitQueryToZuora(zuoraBearerToken: string): Promise<Zuor
   };
   const response = await axios.post(url, data, params);
   return await response.data as ZuoraBatchSubmissionReceipt;
+}
+
+export async function checkJobStatus(zuoraBearerToken: string, jobId: string): Promise<ZuoraBatchJobStatusReceipt> {
+  console.log(`check job status: jobId: ${jobId}`);
+  const url = `https://apisandbox.zuora.com/apps/api/batch-query/jobs/${jobId}`;
+  const params = {
+    headers: {
+      "Authorization": `Bearer ${zuoraBearerToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
+  const response = await axios.get(url, params);
+  const data = await response.data
+  if (data.status) {
+    // The id to use is batches.fileId
+    return {
+      status: true,
+      fileId: data.batches[0].fileId
+    }
+  } else {
+    return {
+      status: false
+    }
+  }
 }
 
 export async function getFileFromZuora (zuoraBearerToken: string): Promise<string> {

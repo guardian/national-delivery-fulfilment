@@ -2,10 +2,10 @@ import axios from 'axios';
 
 export async function getFile (): Promise<string> {
   console.log(`fetching file from zuora`);
-  const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad080d88a44581b018a51562f281fed`;
+  const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad09bd38a83a1ba018a84e983400e4d`;
   const params = {
     headers: {
-      "Authorization": 'Basic [REMOVED]',
+      "Authorization": 'Bearer [removed]',
       'Content-Type': 'application/json'
     }
   };
@@ -65,9 +65,9 @@ export async function submitQueryToZuora(zuoraBearerToken: string) {
   return await response.data;
 }
 
-submitQueryToZuora("[code bearer]").then(data => {
-  console.log(data);
-})
+//submitQueryToZuora("[code bearer]").then(data => {
+//  console.log(data);
+//})
 
 /*
 {
@@ -94,3 +94,65 @@ submitQueryToZuora("[code bearer]").then(data => {
   offset: 0
 }
 */
+
+interface ZuoraBatchJobStatusReceipt {
+  status: boolean;
+  fileId?: string;
+}
+
+export async function checkJobStatus(zuoraBearerToken: string, jobId: string): Promise<ZuoraBatchJobStatusReceipt> {
+  console.log(`check job status: jobId: ${jobId}`);
+  const url = `https://apisandbox.zuora.com/apps/api/batch-query/jobs/${jobId}`;
+  const params = {
+    headers: {
+      "Authorization": `Bearer ${zuoraBearerToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
+  const response = await axios.get(url, params);
+  const data = await response.data
+  if (data.status) {
+    // The id to use is batches.fileId
+    return {
+      status: true,
+      fileId: data.batches[0].fileId
+    }
+  } else {
+    return {
+      status: false
+    }
+  }
+}
+
+/*
+{
+  encrypted: 'none',
+  useLastCompletedJobQueries: false,
+  status: 'completed',
+  batches: [
+    {
+      localizedStatus: 'completed',
+      full: true,
+      status: 'completed',
+      recordCount: 17614,
+      fileId: '8ad080d88a8742ab018a890186eb36f9',
+      apiVersion: '137.0',
+      batchId: '8ad09be48a8748d2018a8901819c0e17',
+      batchType: 'zoqlexport',
+      name: 'alice',
+      message: '',
+      query: "SELECT Subscription.Name FROM RatePlanCharge WHERE Product.ProductType__c = 'Newspaper - National Delivery'"
+    }
+  ],
+  startTime: '2023-09-12T11:48:11+0100',
+  version: '1.0',
+  format: 'CSV',
+  name: 'Pascal 2023-09-01 15:00',
+  id: '8ad09be48a8748d2018a8901819c0e16',
+  offset: 0
+}
+*/
+
+//checkJobStatus("[removed]", "8ad09be48a8748d2018a8901819c0e16").then(data => {
+//  console.log(data);
+//})
