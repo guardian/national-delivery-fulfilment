@@ -37,3 +37,60 @@ export async function fetchZuoraBearerToken() {
 // fetchZuoraBearerToken().then(data => {
 //  console.log(data);
 // })
+
+export async function submitQueryToZuora(zuoraBearerToken: string) {
+  console.log(`submit query to zuora`);
+
+  const url = `https://apisandbox.zuora.com/apps/api/batch-query/`;
+  const data = {
+    "format": "csv",
+    "version": "1.0",
+    "name": "Pascal 2023-09-01 15:00",
+    "encrypted": "none",
+    "useQueryLabels": "true",
+    "dateTimeUtc": "true",
+    "queries": [{
+        "name"  : "alice",
+        "query" : "SELECT Subscription.Name FROM RatePlanCharge WHERE Product.ProductType__c = 'Newspaper - National Delivery'",
+        "type"  : "zoqlexport"
+    }]
+  }
+  const params = {
+    headers: {
+      "Authorization": `Bearer ${zuoraBearerToken}`,
+      "Content-Type": 'application/json',
+    }
+  };
+  const response = await axios.post(url, data, params);
+  return await response.data;
+}
+
+submitQueryToZuora("[code bearer]").then(data => {
+  console.log(data);
+})
+
+/*
+{
+  encrypted: 'none',
+  useLastCompletedJobQueries: false,
+  status: 'submitted',
+  batches: [
+    {
+      localizedStatus: 'pending',
+      full: true,
+      status: 'pending',
+      recordCount: 0,
+      apiVersion: '137.0',
+      batchId: '8ad099a98a8748cc018a88ea775b7343',
+      batchType: 'zoqlexport',
+      name: 'alice',
+      query: "SELECT Subscription.Name FROM RatePlanCharge WHERE Product.ProductType__c = 'Newspaper - National Delivery'"
+    }
+  ],
+  version: '1.0',
+  format: 'CSV',
+  name: 'Pascal 2023-09-01 15:00',
+  id: '8ad099a98a8748cc018a88ea775a7342',
+  offset: 0
+}
+*/

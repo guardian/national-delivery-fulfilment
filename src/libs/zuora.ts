@@ -62,6 +62,32 @@ export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
   return Promise.resolve([subscription1, subscription2]);
 }
 
+export async function submitQueryToZuora(zuoraBearerToken: string) {
+  console.log(`submit query to zuora`);
+  const url = `https://apisandbox.zuora.com/apps/api/batch-query/`;
+  const data = {
+    "format": "csv",
+    "version": "1.0",
+    "name": "Pascal 2023-09-01 15:00",
+    "encrypted": "none",
+    "useQueryLabels": "true",
+    "dateTimeUtc": "true",
+    "queries": [{
+        "name"  : "alice",
+        "query" : "SELECT Subscription.Name FROM RatePlanCharge WHERE Product.ProductType__c = 'Newspaper - National Delivery'",
+        "type"  : "zoqlexport"
+    }]
+  }
+  const params = {
+    headers: {
+      "Authorization": `Bearer ${zuoraBearerToken}`,
+      "Content-Type": 'application/json',
+    }
+  };
+  const response = await axios.post(url, data, params);
+  return await response.data;
+}
+
 export async function getFileFromZuora (zuoraBearerToken: string): Promise<string> {
   console.log(`fetching file from zuora`);
   const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad09bd38a83a1ba018a84e983400e4d`;
