@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { FileRecord, transform1, transform2 } from './transforms'
 import { getSsmValue } from '../utils/ssm';
+import { sleep } from '../utils/sleep';
 
 interface ZuoraBearerToken1 {
   access_token: string;
@@ -15,7 +16,7 @@ interface ZuoraBatchSubmissionReceipt {
 
 interface ZuoraBatchJobStatusReceipt {
   status: boolean;
-  fileId?: string;
+  fileId: string;
 }
 
 export interface ZuoraSubscription {
@@ -109,8 +110,9 @@ export async function checkJobStatus(zuoraBearerToken: string, jobId: string): P
     }
   };
   const response = await axios.get(url, params);
-  const data = await response.data
-  if (data.status) {
+  const data = await response.data;
+  console.log(`checkJobStatus: data: ${JSON.stringify(data)}`);
+  if (data.status === "completed") {
     // The id to use is batches.fileId
     return {
       status: true,
@@ -118,14 +120,15 @@ export async function checkJobStatus(zuoraBearerToken: string, jobId: string): P
     }
   } else {
     return {
-      status: false
+      status: false,
+      fileId: ""
     }
   }
 }
 
-export async function getFileFromZuora (zuoraBearerToken: string): Promise<string> {
-  console.log(`fetching file from zuora`);
-  const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad09bd38a83a1ba018a84e983400e4d`;
+export async function readDataFileFromZuora(zuoraBearerToken: string, fileId: string): Promise<string> {
+  console.log(`fetching file from zuora, fileId: ${fileId}`);
+  const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/${fileId}`;
   const params = {
     method: 'GET',
     headers: {
@@ -143,3 +146,35 @@ async function constructFile(): Promise<string> {
   const filecontents = transform2(records);
   return filecontents;
 }
+
+async function jobIdToFileId(zuoraBearerToken: string, jobId: string): Promise<string> {
+  // Data retrieval from Zuora work like this:
+  // 1. We submit a job to Zuora with submitQueryToZuora
+  // 2. We get an answer that carries an id that we call the jobId.
+  // 3. We probe the server with checkJobStatus *until* we get a ZuoraBatchJobStatusReceipt with status: true
+  // 4. That ZuoraBatchJobStatusReceipt will also have a fileId
+  // 5. The fileId can be used to retrive the file using readDataFileFromZuora
+
+  // This function essentially perform 3, notably querying the server *until* we get a positive ZuoraBatchJobStatusReceipt
+  // It takes the jobId and returns the fileId
+
+  console.log(`jobId: ${jobId}; awaiting for fileId`);
+
+  const receipt = await checkJobStatus(zuoraBearerToken, jobId);
+  console.log(`receipt: ${JSON.stringify(receipt)}`);
+  if (receipt.status) {
+    return (receipt.fileId);
+  } else {
+    await sleep(10*1000); // sleeping for 10 seconds
+    return await jobIdToFileId(zuoraBearerToken, jobId);
+  }
+}
+
+export async function cycleDataFileFromZuora(zuoraBearerToken): Promise<string> {
+  console.log("cycle data file from zuora");
+  const jobReceipt = await submitQueryToZuora(zuoraBearerToken);
+  const jobId = jobReceipt.id;
+  const fileId = await jobIdToFileId(zuoraBearerToken, jobId);
+  const file = await readDataFileFromZuora(zuoraBearerToken, fileId);
+  return file;
+} 
