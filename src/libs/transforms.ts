@@ -71,5 +71,5 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
         {id: 'deliveryReference', title: 'Delivery Reference'}
     ]
   });
-  return csvStringifier.stringifyRecords(records);
+  return csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(records);
 }
