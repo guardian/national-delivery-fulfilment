@@ -40,6 +40,19 @@ export interface FileRecord {
   additionalComms: string;
 }
 
+export function zuoraDataFileToSubscriptions(file: string): ZuoraSubscription[] {
+  const splitLines = str => str.split(/\r?\n/);
+  const lines = splitLines(file);
+  lines.shift();
+  const subscriptions = lines.map((line) => {
+    return {
+      subscription_number: "A000001",
+      address: "90 York way"
+    }
+  });
+  return subscriptions;
+}
+
 function subscriptionToFileRecord(subscription: ZuoraSubscription): FileRecord {
   return {
     customerReference: subscription.subscription_number, 
