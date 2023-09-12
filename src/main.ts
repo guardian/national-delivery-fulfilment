@@ -10,9 +10,6 @@ import { getSsmValue } from "./utils/ssm";
 
 export const main = async () => {
   console.log("main function: start");
-  console.log(`app: ${process.env.APP}`);
-  console.log(`stage: ${process.env.STAGE}`);
-  console.log(`stack: ${process.env.STACK}`);
   const zuoraBearerToken = await fetchZuoraBearerToken2(Stage);
   if (zuoraBearerToken) {
     const file = await getFileFromZuora(zuoraBearerToken);
