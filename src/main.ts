@@ -12,8 +12,10 @@ export const main = async () => {
   console.log("main function: start");
   const zuoraBearerToken = await fetchZuoraBearerToken2(Stage);
   if (zuoraBearerToken) {
-    const answer1 = await submitQueryToZuora(zuoraBearerToken);
-    console.log(answer1);
+    const jobReceipt = await submitQueryToZuora(zuoraBearerToken);
+    console.log(jobReceipt);
+    const jobId = jobReceipt.id;
+    console.log(`jobId: ${jobId}`);
     const file = await getFileFromZuora(zuoraBearerToken);
     for (const i of Array(14).keys()) {
       const cursor = moment().add(i, "days");

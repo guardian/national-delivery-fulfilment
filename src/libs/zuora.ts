@@ -7,6 +7,12 @@ interface ZuoraBearerToken1 {
   access_token: string;
 }
 
+interface ZuoraBatchSubmissionReceipt {
+  // See the sample in playground/zuora.ts for the full answer.
+  // We only need the id, which is what we use to probe termination
+  id: string;
+}
+
 export interface ZuoraSubscription {
   subscription_number: string,
   address: string
@@ -62,7 +68,7 @@ export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
   return Promise.resolve([subscription1, subscription2]);
 }
 
-export async function submitQueryToZuora(zuoraBearerToken: string) {
+export async function submitQueryToZuora(zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
   console.log(`submit query to zuora`);
   const url = `https://apisandbox.zuora.com/apps/api/batch-query/`;
   const data = {
@@ -85,7 +91,7 @@ export async function submitQueryToZuora(zuoraBearerToken: string) {
     }
   };
   const response = await axios.post(url, data, params);
-  return await response.data;
+  return await response.data as ZuoraBatchSubmissionReceipt;
 }
 
 export async function getFileFromZuora (zuoraBearerToken: string): Promise<string> {
