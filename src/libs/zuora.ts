@@ -24,10 +24,18 @@ export interface ZuoraSubscription {
   address: string
 }
 
-function stageToAuthTokenUrl(stage: string) {
+function authTokenQueryUrl(stage: string) {
   var url = 'https://rest.apisandbox.zuora.com/oauth/token'; // this is the code url
   if (stage === "PROD") {
     url = 'https://rest.zuora.com/oauth/token';
+  }
+  return url;
+}
+
+function zuoraServerUrl(stage: string) {
+  var url = 'https://apisandbox.zuora.com'; // this is the code url
+  if (stage === "PROD") {
+    url = 'https://www.zuora.com';
   }
   return url;
 }
@@ -36,7 +44,7 @@ export async function fetchZuoraBearerToken1(stage: string): Promise<ZuoraBearer
   // This function returns the entire answer object from zuora
   // To retrieve the bearer token itself see fetchZuoraBearerToken2
   console.log(`fetching zuora bearer token for stage: ${stage}`);
-  const url = stageToAuthTokenUrl(stage);
+  const url = authTokenQueryUrl(stage);
   const client_id = await getSsmValue(stage, "zuora-client-id");
   const client_secret = await getSsmValue(stage, "zuora-client-secret");
   const data = {
@@ -74,9 +82,9 @@ export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
   return Promise.resolve([subscription1, subscription2]);
 }
 
-export async function submitQueryToZuora(zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
+export async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
   console.log(`submit query to zuora`);
-  const url = `https://apisandbox.zuora.com/apps/api/batch-query/`;
+  const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
   const data = {
     "format": "csv",
     "version": "1.0",
@@ -100,9 +108,9 @@ export async function submitQueryToZuora(zuoraBearerToken: string): Promise<Zuor
   return await response.data as ZuoraBatchSubmissionReceipt;
 }
 
-export async function checkJobStatus(zuoraBearerToken: string, jobId: string): Promise<ZuoraBatchJobStatusReceipt> {
+export async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: string): Promise<ZuoraBatchJobStatusReceipt> {
   console.log(`check job status: jobId: ${jobId}`);
-  const url = `https://apisandbox.zuora.com/apps/api/batch-query/jobs/${jobId}`;
+  const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/jobs/${jobId}`;
   const params = {
     headers: {
       "Authorization": `Bearer ${zuoraBearerToken}`,
@@ -113,7 +121,6 @@ export async function checkJobStatus(zuoraBearerToken: string, jobId: string): P
   const data = await response.data;
   console.log(`checkJobStatus: data: ${JSON.stringify(data)}`);
   if (data.status === "completed") {
-    // The id to use is batches.fileId
     return {
       status: true,
       fileId: data.batches[0].fileId
@@ -126,9 +133,9 @@ export async function checkJobStatus(zuoraBearerToken: string, jobId: string): P
   }
 }
 
-export async function readDataFileFromZuora(zuoraBearerToken: string, fileId: string): Promise<string> {
+export async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string): Promise<string> {
   console.log(`fetching file from zuora, fileId: ${fileId}`);
-  const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/${fileId}`;
+  const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/file/${fileId}`;
   const params = {
     method: 'GET',
     headers: {
@@ -147,7 +154,7 @@ async function constructFile(): Promise<string> {
   return filecontents;
 }
 
-async function jobIdToFileId(zuoraBearerToken: string, jobId: string): Promise<string> {
+async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string): Promise<string> {
   // Data retrieval from Zuora work like this:
   // 1. We submit a job to Zuora with submitQueryToZuora
   // 2. We get an answer that carries an id that we call the jobId.
@@ -160,21 +167,21 @@ async function jobIdToFileId(zuoraBearerToken: string, jobId: string): Promise<s
 
   console.log(`jobId: ${jobId}; awaiting for fileId`);
 
-  const receipt = await checkJobStatus(zuoraBearerToken, jobId);
+  const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId);
   console.log(`receipt: ${JSON.stringify(receipt)}`);
   if (receipt.status) {
     return (receipt.fileId);
   } else {
     await sleep(10*1000); // sleeping for 10 seconds
-    return await jobIdToFileId(zuoraBearerToken, jobId);
+    return await jobIdToFileId(stage, zuoraBearerToken, jobId);
   }
 }
 
-export async function cycleDataFileFromZuora(zuoraBearerToken): Promise<string> {
+export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken): Promise<string> {
   console.log("cycle data file from zuora");
-  const jobReceipt = await submitQueryToZuora(zuoraBearerToken);
+  const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken);
   const jobId = jobReceipt.id;
-  const fileId = await jobIdToFileId(zuoraBearerToken, jobId);
-  const file = await readDataFileFromZuora(zuoraBearerToken, fileId);
+  const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId);
+  const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId);
   return file;
 } 

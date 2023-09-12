@@ -13,7 +13,7 @@ export const main = async () => {
   console.log("main function: start");
   const zuoraBearerToken = await fetchZuoraBearerToken2(Stage);
   if (zuoraBearerToken) {
-    const file = await cycleDataFileFromZuora(zuoraBearerToken);
+    const file = await cycleDataFileFromZuora(Stage, zuoraBearerToken);
     for (const i of Array(14).keys()) {
       const cursor = moment().add(i, "days");
       await commitFileToS3_v2(Stage, cursor.format("YYYY"), cursor.format("YYYY-MM"), cursor.format("YYYY-MM-DD"), file);
