@@ -40,7 +40,7 @@ function zuoraServerUrl(stage: string) {
   return url;
 }
 
-export async function fetchZuoraBearerToken1(stage: string): Promise<ZuoraBearerToken1> {
+async function fetchZuoraBearerToken1(stage: string): Promise<ZuoraBearerToken1> {
   // This function returns the entire answer object from zuora
   // To retrieve the bearer token itself see fetchZuoraBearerToken2
   console.log(`fetching zuora bearer token for stage: ${stage}`);
@@ -82,7 +82,7 @@ export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
   return Promise.resolve([subscription1, subscription2]);
 }
 
-export async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
+async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
   console.log(`submit query to zuora`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
   const data = {
@@ -108,7 +108,7 @@ export async function submitQueryToZuora(stage: string, zuoraBearerToken: string
   return await response.data as ZuoraBatchSubmissionReceipt;
 }
 
-export async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: string): Promise<ZuoraBatchJobStatusReceipt> {
+async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: string): Promise<ZuoraBatchJobStatusReceipt> {
   console.log(`check job status: jobId: ${jobId}`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/jobs/${jobId}`;
   const params = {
@@ -133,7 +133,7 @@ export async function checkJobStatus(stage: string, zuoraBearerToken: string, jo
   }
 }
 
-export async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string): Promise<string> {
+async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string): Promise<string> {
   console.log(`fetching file from zuora, fileId: ${fileId}`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/file/${fileId}`;
   const params = {
