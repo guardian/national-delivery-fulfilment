@@ -14,6 +14,7 @@ export const main = async () => {
   const zuoraBearerToken = await fetchZuoraBearerToken2(Stage);
   if (zuoraBearerToken) {
     const file1 = await cycleDataFileFromZuora(Stage, zuoraBearerToken);
+    console.log(file1.split(/\r?\n/).slice(0, 20));
     const subscriptions = zuoraDataFileToSubscriptions(file1);
     const fileRecords = subscriptionsToFileRecords(subscriptions);
     const file2 = fileRecordsToCSVFile(fileRecords);

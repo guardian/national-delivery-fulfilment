@@ -63,6 +63,17 @@ export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
 }
 
 function zuoraBatchQuery() {
+  // https://knowledgecenter.zuora.com/Zuora_Central_Platform/Query/Export_ZOQL
+
+  const query = `
+    SELECT
+      Subscription.Name
+    FROM
+      RatePlanCharge
+    WHERE
+      Product.ProductType__c = 'Newspaper - National Delivery'
+  `;
+
   return {
     "format": "csv",
     "version": "1.0",
@@ -71,8 +82,8 @@ function zuoraBatchQuery() {
     "useQueryLabels": "true",
     "dateTimeUtc": "true",
     "queries": [{
-        "name"  : "alice",
-        "query" : "SELECT Subscription.Name FROM RatePlanCharge WHERE Product.ProductType__c = 'Newspaper - National Delivery'",
+        "name"  : "national-delivery-subscriptions",
+        "query" : query,
         "type"  : "zoqlexport"
     }]
   }
