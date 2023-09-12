@@ -20,7 +20,7 @@ export const main = async () => {
 
     // 2
     const jobStatus = await checkJobStatus(zuoraBearerToken, "8ad09be48a8748d2018a8901819c0e16");
-    console.log(`jobStatus: ${jobStatus}`);
+    console.log(`jobStatus: ${JSON.stringify(jobStatus)}`);
 
     // 3
     const file = await getFileFromZuora(zuoraBearerToken);
