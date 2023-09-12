@@ -1,6 +1,10 @@
 import moment from 'moment';
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
-import { ZuoraSubscription } from './zuora';
+
+interface ZuoraSubscription {
+  subscription_number: string,
+  address: string
+}
 
 /*
 Headers and some values of the csv files we are aiming to generate

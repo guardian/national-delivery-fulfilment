@@ -19,11 +19,6 @@ interface ZuoraBatchJobStatusReceipt {
   fileId: string;
 }
 
-export interface ZuoraSubscription {
-  subscription_number: string,
-  address: string
-}
-
 function authTokenQueryUrl(stage: string) {
   var url = 'https://rest.apisandbox.zuora.com/oauth/token'; // this is the code url
   if (stage === "PROD") {
@@ -130,13 +125,6 @@ async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fi
   };
   const response = await axios.get(url, params);
   return await response.data;
-}
-
-async function constructFile(): Promise<string> {
-  const subscriptions: ZuoraSubscription[] = await mockZuoraAquaQuery(); 
-  const records: FileRecord[] = subscriptionsToFileRecords(subscriptions);
-  const filecontents = fileRecordsToCSVFile(records);
-  return filecontents;
 }
 
 async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string): Promise<string> {
