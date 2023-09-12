@@ -68,8 +68,21 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
   const csvStringifier = createCsvStringifier({
     header: [
         {id: 'customerReference', title: 'Customer Reference'},
-        {id: 'deliveryReference', title: 'Delivery Reference'}
-    ]
+        {id: 'deliveryReference', title: 'Delivery Reference'},
+        {id: 'retailerReference', title: 'Retailer Reference'},
+        {id: 'customerFullName',  title: 'Customer Full Name'},
+        {id: 'customerAddressLine1', title: 'Customer Address Line 1'},
+        {id: 'customerAddressLine2', title: 'Customer Address Line 2'},
+        {id: 'customerAddressLine3', title: 'Customer Address Line 3'},
+        {id: 'customerTown', title: 'Customer Town'},
+        {id: 'customerPostCode', title: 'Customer PostCode'},
+        {id: 'deliveryQuantity', title: 'Delivery Quantity'},
+        {id: 'deliveryInformation', title: 'Delivery Information'},
+        {id: 'sentDate', title: 'Sent Date'},
+        {id: 'deliveryDate', title: 'Delivery Date'},
+        {id: 'sourceCampaign', title: 'Source Campaign'},
+        {id: 'additionalComms', title: 'Additional Comms'}
+      ]
   });
   return csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(records);
 }
