@@ -7,6 +7,7 @@ import { ZuoraSubscription, checkJobStatus, fetchZuoraBearerToken1, fetchZuoraBe
 import moment from 'moment';
 import { Credentials } from 'aws-sdk/lib/core';
 import { getSsmValue } from "./utils/ssm";
+import { sleep } from "./utils/sleep";
 
 export const main = async () => {
   console.log("main function: start");
@@ -17,6 +18,11 @@ export const main = async () => {
     console.log(jobReceipt);
     const jobId = jobReceipt.id;
     console.log(`jobId: ${jobId}`);
+
+    // testing the sleep function
+    console.log(Date.now()/1000);
+    await sleep(3000);
+    console.log(Date.now()/1000);
 
     // 2
     const jobStatus = await checkJobStatus(zuoraBearerToken, "8ad09be48a8748d2018a8901819c0e16");

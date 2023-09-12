@@ -1,0 +1,1 @@
+export const sleep = (interval: number): Promise<void> => new Promise(res => setTimeout(res, interval));
