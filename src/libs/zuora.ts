@@ -3,16 +3,21 @@ import axios from 'axios';
 import { FileRecord, transform1, transform2 } from './transforms'
 import { getSsmValue } from '../utils/ssm';
 
+interface ZuoraBearerToken1 {
+  access_token: string;
+}
+
+export interface ZuoraSubscription {
+  subscription_number: string,
+  address: string
+}
+
 function stageToAuthTokenUrl(stage: string) {
   var url = 'https://rest.apisandbox.zuora.com/oauth/token'; // this is the code url
   if (stage === "PROD") {
     url = 'https://rest.zuora.com/oauth/token';
   }
   return url;
-}
-
-interface ZuoraBearerToken1 {
-  access_token: string;
 }
 
 export async function fetchZuoraBearerToken1(stage: string): Promise<ZuoraBearerToken1> {
@@ -42,11 +47,6 @@ export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
   return token1.access_token;
 }
 
-export interface ZuoraSubscription {
-    subscription_number: string,
-    address: string
-}
-
 export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
 
   const subscription1 = {
@@ -63,9 +63,7 @@ export async function mockZuoraAquaQuery(): Promise<ZuoraSubscription[]> {
 }
 
 export async function getFileFromZuora (zuoraBearerToken: string): Promise<string> {
-
   console.log(`fetching file from zuora`);
-  
   const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad09bd38a83a1ba018a84e983400e4d`;
   const params = {
     method: 'GET',
@@ -74,7 +72,6 @@ export async function getFileFromZuora (zuoraBearerToken: string): Promise<strin
       'Content-Type': 'application/json'
     }
   };
-
   const response = await axios.get(url, params);
   return await response.data;
 }
@@ -85,4 +82,3 @@ async function constructFile(): Promise<string> {
   const filecontents = transform2(records);
   return filecontents;
 }
-

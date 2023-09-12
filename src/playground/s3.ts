@@ -22,7 +22,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 // the client (and the credentials if you are running this on local) see 
 // learning-s3-main.ts
 
-export const publish_to_s3_v1 = async (client: S3Client) => {
+export const helloWorld1 = async (client: S3Client) => {
   const command = new PutObjectCommand({
     Bucket: "gu-national-delivery-fulfilment-code",
     Key: "hello-world.txt",
@@ -52,4 +52,4 @@ const credentials = new Credentials({
 
 const client = new S3Client({ credentials: credentials, region: "eu-west-1" });
 
-publish_to_s3_v1(client);
+helloWorld1(client);
