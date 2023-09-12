@@ -62,10 +62,8 @@ export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
   return token1.access_token;
 }
 
-async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
-  console.log(`submit query to zuora`);
-  const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
-  const data = {
+function zuoraBatchQuery() {
+  return {
     "format": "csv",
     "version": "1.0",
     "name": "Pascal 2023-09-01 15:00",
@@ -78,6 +76,12 @@ async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Prom
         "type"  : "zoqlexport"
     }]
   }
+}
+
+async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
+  console.log(`submit query to zuora`);
+  const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
+  const data = zuoraBatchQuery();
   const params = {
     headers: {
       "Authorization": `Bearer ${zuoraBearerToken}`,
