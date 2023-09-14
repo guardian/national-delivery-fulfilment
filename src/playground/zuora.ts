@@ -156,3 +156,14 @@ export async function checkJobStatus(zuoraBearerToken: string, jobId: string): P
 //checkJobStatus("[removed]", "8ad09be48a8748d2018a8901819c0e16").then(data => {
 //  console.log(data);
 //})
+
+import { cycleDataFileFromZuora } from '../libs/zuora';
+
+export async function cycle (zuoraBearerToken: string): Promise<string> {
+  const file1 = await cycleDataFileFromZuora("CODE", zuoraBearerToken);
+  return Promise.resolve(file1);
+};
+
+cycle("[removed]").then(file => { // 11:03
+  console.log(file.split(/\r?\n/).slice(0, 20).join("\n"));
+})

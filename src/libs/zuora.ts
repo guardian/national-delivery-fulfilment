@@ -65,9 +65,49 @@ export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
 function zuoraBatchQuery() {
   // https://knowledgecenter.zuora.com/Zuora_Central_Platform/Query/Export_ZOQL
 
+/*
+Subscription.Name,
+Subscription.DeliveryAgent__c,
+SoldToContact.Address1,
+SoldToContact.Address2,
+SoldToContact.City,
+SoldToContact.PostalCode,
+SoldToContact.FirstName,
+SoldToContact.LastName,
+SoldToContact.SpecialDeliveryInstructions__c,
+RateplanCharge.quantity
+
+Headers and some values of the csv files we are aiming to generate
+
+Customer Reference      : A-S6813425                               # Subscription.Name
+Delivery Reference      : 41285784                                 # (generate randomly)
+Retailer Reference      : 36                                       # Subscription.DeliveryAgent__c
+Customer Full Name      : FirstName LastName                       # SoldToContact.FirstName, SoldToContact.LastName
+Customer Address Line 1 : 15 London Road                           # SoldToContact.Address1
+Customer Address Line 2                                            # SoldToContact.Address1
+Customer Address Line 3                                            # (not defined)
+Customer Town           : Bristol                                  # SoldToContact.City
+Customer PostCode       : SW1A 2AA                                 # SoldToContact.PostalCode
+Delivery Quantity       : 1                                        # RateplanCharge.quantity
+Delivery Information    : Dark green door, post through letterbox  # SoldToContact.SpecialDeliveryInstructions__c
+Sent Date               : 10/07/2023                               # initially equal to Delivery Date, but investigate the meaning
+Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
+Source campaign                                                    # reserved for future use
+Additional Comms                                                   # reserved for future use
+*/
+
   const query = `
     SELECT
-      Subscription.Name
+      Subscription.Name,
+      Subscription.DeliveryAgent__c,
+      SoldToContact.Address1,
+      SoldToContact.Address2,
+      SoldToContact.City,
+      SoldToContact.PostalCode,
+      SoldToContact.FirstName,
+      SoldToContact.LastName,
+      SoldToContact.SpecialDeliveryInstructions__c,
+      RateplanCharge.quantity
     FROM
       RatePlanCharge
     WHERE
@@ -160,12 +200,12 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   if (receipt.status) {
     return (receipt.fileId);
   } else {
-    await sleep(10*1000); // sleeping for 10 seconds
+    await sleep(1*1000); // sleeping for 10 seconds
     return await jobIdToFileId(stage, zuoraBearerToken, jobId);
   }
 }
 
-export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken): Promise<string> {
+export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string): Promise<string> {
   console.log("cycle data file from zuora");
   const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken);
   const jobId = jobReceipt.id;
