@@ -11,7 +11,7 @@
 inside the `cdk` folder
 
 ```
-$ yarn install
+$ yarn install --frozen-lockfile
 $ npm test -- -u # accepting a new cdk snapshot
 ```
 
