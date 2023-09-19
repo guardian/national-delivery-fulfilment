@@ -11,3 +11,5 @@ yarn-error.log
 **/*.yarnrc.yml
 
 national-delivery-fulfilment.zip
+
+.bsp
