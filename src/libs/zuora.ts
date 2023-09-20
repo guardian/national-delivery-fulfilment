@@ -3,7 +3,6 @@ import axios from 'axios';
 import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile } from './transforms'
 import { getSsmValue } from '../utils/ssm';
 import { sleep } from '../utils/sleep';
-import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 
 interface ZuoraBearerToken1 {
@@ -18,7 +17,18 @@ interface ZuoraBatchSubmissionReceipt {
 
 interface ZuoraBatchJobStatusReceipt {
   status: boolean;
-  fileId: string;
+  subscriptionsFileId: string;
+  holidayNamesFileId: string;
+}
+
+interface ZuoraDataFileIds {
+  subscriptionsFileId: string;
+  holidayNamesFileId: string;
+}
+
+export interface ZuoraDataFiles {
+  subscriptionsFile: string;
+  holidayNamesFile: string;
 }
 
 function authTokenQueryUrl(stage: string) {
@@ -63,7 +73,7 @@ export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
   return token1.access_token;
 }
 
-function zuoraBatchQuery(date: string) {
+function zuoraBatchQueries(date: string) {
   // https://knowledgecenter.zuora.com/Zuora_Central_Platform/Query/Export_ZOQL
 
 /*
@@ -107,7 +117,7 @@ Additional Comms                                                   # reserved fo
 
   console.log(`date ${date} maps to day ${dayOfTheWeekName}`);
 
-  const query = `
+  const subscriptionsQuery = `
     SELECT
       Subscription.Name,
       Subscription.DeliveryAgent__c,
@@ -129,25 +139,43 @@ Additional Comms                                                   # reserved fo
       and (RatePlanCharge.effectiveEndDate >= '${date}' or (Subscription.autoRenew = true and Subscription.status = 'Active'))
   `;
 
+  const holidayQuery =  `
+    SELECT
+      Subscription.Name
+    FROM
+      RatePlanCharge
+    WHERE
+      (Subscription.Status = 'Active' OR Subscription.Status = 'Cancelled') AND
+      ProductRatePlanCharge.ProductType__c = 'Adjustment' AND
+      RatePlanCharge.Name = 'Holiday Credit' AND
+      RatePlanCharge.HolidayStart__c <= '${date}' AND
+      RatePlanCharge.HolidayEnd__c >= '${date}' AND
+      RatePlan.AmendmentType != 'RemoveProduct'
+   `;
+
   return {
     "format": "csv",
     "version": "1.0",
-    "name": `National delivery fulfilment: ${uuidv4()}`,
+    "name": `National Delivery Fulfilment @ ${date}`,
     "encrypted": "none",
     "useQueryLabels": "true",
     "dateTimeUtc": "true",
     "queries": [{
-        "name"  : `national-delivery-fulfilment-${uuidv4()}`,
-        "query" : query,
+        "name"  : "national-delivery-fulfilment-subscriptions",
+        "query" : subscriptionsQuery,
         "type"  : "zoqlexport"
-    }]
+    },{
+      "name"  : "national-delivery-fulfilment-holiday-names",
+      "query" : holidayQuery,
+      "type"  : "zoqlexport"
+  }]
   }
 }
 
 async function submitQueryToZuora(stage: string, zuoraBearerToken: string, date: string): Promise<ZuoraBatchSubmissionReceipt> {
-  console.log(`date: ${date}; submit query to zuora`);
+  console.log(`date: ${date}; submitting batch queries to zuora`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
-  const data = zuoraBatchQuery("2023-09-20");
+  const data = zuoraBatchQueries(date);
   const params = {
     headers: {
       "Authorization": `Bearer ${zuoraBearerToken}`,
@@ -170,21 +198,27 @@ async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: st
   const response = await axios.get(url, params);
   const data = await response.data;
   console.log(`date: ${date}; checkJobStatus: data: ${JSON.stringify(data)}`);
+
   if (data.status === "completed") {
     return {
       status: true,
-      fileId: data.batches[0].fileId
+      subscriptionsFileId: data.batches.filter((item: {name: string}) => {
+        return item.name == "national-delivery-fulfilment-subscriptions";
+      })[0].fileId,
+      holidayNamesFileId: data.batches.filter((item: {name: string}) => {
+        return item.name == "national-delivery-fulfilment-holiday-names";
+      })[0].fileId,
     }
   } else {
     return {
       status: false,
-      fileId: ""
+      subscriptionsFileId: "",
+      holidayNamesFileId: ""
     }
   }
 }
 
-async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string, date: string): Promise<string> {
-  console.log(`date: ${date}; fetching file from zuora, fileId: ${fileId}`);
+async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string): Promise<string> {
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/file/${fileId}`;
   const params = {
     method: 'GET',
@@ -197,7 +231,7 @@ async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fi
   return await response.data;
 }
 
-async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string, date: string): Promise<string> {
+async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string, date: string): Promise<ZuoraDataFileIds> {
   // Data retrieval from Zuora work like this:
   // 1. We submit a job to Zuora with submitQueryToZuora
   // 2. We get an answer that carries an id that we call the jobId.
@@ -213,26 +247,27 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
     const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId, date);
     console.log(`date: ${date}; receipt: ${JSON.stringify(receipt)}`);
     if (receipt.status) {
-      console.log(`date: ${date}; jobIdToFileId: returning fileId: ${receipt.fileId}`);
-      return Promise.resolve(receipt.fileId);
+      return Promise.resolve(receipt); // The receipt is obtained as a ZuoraBatchJobStatusReceipt and returned as as ZuoraDataFileIds
     }
     await sleep(1*1000); // sleeping for 1 seconds
   }
-
-  return Promise.resolve("");
 }
 
 export async function holidayExcludedSubscriptionNames(date: string): Promise<string[]> {
   return Promise.resolve(["A-S00647367"]);
 }
 
-export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, date: string): Promise<string> {
+export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, date: string): Promise<ZuoraDataFiles> {
   console.log(`date: ${date}; cycle data file from zuora`);
   const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken, date);
   const jobId = jobReceipt.id;
-  const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId, date);
-  console.log(`date: ${date}; fileId: ${fileId}`);
-  const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId, date);
-  console.log(`date: ${date}; data file received from Zuora`);
-  return file;
+  console.log(`date: ${date}; jobId: ${jobId}`);
+  const fileIds = await jobIdToFileId(stage, zuoraBearerToken, jobId, date);
+  console.log(`date: ${date}; fileId: ${fileIds}`);
+  const subscriptionsFile = await readDataFileFromZuora(stage, zuoraBearerToken, fileIds.subscriptionsFileId);
+  const holidayNamesFile = await readDataFileFromZuora(stage, zuoraBearerToken, fileIds.holidayNamesFileId);
+  return {
+    subscriptionsFile: subscriptionsFile,
+    holidayNamesFile: holidayNamesFile
+  }
 } 

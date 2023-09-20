@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile, zuoraDataFileToSubscriptions, excludeHolidaySubscriptions } from './libs/transforms'
 import { commitFileToS3_v3 } from './libs/s3'
 import { Stage } from './utils/config'
-import { cycleDataFileFromZuora, fetchZuoraBearerToken2, holidayExcludedSubscriptionNames } from './libs/zuora'
+import { cycleDataFileFromZuora as cycleDataFilesFromZuora, fetchZuoraBearerToken2, holidayExcludedSubscriptionNames } from './libs/zuora'
 import moment from 'moment';
 import { Credentials } from 'aws-sdk/lib/core';
 import { getSsmValue } from "./utils/ssm";
@@ -19,8 +19,8 @@ export const main = async () => {
       const cursor = moment().add(i, "days");
       const date = cursor.format("YYYY-MM-DD");
       console.log(`i: ${i}; date: ${date}`);
-      const zuoraDataFile = await cycleDataFileFromZuora(Stage, zuoraBearerToken, date);
-      const subscriptions1 = zuoraDataFileToSubscriptions(zuoraDataFile);
+      const zuoraDataFiles = await cycleDataFilesFromZuora(Stage, zuoraBearerToken, date);
+      const subscriptions1 = zuoraDataFileToSubscriptions(zuoraDataFiles.subscriptionsFile);
       const holidaySubscriptionNames = await holidayExcludedSubscriptionNames(date);
       const subscriptions2 = excludeHolidaySubscriptions(subscriptions1, holidaySubscriptionNames);
       const fileRecords = subscriptionsToFileRecords(subscriptions2);
