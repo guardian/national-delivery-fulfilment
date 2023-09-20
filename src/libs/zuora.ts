@@ -200,7 +200,7 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   if (receipt.status) {
     return (receipt.fileId);
   } else {
-    await sleep(1*1000); // sleeping for 10 seconds
+    await sleep(1*1000); // sleeping for 1 seconds
     return await jobIdToFileId(stage, zuoraBearerToken, jobId);
   }
 }
