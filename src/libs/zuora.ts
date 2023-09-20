@@ -188,7 +188,7 @@ async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fi
   return await response.data;
 }
 
-async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string): Promise<string> {
+async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string, index: string): Promise<string> {
   // Data retrieval from Zuora work like this:
   // 1. We submit a job to Zuora with submitQueryToZuora
   // 2. We get an answer that carries an id that we call the jobId.
@@ -199,24 +199,24 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   // This function essentially perform 3, notably querying the server *until* we get a positive ZuoraBatchJobStatusReceipt
   // It takes the jobId and returns the fileId
 
-  console.log(`jobId: ${jobId}; awaiting for fileId`);
+  console.log(`i:${index}; jobId: ${jobId}; awaiting for fileId`);
 
   const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId);
-  console.log(`receipt: ${JSON.stringify(receipt)}`);
+  console.log(`i:${index}; receipt: ${JSON.stringify(receipt)}`);
   if (receipt.status) {
     return (receipt.fileId);
   } else {
     await sleep(1*1000); // sleeping for 1 seconds
-    return await jobIdToFileId(stage, zuoraBearerToken, jobId);
+    return await jobIdToFileId(stage, zuoraBearerToken, jobId, index);
   }
 }
 
-export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string): Promise<string> {
-  console.log("cycle data file from zuora");
+export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, index: string): Promise<string> {
+  console.log(`i:${index}; cycle data file from zuora`);
   const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken);
   const jobId = jobReceipt.id;
-  const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId);
-  console.log(`fileId: ${fileId}`);
+  const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId, index);
+  console.log(`i:${index}; fileId: ${fileId}`);
   const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId);
   return file;
 } 

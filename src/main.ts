@@ -15,11 +15,11 @@ export const main = async () => {
   if (zuoraBearerToken) {
     for (const i of Array(14).keys()) {
       console.log(`i: ${i}`);
-      console.log(`timestamp: ${new Date()}`);
+      console.log(`i: ${i}; timestamp: ${new Date()}`);
       const cursor = moment().add(i, "days");
       const date = cursor.format("YYYY-MM-DD");
-      console.log(`date: ${date}`);
-      const file1 = await cycleDataFileFromZuora(Stage, zuoraBearerToken);
+      console.log(`i: ${i}; date: ${date}`);
+      const file1 = await cycleDataFileFromZuora(Stage, zuoraBearerToken, i);
       //const subscriptions = zuoraDataFileToSubscriptions(file1);
       //const fileRecords = subscriptionsToFileRecords(subscriptions);
       //const file2 = fileRecordsToCSVFile(fileRecords);
