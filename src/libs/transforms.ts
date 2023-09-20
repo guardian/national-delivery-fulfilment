@@ -65,7 +65,7 @@ export interface FileRecord {
   additionalComms: string;
 }
 
-export function zuoraDataFileToSubscriptions(file: string): ZuoraSubscription[] {
+export function subscriptionsDataFileToSubscriptions(file: string): ZuoraSubscription[] {
   const splitLines = str => str.split(/\r?\n/);
   const lines = splitLines(file);
   lines.shift();
@@ -85,6 +85,13 @@ export function zuoraDataFileToSubscriptions(file: string): ZuoraSubscription[] 
     }
   });
   return subscriptions;
+}
+
+export function holidayNamesDataFileToNames(file: string): string[] {
+  const splitLines = str => str.split(/\r?\n/);
+  const lines = splitLines(file);
+  lines.shift();
+  return lines;
 }
 
 function subscriptionToFileRecord(subscription: ZuoraSubscription): FileRecord {
