@@ -133,3 +133,7 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
   });
   return csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(records);
 }
+
+export function excludeHolidaySubscriptions(subcriptions: ZuoraSubscription[], names: string[]): ZuoraSubscription[] {
+  return subcriptions;
+}

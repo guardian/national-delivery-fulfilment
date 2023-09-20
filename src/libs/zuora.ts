@@ -222,6 +222,10 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   return Promise.resolve("");
 }
 
+export async function holidayExcludedSubscriptionNames(date: string): Promise<string[]> {
+  return Promise.resolve(["A-S00647367"]);
+}
+
 export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, date: string): Promise<string> {
   console.log(`date: ${date}; cycle data file from zuora`);
   const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken, date);
