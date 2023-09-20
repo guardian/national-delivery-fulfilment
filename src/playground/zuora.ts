@@ -192,6 +192,6 @@ export async function testing (zuoraBearerToken: string): Promise<string> {
   return Promise.resolve("ending");
 };
 
-testing("e8ab18c553ea4536a4d9abe8107f37da").then(data => {
+testing("[removed]").then(data => {
   console.log(data);
 })
