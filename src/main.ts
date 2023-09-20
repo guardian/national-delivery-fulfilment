@@ -19,7 +19,7 @@ export const main = async () => {
       const cursor = moment().add(i, "days");
       const date = cursor.format("YYYY-MM-DD");
       console.log(`i: ${i}; date: ${date}`);
-      const file1 = await cycleDataFileFromZuora(Stage, zuoraBearerToken, i);
+      const file1 = await cycleDataFileFromZuora(Stage, zuoraBearerToken, date);
       const subscriptions = zuoraDataFileToSubscriptions(file1);
       const fileRecords = subscriptionsToFileRecords(subscriptions);
       const file2 = fileRecordsToCSVFile(fileRecords);

@@ -181,7 +181,7 @@ export async function testing (zuoraBearerToken: string): Promise<string> {
     const cursor = moment().add(i, "days");
     const date = cursor.format("YYYY-MM-DD");
     console.log(`date: ${date}`);
-    const file1 = await cycleDataFileFromZuora("CODE", zuoraBearerToken);
+    const file1 = await cycleDataFileFromZuora("CODE", zuoraBearerToken, date);
     //const subscriptions = zuoraDataFileToSubscriptions(file1);
     //const fileRecords = subscriptionsToFileRecords(subscriptions);
     //const file2 = fileRecordsToCSVFile(fileRecords);
@@ -192,6 +192,6 @@ export async function testing (zuoraBearerToken: string): Promise<string> {
   return Promise.resolve("ending");
 };
 
-testing("[removed]").then(data => {
+testing("e8ab18c553ea4536a4d9abe8107f37da").then(data => {
   console.log(data);
 })
