@@ -136,6 +136,6 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
 
 export function excludeHolidaySubscriptions(subcriptions: ZuoraSubscription[], names: string[]): ZuoraSubscription[] {
   return subcriptions.filter(sub => {
-    return names.includes(sub.subscription_name);
+    return !names.includes(sub.subscription_name);
   });
 }
