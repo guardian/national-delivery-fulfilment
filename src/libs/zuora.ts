@@ -218,5 +218,6 @@ export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: st
   const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId, index);
   console.log(`i:${index}; fileId: ${fileId}`);
   const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId, index);
+  console.log(`i:${index}; data file received from Zuora`);
   return file;
 } 
