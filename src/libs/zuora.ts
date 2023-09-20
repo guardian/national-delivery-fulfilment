@@ -199,16 +199,18 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   // This function essentially perform 3, notably querying the server *until* we get a positive ZuoraBatchJobStatusReceipt
   // It takes the jobId and returns the fileId
 
-  console.log(`i:${index}; jobId: ${jobId}; awaiting for fileId`);
-
-  const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId, index);
-  console.log(`i:${index}; receipt: ${JSON.stringify(receipt)}`);
-  if (receipt.status) {
-    return (receipt.fileId);
-  } else {
+  while (true) {
+    console.log(`i:${index}; jobId: ${jobId}; awaiting for fileId`);
+    const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId, index);
+    console.log(`i:${index}; receipt: ${JSON.stringify(receipt)}`);
+    if (receipt.status) {
+      console.log(`i:${index}; jobIdToFileId: returning fileId: ${receipt.fileId}`);
+      return Promise.resolve(receipt.fileId);
+    }
     await sleep(1*1000); // sleeping for 1 seconds
-    return await jobIdToFileId(stage, zuoraBearerToken, jobId, index);
   }
+
+  return Promise.resolve("");
 }
 
 export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, index: string): Promise<string> {
