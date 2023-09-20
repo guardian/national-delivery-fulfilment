@@ -47,7 +47,6 @@ async function fetchZuoraBearerToken1(stage: string): Promise<ZuoraBearerToken1>
     client_secret: client_secret,
     grant_type: "client_credentials"
   }
-  console.log(data);
   const params = {
     headers: {
       "Content-Type": 'application/x-www-form-urlencoded',
