@@ -18,7 +18,7 @@ export const main = async () => {
       console.log(`timestamp: ${new Date()}`);
       const cursor = moment().add(i, "days");
       const date = cursor.format("YYYY-MM-DD");
-      console.log(`timestamp: ${date}`);
+      console.log(`date: ${date}`);
       const file1 = await cycleDataFileFromZuora(Stage, zuoraBearerToken);
       //const subscriptions = zuoraDataFileToSubscriptions(file1);
       //const fileRecords = subscriptionsToFileRecords(subscriptions);

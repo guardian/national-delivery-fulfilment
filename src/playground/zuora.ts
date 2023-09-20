@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+import { cycleDataFileFromZuora } from '../libs/zuora';
+import moment from 'moment';
+import { sleep } from '../utils/sleep';
+
 export async function getFile (): Promise<string> {
   console.log(`fetching file from zuora`);
   const url = `https://apisandbox.zuora.com/apps/api/batch-query/file/8ad09bd38a83a1ba018a84e983400e4d`;
@@ -157,13 +161,37 @@ export async function checkJobStatus(zuoraBearerToken: string, jobId: string): P
 //  console.log(data);
 //})
 
-import { cycleDataFileFromZuora } from '../libs/zuora';
+// ------------------------------------------------------------------
 
+/*
 export async function cycle (zuoraBearerToken: string): Promise<string> {
   const file1 = await cycleDataFileFromZuora("CODE", zuoraBearerToken);
   return Promise.resolve(file1);
 };
+*/
 
-cycle("[removed]").then(file => { // 11:03
-  console.log(file.split(/\r?\n/).slice(0, 20).join("\n"));
+//cycle("[removed]").then(file => { // 11:03
+//  console.log(file.split(/\r?\n/).slice(0, 20).join("\n"));
+//})
+
+export async function testing (zuoraBearerToken: string): Promise<string> {
+  for (const i of Array(14).keys()) {
+    console.log(`i: ${i}`);
+    console.log(`timestamp: ${Date.now()}`);
+    const cursor = moment().add(i, "days");
+    const date = cursor.format("YYYY-MM-DD");
+    console.log(`date: ${date}`);
+    const file1 = await cycleDataFileFromZuora("CODE", zuoraBearerToken);
+    //const subscriptions = zuoraDataFileToSubscriptions(file1);
+    //const fileRecords = subscriptionsToFileRecords(subscriptions);
+    //const file2 = fileRecordsToCSVFile(fileRecords);
+    //const filePathKey = `fulfilment/${cursor.format("YYYY")}/${cursor.format("YYYY-MM")}/${cursor.format("YYYY-MM-DD")}.csv`;
+    //await commitFileToS3_v3(Stage, filePathKey, file2);
+    //await sleep(2000); // sleeping 2 seconds
+  }
+  return Promise.resolve("ending");
+};
+
+testing("[removed]").then(data => {
+  console.log(data);
 })

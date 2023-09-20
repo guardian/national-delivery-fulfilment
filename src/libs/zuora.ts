@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile } from './transforms'
 import { getSsmValue } from '../utils/ssm';
 import { sleep } from '../utils/sleep';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ZuoraBearerToken1 {
   access_token: string;
@@ -61,7 +62,7 @@ export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
   return token1.access_token;
 }
 
-function zuoraBatchQuery() {
+function zuoraBatchQuery(date: string) {
   // https://knowledgecenter.zuora.com/Zuora_Central_Platform/Query/Export_ZOQL
 
 /*
@@ -95,6 +96,8 @@ Source campaign                                                    # reserved fo
 Additional Comms                                                   # reserved for future use
 */
 
+  const dayOfTheWeek = "Wednesday" // "2023-09-20"
+
   const query = `
     SELECT
       Subscription.Name,
@@ -106,22 +109,26 @@ Additional Comms                                                   # reserved fo
       SoldToContact.FirstName,
       SoldToContact.LastName,
       SoldToContact.SpecialDeliveryInstructions__c,
-      RateplanCharge.quantity
+      RateplanCharge.quantity,
+      RatePlanCharge.name
     FROM
       RatePlanCharge
     WHERE
-      Product.ProductType__c = 'Newspaper - National Delivery'
+      Product.ProductType__c = 'Newspaper - National Delivery' 
+      and RatePlanCharge.name = '${dayOfTheWeek}' 
+      and RatePlanCharge.effectiveStartDate <= '${date}'
+      and (RatePlanCharge.effectiveEndDate >= '${date}' or (Subscription.autoRenew = true and Subscription.status = 'Active'))
   `;
 
   return {
     "format": "csv",
     "version": "1.0",
-    "name": "Pascal 2023-09-01 15:00",
+    "name": `National delivery fulfilment: ${uuidv4()}`,
     "encrypted": "none",
     "useQueryLabels": "true",
     "dateTimeUtc": "true",
     "queries": [{
-        "name"  : "national-delivery-subscriptions",
+        "name"  : `national-delivery-fulfilment-${uuidv4()}`,
         "query" : query,
         "type"  : "zoqlexport"
     }]
@@ -131,7 +138,7 @@ Additional Comms                                                   # reserved fo
 async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
   console.log(`submit query to zuora`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
-  const data = zuoraBatchQuery();
+  const data = zuoraBatchQuery("2023-09-20");
   const params = {
     headers: {
       "Authorization": `Bearer ${zuoraBearerToken}`,
