@@ -149,8 +149,8 @@ async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Prom
   return await response.data as ZuoraBatchSubmissionReceipt;
 }
 
-async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: string): Promise<ZuoraBatchJobStatusReceipt> {
-  console.log(`check job status: jobId: ${jobId}`);
+async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: string, index: string): Promise<ZuoraBatchJobStatusReceipt> {
+  console.log(`i:${index}; check job status: jobId: ${jobId}`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/jobs/${jobId}`;
   const params = {
     headers: {
@@ -160,7 +160,7 @@ async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: st
   };
   const response = await axios.get(url, params);
   const data = await response.data;
-  console.log(`checkJobStatus: data: ${JSON.stringify(data)}`);
+  console.log(`i:${index}; checkJobStatus: data: ${JSON.stringify(data)}`);
   if (data.status === "completed") {
     return {
       status: true,
@@ -174,8 +174,8 @@ async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: st
   }
 }
 
-async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string): Promise<string> {
-  console.log(`fetching file from zuora, fileId: ${fileId}`);
+async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string, index: string): Promise<string> {
+  console.log(`i:${index}; fetching file from zuora, fileId: ${fileId}`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/file/${fileId}`;
   const params = {
     method: 'GET',
@@ -201,7 +201,7 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
 
   console.log(`i:${index}; jobId: ${jobId}; awaiting for fileId`);
 
-  const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId);
+  const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId, index);
   console.log(`i:${index}; receipt: ${JSON.stringify(receipt)}`);
   if (receipt.status) {
     return (receipt.fileId);
@@ -217,6 +217,6 @@ export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: st
   const jobId = jobReceipt.id;
   const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId, index);
   console.log(`i:${index}; fileId: ${fileId}`);
-  const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId);
+  const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId, index);
   return file;
 } 
