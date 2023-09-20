@@ -135,8 +135,8 @@ Additional Comms                                                   # reserved fo
   }
 }
 
-async function submitQueryToZuora(stage: string, zuoraBearerToken: string): Promise<ZuoraBatchSubmissionReceipt> {
-  console.log(`submit query to zuora`);
+async function submitQueryToZuora(stage: string, zuoraBearerToken: string, index: string): Promise<ZuoraBatchSubmissionReceipt> {
+  console.log(`i:${index}; submit query to zuora`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
   const data = zuoraBatchQuery("2023-09-20");
   const params = {
@@ -213,7 +213,7 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
 
 export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, index: string): Promise<string> {
   console.log(`i:${index}; cycle data file from zuora`);
-  const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken);
+  const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken, index);
   const jobId = jobReceipt.id;
   const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId, index);
   console.log(`i:${index}; fileId: ${fileId}`);
