@@ -135,8 +135,8 @@ Additional Comms                                                   # reserved fo
   }
 }
 
-async function submitQueryToZuora(stage: string, zuoraBearerToken: string, index: string): Promise<ZuoraBatchSubmissionReceipt> {
-  console.log(`i:${index}; submit query to zuora`);
+async function submitQueryToZuora(stage: string, zuoraBearerToken: string, index: number): Promise<ZuoraBatchSubmissionReceipt> {
+  console.log(`i: ${index}; submit query to zuora`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
   const data = zuoraBatchQuery("2023-09-20");
   const params = {
@@ -149,8 +149,8 @@ async function submitQueryToZuora(stage: string, zuoraBearerToken: string, index
   return await response.data as ZuoraBatchSubmissionReceipt;
 }
 
-async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: string, index: string): Promise<ZuoraBatchJobStatusReceipt> {
-  console.log(`i:${index}; check job status: jobId: ${jobId}`);
+async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: string, index: number): Promise<ZuoraBatchJobStatusReceipt> {
+  console.log(`i: ${index}; check job status: jobId: ${jobId}`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/jobs/${jobId}`;
   const params = {
     headers: {
@@ -160,7 +160,7 @@ async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: st
   };
   const response = await axios.get(url, params);
   const data = await response.data;
-  console.log(`i:${index}; checkJobStatus: data: ${JSON.stringify(data)}`);
+  console.log(`i: ${index}; checkJobStatus: data: ${JSON.stringify(data)}`);
   if (data.status === "completed") {
     return {
       status: true,
@@ -174,8 +174,8 @@ async function checkJobStatus(stage: string, zuoraBearerToken: string, jobId: st
   }
 }
 
-async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string, index: string): Promise<string> {
-  console.log(`i:${index}; fetching file from zuora, fileId: ${fileId}`);
+async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fileId: string, index: number): Promise<string> {
+  console.log(`i: ${index}; fetching file from zuora, fileId: ${fileId}`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/file/${fileId}`;
   const params = {
     method: 'GET',
@@ -188,7 +188,7 @@ async function readDataFileFromZuora(stage: string, zuoraBearerToken: string, fi
   return await response.data;
 }
 
-async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string, index: string): Promise<string> {
+async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: string, index: number): Promise<string> {
   // Data retrieval from Zuora work like this:
   // 1. We submit a job to Zuora with submitQueryToZuora
   // 2. We get an answer that carries an id that we call the jobId.
@@ -200,11 +200,11 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   // It takes the jobId and returns the fileId
 
   while (true) {
-    console.log(`i:${index}; jobId: ${jobId}; awaiting for fileId`);
+    console.log(`i: ${index}; jobId: ${jobId}; awaiting for fileId`);
     const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId, index);
-    console.log(`i:${index}; receipt: ${JSON.stringify(receipt)}`);
+    console.log(`i: ${index}; receipt: ${JSON.stringify(receipt)}`);
     if (receipt.status) {
-      console.log(`i:${index}; jobIdToFileId: returning fileId: ${receipt.fileId}`);
+      console.log(`i: ${index}; jobIdToFileId: returning fileId: ${receipt.fileId}`);
       return Promise.resolve(receipt.fileId);
     }
     await sleep(1*1000); // sleeping for 1 seconds
@@ -213,13 +213,13 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   return Promise.resolve("");
 }
 
-export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, index: string): Promise<string> {
-  console.log(`i:${index}; cycle data file from zuora`);
+export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, index: number): Promise<string> {
+  console.log(`i: ${index}; cycle data file from zuora`);
   const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken, index);
   const jobId = jobReceipt.id;
   const fileId = await jobIdToFileId(stage, zuoraBearerToken, jobId, index);
-  console.log(`i:${index}; fileId: ${fileId}`);
+  console.log(`i: ${index}; fileId: ${fileId}`);
   const file = await readDataFileFromZuora(stage, zuoraBearerToken, fileId, index);
-  console.log(`i:${index}; data file received from Zuora`);
+  console.log(`i: ${index}; data file received from Zuora`);
   return file;
 } 
