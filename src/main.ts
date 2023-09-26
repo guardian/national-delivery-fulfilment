@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile, subscriptionsDataFileToSubscriptions, excludeHolidaySubscriptions, holidayNamesDataFileToNames } from './libs/transforms'
 import { commitFileToS3_v3 } from './libs/s3'
 import { Stage } from './utils/config'
-import { cycleDataFileFromZuora as cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora'
+import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora'
 import moment from 'moment';
 import { Credentials } from 'aws-sdk/lib/core';
 import { getSsmValue } from "./utils/ssm";

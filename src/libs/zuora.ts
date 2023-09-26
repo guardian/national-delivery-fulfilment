@@ -253,7 +253,7 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   }
 }
 
-export async function cycleDataFileFromZuora(stage: string, zuoraBearerToken: string, date: string): Promise<ZuoraDataFiles> {
+export async function cycleDataFilesFromZuora(stage: string, zuoraBearerToken: string, date: string): Promise<ZuoraDataFiles> {
   console.log(`date: ${date}; cycle data file from zuora`);
   const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken, date);
   const jobId = jobReceipt.id;
