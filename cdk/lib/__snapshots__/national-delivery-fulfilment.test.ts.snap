@@ -6,6 +6,8 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
     "gu:cdk:constructs": [
       "GuDistributionBucketParameter",
       "GuScheduledLambda",
+      "GuRole",
+      "GuAllowPolicy",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -15,8 +17,77 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       "Description": "SSM parameter containing the S3 bucket name holding distribution artifacts",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
+    "SsmParameterValuenationaldeliveryfulfilmentCODEsupplierRoleArnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/national-delivery-fulfilment/CODE/supplierRoleArn",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
   },
   "Resources": {
+    "AllowFulfilmentBucketPolicy2CD95F99": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:ListBucket",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:s3:::gu-national-delivery-fulfilment-code/*",
+                "arn:aws:s3:::gu-national-delivery-fulfilment-code",
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AllowFulfilmentBucketPolicy2CD95F99",
+        "Roles": [
+          {
+            "Ref": "AllowFulfilmentBucketRoleCODEF7ECC988",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "AllowFulfilmentBucketRoleCODEF7ECC988": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuenationaldeliveryfulfilmentCODEsupplierRoleArnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "RoleName": "SandboxPaperroundAccess",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "CODE",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
     "DataBucketE3889A50": {
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -322,6 +393,8 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
     "gu:cdk:constructs": [
       "GuDistributionBucketParameter",
       "GuScheduledLambda",
+      "GuRole",
+      "GuAllowPolicy",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -331,8 +404,77 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       "Description": "SSM parameter containing the S3 bucket name holding distribution artifacts",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
+    "SsmParameterValuenationaldeliveryfulfilmentPRODsupplierRoleArnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/national-delivery-fulfilment/PROD/supplierRoleArn",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
   },
   "Resources": {
+    "AllowFulfilmentBucketPolicy2CD95F99": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:ListBucket",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:s3:::gu-national-delivery-fulfilment-prod/*",
+                "arn:aws:s3:::gu-national-delivery-fulfilment-prod",
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AllowFulfilmentBucketPolicy2CD95F99",
+        "Roles": [
+          {
+            "Ref": "AllowFulfilmentBucketRolePRODE7CF8AE4",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "AllowFulfilmentBucketRolePRODE7CF8AE4": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuenationaldeliveryfulfilmentPRODsupplierRoleArnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "RoleName": "ProductionPaperroundAccess",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "PROD",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
     "DataBucketE3889A50": {
       "DeletionPolicy": "Retain",
       "Properties": {
