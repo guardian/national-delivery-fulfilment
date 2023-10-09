@@ -8,6 +8,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       "GuScheduledLambda",
       "GuRole",
       "GuAllowPolicy",
+      "GuAllowPolicy",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -42,6 +43,27 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
           "Version": "2012-10-17",
         },
         "PolicyName": "AllowFulfilmentBucketPolicy2CD95F99",
+        "Roles": [
+          {
+            "Ref": "AllowFulfilmentBucketRoleCODEF7ECC988",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "AllowFulfilmentBucketPutFailedDeliveryPolicy23D77015": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutObject",
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-code/processed-failed-delivery-files/*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AllowFulfilmentBucketPutFailedDeliveryPolicy23D77015",
         "Roles": [
           {
             "Ref": "AllowFulfilmentBucketRoleCODEF7ECC988",
@@ -395,6 +417,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       "GuScheduledLambda",
       "GuRole",
       "GuAllowPolicy",
+      "GuAllowPolicy",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -429,6 +452,27 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
           "Version": "2012-10-17",
         },
         "PolicyName": "AllowFulfilmentBucketPolicy2CD95F99",
+        "Roles": [
+          {
+            "Ref": "AllowFulfilmentBucketRolePRODE7CF8AE4",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "AllowFulfilmentBucketPutFailedDeliveryPolicy23D77015": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutObject",
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-prod/processed-failed-delivery-files/*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AllowFulfilmentBucketPutFailedDeliveryPolicy23D77015",
         "Roles": [
           {
             "Ref": "AllowFulfilmentBucketRolePRODE7CF8AE4",

@@ -93,6 +93,21 @@ export class NationalDeliveryFulfilment extends GuStack {
             )
         );
 
+        supplierFulfilmentRole.attachInlinePolicy(
+            new GuAllowPolicy(
+                this,
+                "AllowFulfilmentBucketPutFailedDeliveryPolicy",
+                {
+                    actions: [
+                        "s3:PutObject"
+                    ],
+                    resources: [
+                        `arn:aws:s3:::${bucketName}/processed-failed-delivery-files/*`
+                    ],
+                }
+            )
+        );
+
 
     }
 }
