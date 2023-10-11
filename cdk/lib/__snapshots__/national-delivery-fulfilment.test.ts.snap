@@ -58,7 +58,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
             {
               "Action": "s3:PutObject",
               "Effect": "Allow",
-              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-code/processed-failed-delivery-files/*",
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-code/failed-deliveries/uploads/*",
             },
           ],
           "Version": "2012-10-17",
@@ -467,7 +467,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
             {
               "Action": "s3:PutObject",
               "Effect": "Allow",
-              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-prod/processed-failed-delivery-files/*",
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-prod/failed-deliveries/uploads/*",
             },
           ],
           "Version": "2012-10-17",
