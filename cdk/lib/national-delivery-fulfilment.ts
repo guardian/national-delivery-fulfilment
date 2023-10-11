@@ -102,7 +102,7 @@ export class NationalDeliveryFulfilment extends GuStack {
                         "s3:PutObject"
                     ],
                     resources: [
-                        `arn:aws:s3:::${bucketName}/processed-failed-delivery-files/*`
+                        `arn:aws:s3:::${bucketName}/failed-deliveries/uploads/*`
                     ],
                 }
             )
