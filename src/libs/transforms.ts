@@ -94,7 +94,7 @@ export function holidayNamesDataFileToNames(file: string): string[] {
   return lines;
 }
 
-function subscriptionToFileRecord(subscription: ZuoraSubscription): FileRecord {
+function subscriptionToFileRecord(subscription: ZuoraSubscription, sentDate: string, deliveryDate: string): FileRecord {
   return {
     customerReference: subscription.subscription_name, 
     deliveryReference: `c7a9577c-f198-4ddf-a707-f5f526e3aba5-${subscription.subscription_name}`,
@@ -107,15 +107,15 @@ function subscriptionToFileRecord(subscription: ZuoraSubscription): FileRecord {
     customerPostCode: subscription.sold_to_postal_code,
     deliveryQuantity: subscription.quantity,
     deliveryInformation: subscription.sold_to_special_delivery_instructions,
-    sentDate: "15/07/2023",
-    deliveryDate: "15/07/2023",
+    sentDate: sentDate,
+    deliveryDate: deliveryDate,
     sourceCampaign: "",
     additionalComms: ""
   }
 }
 
-export function subscriptionsToFileRecords(subscriptions: ZuoraSubscription[]): FileRecord[] {
-  return subscriptions.map((subscription) => subscriptionToFileRecord(subscription));
+export function subscriptionsToFileRecords(subscriptions: ZuoraSubscription[], sentDate: string, deliveryDate: string): FileRecord[] {
+  return subscriptions.map((subscription) => subscriptionToFileRecord(subscription, sentDate, deliveryDate));
 }
 
 export function fileRecordsToCSVFile(records: FileRecord[]): string {
