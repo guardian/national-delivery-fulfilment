@@ -148,7 +148,7 @@ export function excludeHolidaySubscriptions(subcriptions: ZuoraSubscription[], n
 }
 
 function subscriptionIsCorrect(subscription: ZuoraSubscription): boolean {
-  if(subscription.subscription_delivery_agent == ""){
+  if(subscription.subscription_delivery_agent === ""){
     return false;
   }
   return true;
