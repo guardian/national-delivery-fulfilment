@@ -148,10 +148,12 @@ export function excludeHolidaySubscriptions(subcriptions: ZuoraSubscription[], n
 }
 
 function subscriptionIsCorrect(subscription: ZuoraSubscription): boolean {
-  if(subscription.subscription_delivery_agent === ""){
-    return false;
-  }
-  return true;
+  // This function decides if a ZuoraSubscription should be actually put into the output file.
+  // It was first written to exclude those with an empty delivery agent, during E2E testing.
+  // When the data is corrected in Zuora and we guarrantee that no subscription will have 
+  // missing attribute then we can remove it, otherwise we may end up expanding it to perform
+  // some validations
+  return subscription.subscription_delivery_agent != "";
 }
 
 export function retainCorrectSubscriptions(subscriptions: ZuoraSubscription[]): ZuoraSubscription[] {
