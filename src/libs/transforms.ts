@@ -146,3 +146,16 @@ export function excludeHolidaySubscriptions(subcriptions: ZuoraSubscription[], n
     return !names.includes(sub.subscription_name);
   });
 }
+
+function subscriptionIsCorrect(subscription: ZuoraSubscription): boolean {
+  if(subscription.subscription_delivery_agent == ""){
+    return false;
+  }
+  return true;
+}
+
+export function retainCorrectSubscriptions(subscriptions: ZuoraSubscription[]): ZuoraSubscription[] {
+  return subscriptions.filter(sub => {
+    return subscriptionIsCorrect(sub);
+  });
+}

@@ -1,6 +1,6 @@
          
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile, subscriptionsDataFileToSubscriptions, excludeHolidaySubscriptions, holidayNamesDataFileToNames } from './libs/transforms'
+import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile, subscriptionsDataFileToSubscriptions, excludeHolidaySubscriptions, holidayNamesDataFileToNames, retainCorrectSubscriptions } from './libs/transforms'
 import { commitFileToS3_v3 } from './libs/s3'
 import { Stage } from './utils/config'
 import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora'
@@ -21,10 +21,11 @@ export const main = async () => {
       const date = cursor.format("YYYY-MM-DD");
       console.log(`i: ${i}; date: ${date}`);
       const zuoraDataFiles = await cycleDataFilesFromZuora(Stage, zuoraBearerToken, date);
-      const subscriptions1 = subscriptionsDataFileToSubscriptions(zuoraDataFiles.subscriptionsFile);
+      const subscriptions1a = subscriptionsDataFileToSubscriptions(zuoraDataFiles.subscriptionsFile);
+      const subscriptions1b = retainCorrectSubscriptions(subscriptions1a)
       const holidaySubscriptionNames = holidayNamesDataFileToNames(zuoraDataFiles.holidayNamesFile);
       console.log(holidaySubscriptionNames);
-      const subscriptions2 = excludeHolidaySubscriptions(subscriptions1, holidaySubscriptionNames);
+      const subscriptions2 = excludeHolidaySubscriptions(subscriptions1b, holidaySubscriptionNames);
       const sentDate = now.format("DD/MM/YYYY");
       const deliveryDate = cursor.format("DD/MM/YYYY");
       const fileRecords = subscriptionsToFileRecords(subscriptions2, sentDate, deliveryDate);
