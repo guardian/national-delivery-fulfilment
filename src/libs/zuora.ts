@@ -137,7 +137,7 @@ Additional Comms                                                   # reserved fo
       and RatePlanCharge.name = '${dayOfTheWeekName}' 
       and RatePlanCharge.effectiveStartDate <= '${date}'
       and (RatePlanCharge.effectiveEndDate >= '${date}' or (Subscription.autoRenew = true and Subscription.status = 'Active'))
-      and Subscription.status = 'Active'
+      and (Subscription.status = 'Active' or Subscription.status = 'Cancelled')
   `;
 
   const holidayQuery =  `
