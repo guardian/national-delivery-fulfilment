@@ -138,13 +138,13 @@ Additional Comms                                                   # reserved fo
       RatePlanCharge.name = '${dayOfTheWeekName}' AND
       RatePlanCharge.effectiveStartDate <= '${date}' AND
       (
-          RatePlanCharge.effectiveEndDate > '${date}' OR
-          (
-              RatePlanCharge.EffectiveEndDate >= '${today}' AND
-              Subscription.Status = 'Active' AND
-              Subscription.AutoRenew = true AND
-              (RatePlan.AmendmentType IS NULL OR RatePlan.AmendmentType != 'RemoveProduct')
-          )
+        RatePlanCharge.effectiveEndDate > '${date}' OR
+        (
+          RatePlanCharge.EffectiveEndDate >= '${today}' AND
+          Subscription.Status = 'Active' AND
+          Subscription.AutoRenew = true AND
+          (RatePlan.AmendmentType IS NULL OR RatePlan.AmendmentType != 'RemoveProduct')
+        )
       )
   `;
 
