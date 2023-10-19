@@ -133,10 +133,19 @@ Additional Comms                                                   # reserved fo
     FROM
       RatePlanCharge
     WHERE
-      Product.ProductType__c = 'Newspaper - National Delivery' 
-      and RatePlanCharge.name = '${dayOfTheWeekName}' 
-      and RatePlanCharge.effectiveStartDate <= '${date}'
-      and (RatePlanCharge.effectiveEndDate >= '${date}' or (Subscription.autoRenew = true and Subscription.status = 'Active'))
+      (Subscription.Status = 'Active' OR Subscription.Status = 'Cancelled') AND
+      Product.Name = 'Newspaper - National Delivery'        and
+      RatePlanCharge.name = 'Saturday'        and
+      RatePlanCharge.effectiveStartDate <= '2023-10-28'       and
+      (
+          RatePlanCharge.effectiveEndDate > '2023-10-28' or 
+          (
+              RatePlanCharge.EffectiveEndDate >= '2023-10-19' AND
+              Subscription.Status = 'Active' AND
+              Subscription.AutoRenew = true AND
+              (RatePlan.AmendmentType IS NULL OR RatePlan.AmendmentType != 'RemoveProduct')
+          )
+      )
   `;
 
   const holidayQuery =  `
