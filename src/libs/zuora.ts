@@ -73,7 +73,7 @@ export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
   return token1.access_token;
 }
 
-function zuoraBatchQueries(date: string) {
+function zuoraBatchQueries(date: string, today: string) {
   // https://knowledgecenter.zuora.com/Zuora_Central_Platform/Query/Export_ZOQL
 
 /*
@@ -134,13 +134,13 @@ Additional Comms                                                   # reserved fo
       RatePlanCharge
     WHERE
       (Subscription.Status = 'Active' OR Subscription.Status = 'Cancelled') AND
-      Product.Name = 'Newspaper - National Delivery'        and
-      RatePlanCharge.name = 'Saturday'        and
-      RatePlanCharge.effectiveStartDate <= '2023-10-28'       and
+      Product.Name = 'Newspaper - National Delivery' AND
+      RatePlanCharge.name = '${dayOfTheWeekName}' AND
+      RatePlanCharge.effectiveStartDate <= '${date}' AND
       (
-          RatePlanCharge.effectiveEndDate > '2023-10-28' or 
+          RatePlanCharge.effectiveEndDate > '${date}' OR
           (
-              RatePlanCharge.EffectiveEndDate >= '2023-10-19' AND
+              RatePlanCharge.EffectiveEndDate >= '${today}' AND
               Subscription.Status = 'Active' AND
               Subscription.AutoRenew = true AND
               (RatePlan.AmendmentType IS NULL OR RatePlan.AmendmentType != 'RemoveProduct')
@@ -181,10 +181,10 @@ Additional Comms                                                   # reserved fo
   }
 }
 
-async function submitQueryToZuora(stage: string, zuoraBearerToken: string, date: string): Promise<ZuoraBatchSubmissionReceipt> {
+async function submitQueryToZuora(stage: string, zuoraBearerToken: string, date: string, today: string): Promise<ZuoraBatchSubmissionReceipt> {
   console.log(`date: ${date}; submitting batch queries to zuora`);
   const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
-  const data = zuoraBatchQueries(date);
+  const data = zuoraBatchQueries(date, today);
   const params = {
     headers: {
       "Authorization": `Bearer ${zuoraBearerToken}`,
@@ -262,9 +262,9 @@ async function jobIdToFileId(stage: string, zuoraBearerToken: string, jobId: str
   }
 }
 
-export async function cycleDataFilesFromZuora(stage: string, zuoraBearerToken: string, date: string): Promise<ZuoraDataFiles> {
+export async function cycleDataFilesFromZuora(stage: string, zuoraBearerToken: string, date: string, today: string): Promise<ZuoraDataFiles> {
   console.log(`date: ${date}; cycle data file from zuora`);
-  const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken, date);
+  const jobReceipt = await submitQueryToZuora(stage, zuoraBearerToken, date, today);
   const jobId = jobReceipt.id;
   console.log(`date: ${date}; jobId: ${jobId}`);
   const fileIds = await jobIdToFileId(stage, zuoraBearerToken, jobId, date);
