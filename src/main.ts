@@ -11,7 +11,8 @@ import { sleep } from "./utils/sleep";
 
 async function generateFilesForAllDays(zuoraBearerToken: string, now: moment.Moment) {
   const today = now.format("YYYY-MM-DD");
-  for (const i of Array(14).keys()) {
+  const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // There probably a sexier way to do this
+  for (const i of indices) {
     console.log(`i: ${i}`);
     console.log(`i: ${i}; timestamp: ${new Date()}`);
     const cursor = moment().add(i, "days");
