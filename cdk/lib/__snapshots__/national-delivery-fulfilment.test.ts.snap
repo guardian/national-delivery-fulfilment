@@ -9,6 +9,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       "GuRole",
       "GuAllowPolicy",
       "GuAllowPolicy",
+      "GuAllowPolicy",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -24,20 +25,35 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
     },
   },
   "Resources": {
+    "AllowFulfilmentBucketGetFilesPolicy8F0279D0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-code/fulfilment/*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AllowFulfilmentBucketGetFilesPolicy8F0279D0",
+        "Roles": [
+          {
+            "Ref": "AllowFulfilmentBucketRoleCODEF7ECC988",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "AllowFulfilmentBucketPolicy2CD95F99": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": [
-                "s3:GetObject",
-                "s3:ListBucket",
-              ],
+              "Action": "s3:ListBucket",
               "Effect": "Allow",
-              "Resource": [
-                "arn:aws:s3:::gu-national-delivery-fulfilment-code/*",
-                "arn:aws:s3:::gu-national-delivery-fulfilment-code",
-              ],
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-code",
             },
           ],
           "Version": "2012-10-17",
@@ -418,6 +434,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       "GuRole",
       "GuAllowPolicy",
       "GuAllowPolicy",
+      "GuAllowPolicy",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -433,20 +450,35 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
     },
   },
   "Resources": {
+    "AllowFulfilmentBucketGetFilesPolicy8F0279D0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-prod/fulfilment/*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AllowFulfilmentBucketGetFilesPolicy8F0279D0",
+        "Roles": [
+          {
+            "Ref": "AllowFulfilmentBucketRolePRODE7CF8AE4",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "AllowFulfilmentBucketPolicy2CD95F99": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": [
-                "s3:GetObject",
-                "s3:ListBucket",
-              ],
+              "Action": "s3:ListBucket",
               "Effect": "Allow",
-              "Resource": [
-                "arn:aws:s3:::gu-national-delivery-fulfilment-prod/*",
-                "arn:aws:s3:::gu-national-delivery-fulfilment-prod",
-              ],
+              "Resource": "arn:aws:s3:::gu-national-delivery-fulfilment-prod",
             },
           ],
           "Version": "2012-10-17",

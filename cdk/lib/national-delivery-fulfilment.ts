@@ -82,12 +82,25 @@ export class NationalDeliveryFulfilment extends GuStack {
                 "AllowFulfilmentBucketPolicy",
                 {
                     actions: [
-                        "s3:GetObject",
                         "s3:ListBucket"
                     ],
                     resources: [
-                        `arn:aws:s3:::${bucketName}/*`,
                         `arn:aws:s3:::${bucketName}`
+                    ],
+                }
+            )
+        );
+
+        supplierFulfilmentRole.attachInlinePolicy(
+            new GuAllowPolicy(
+                this,
+                "AllowFulfilmentBucketGetFilesPolicy",
+                {
+                    actions: [
+                        "s3:GetObject"
+                    ],
+                    resources: [
+                        `arn:aws:s3:::${bucketName}/fulfilment/*`
                     ],
                 }
             )
