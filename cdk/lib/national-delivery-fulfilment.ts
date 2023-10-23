@@ -112,6 +112,7 @@ export class NationalDeliveryFulfilment extends GuStack {
                 "AllowFulfilmentBucketPutFailedDeliveryPolicy",
                 {
                     actions: [
+                        "s3:GetObject",
                         "s3:PutObject"
                     ],
                     resources: [
