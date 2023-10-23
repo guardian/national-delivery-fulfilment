@@ -136,7 +136,8 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
         {id: 'deliveryDate', title: 'Delivery Date'},
         {id: 'sourceCampaign', title: 'Source Campaign'},
         {id: 'additionalComms', title: 'Additional Comms'}
-      ]
+    ],
+    alwaysQuote: true
   });
   return csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(records);
 }
