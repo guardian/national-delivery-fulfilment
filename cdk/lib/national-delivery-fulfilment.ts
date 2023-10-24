@@ -30,12 +30,12 @@ export class NationalDeliveryFulfilment extends GuStack {
                 rules: [{
                     schedule: Schedule.cron({
                         day: '*',
-                        hour: '11',
+                        hour: '6',
                         minute: '30',
                     }),
                 }],
                 monitoringConfiguration: {noMonitoring: true},
-                timeout: Duration.seconds(15 * 60),
+                timeout: Duration.seconds(15 * 60), // overriding the default duration which is not 15 minutes
             },
         );
 
