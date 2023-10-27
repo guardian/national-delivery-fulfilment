@@ -9,7 +9,7 @@ import { Credentials } from 'aws-sdk/lib/core';
 import { getSsmValue } from "./utils/ssm";
 import { sleep } from "./utils/sleep";
 
-async function generateFileAtDay(zuoraBearerToken: string, now: moment.Moment, cursor: moment.Moment) {
+async function generateFileForDay(zuoraBearerToken: string, now: moment.Moment, cursor: moment.Moment) {
   const today = now.format("YYYY-MM-DD");
   const date = cursor.format("YYYY-MM-DD");
   console.log(`date: ${date}`);
@@ -30,11 +30,11 @@ async function generateFileAtDay(zuoraBearerToken: string, now: moment.Moment, c
 async function generateFilesForAllDays(zuoraBearerToken: string, now: moment.Moment) {
   const today = now.format("YYYY-MM-DD");
   const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // There probably a sexier way to do this
-  for (const i of indices) {
+  const promises = indices.map(async (i) => {
     const cursor = moment().add(i, "days");
-    await generateFileAtDay(zuoraBearerToken, now, cursor);
-    await sleep(2000); // sleeping 2 seconds
-  }
+    return generateFileForDay(zuoraBearerToken, now, cursor);
+  });
+  await Promise.all(promises);
 }
 
 export const main = async () => {
