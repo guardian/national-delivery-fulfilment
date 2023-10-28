@@ -9,31 +9,6 @@ import { Credentials } from 'aws-sdk/lib/core';
 import { getSsmValue } from "./utils/ssm";
 import { sleep } from "./utils/sleep";
 
-async function generateFilesForAllDays(zuoraBearerToken: string, now: moment.Moment) {
-  const today = now.format("YYYY-MM-DD");
-  const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // There probably a sexier way to do this
-  for (const i of indices) {
-    console.log(`i: ${i}`);
-    console.log(`i: ${i}; timestamp: ${new Date()}`);
-    const cursor = moment().add(i, "days");
-    const date = cursor.format("YYYY-MM-DD");
-    console.log(`i: ${i}; date: ${date}`);
-    const zuoraDataFiles = await cycleDataFilesFromZuora(Stage, zuoraBearerToken, date, today);
-    const currentSubs = subscriptionsDataFileToSubscriptions(zuoraDataFiles.subscriptionsFile);
-    const subsWithoutInvalid = retainCorrectSubscriptions(currentSubs)
-    const holidaySubscriptionNames = holidayNamesDataFileToNames(zuoraDataFiles.holidayNamesFile);
-    console.log(holidaySubscriptionNames);
-    const subsWithoutHolidayStops = excludeHolidaySubscriptions(subsWithoutInvalid, holidaySubscriptionNames);
-    const sentDate = now.format("DD/MM/YYYY");
-    const deliveryDate = cursor.format("DD/MM/YYYY");
-    const fileRecords = subscriptionsToFileRecords(subsWithoutHolidayStops, sentDate, deliveryDate);
-    const file2 = fileRecordsToCSVFile(fileRecords);
-    const filePathKey = `fulfilment/${cursor.format("YYYY")}/${cursor.format("YYYY-MM")}/${cursor.format("YYYY-MM-DD")}.csv`;
-    await commitFileToS3_v3(Stage, filePathKey, file2);
-    await sleep(2000); // sleeping 2 seconds
-  }
-}
-
 export const main = async () => {
   console.log("main function: start");
   const now = moment();
@@ -45,3 +20,31 @@ export const main = async () => {
   }
   console.log("main function: completed");
 };
+
+async function generateFilesForAllDays(zuoraBearerToken: string, now: moment.Moment) {
+  const today = now.format("YYYY-MM-DD");
+  const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // There probably a sexier way to do this
+  const promises = indices.map(async (i) => {
+    const cursor = moment().add(i, "days");
+    return generateFileForDay(zuoraBearerToken, now, cursor);
+  });
+  await Promise.all(promises);
+}
+
+async function generateFileForDay(zuoraBearerToken: string, now: moment.Moment, cursor: moment.Moment) {
+  const today = now.format("YYYY-MM-DD");
+  const date = cursor.format("YYYY-MM-DD");
+  console.log(`date: ${date}`);
+  const zuoraDataFiles = await cycleDataFilesFromZuora(Stage, zuoraBearerToken, date, today);
+  const currentSubs = subscriptionsDataFileToSubscriptions(zuoraDataFiles.subscriptionsFile);
+  const subsWithoutInvalid = retainCorrectSubscriptions(currentSubs)
+  const holidaySubscriptionNames = holidayNamesDataFileToNames(zuoraDataFiles.holidayNamesFile);
+  console.log(holidaySubscriptionNames);
+  const subsWithoutHolidayStops = excludeHolidaySubscriptions(subsWithoutInvalid, holidaySubscriptionNames);
+  const sentDate = now.format("DD/MM/YYYY");
+  const deliveryDate = cursor.format("DD/MM/YYYY");
+  const fileRecords = subscriptionsToFileRecords(subsWithoutHolidayStops, sentDate, deliveryDate);
+  const file2 = fileRecordsToCSVFile(fileRecords);
+  const filePathKey = `fulfilment/${cursor.format("YYYY")}/${cursor.format("YYYY-MM")}/${cursor.format("YYYY-MM-DD")}.csv`;
+  await commitFileToS3_v3(Stage, filePathKey, file2);
+}
