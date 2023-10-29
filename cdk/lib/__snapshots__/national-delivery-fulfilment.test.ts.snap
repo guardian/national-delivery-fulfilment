@@ -387,9 +387,9 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       },
       "Type": "AWS::IAM::Policy",
     },
-    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron30609BEBC0D2": {
+    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron3009BF94F13": {
       "Properties": {
-        "ScheduleExpression": "cron(30 6 * * ? *)",
+        "ScheduleExpression": "cron(30 * * * ? *)",
         "State": "ENABLED",
         "Targets": [
           {
@@ -405,7 +405,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       },
       "Type": "AWS::Events::Rule",
     },
-    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron3060AllowEventRuleNationalDeliveryFulfilmentCODEnationaldeliveryfulfilmentlambda83C15CF276003C02": {
+    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron300AllowEventRuleNationalDeliveryFulfilmentCODEnationaldeliveryfulfilmentlambda83C15CF27F01F0A8": {
       "Properties": {
         "Action": "lambda:InvokeFunction",
         "FunctionName": {
@@ -417,7 +417,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
         "Principal": "events.amazonaws.com",
         "SourceArn": {
           "Fn::GetAtt": [
-            "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron30609BEBC0D2",
+            "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron3009BF94F13",
             "Arn",
           ],
         },
@@ -815,9 +815,9 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       },
       "Type": "AWS::IAM::Policy",
     },
-    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron30609BEBC0D2": {
+    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron3009BF94F13": {
       "Properties": {
-        "ScheduleExpression": "cron(30 6 * * ? *)",
+        "ScheduleExpression": "cron(30 * * * ? *)",
         "State": "ENABLED",
         "Targets": [
           {
@@ -833,7 +833,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       },
       "Type": "AWS::Events::Rule",
     },
-    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron3060AllowEventRuleNationalDeliveryFulfilmentPRODnationaldeliveryfulfilmentlambda8B0CC485D6B0DB02": {
+    "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron300AllowEventRuleNationalDeliveryFulfilmentPRODnationaldeliveryfulfilmentlambda8B0CC48557D9E833": {
       "Properties": {
         "Action": "lambda:InvokeFunction",
         "FunctionName": {
@@ -845,7 +845,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
         "Principal": "events.amazonaws.com",
         "SourceArn": {
           "Fn::GetAtt": [
-            "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron30609BEBC0D2",
+            "nationaldeliveryfulfilmentlambdanationaldeliveryfulfilmentlambdacron3009BF94F13",
             "Arn",
           ],
         },

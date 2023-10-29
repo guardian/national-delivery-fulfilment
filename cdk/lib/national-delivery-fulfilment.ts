@@ -30,7 +30,7 @@ export class NationalDeliveryFulfilment extends GuStack {
                 rules: [{
                     schedule: Schedule.cron({
                         day: '*',
-                        hour: '6',
+                        hour: '*',
                         minute: '30',
                     }),
                 }],
