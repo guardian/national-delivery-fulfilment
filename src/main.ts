@@ -29,39 +29,6 @@ export const main = async (dayIndex?: number) => {
   console.log("main function completed");
 };
 
-async function generateFilesForAllDaysSequential(zuoraBearerToken: string) {
-  // Date: 29th October 2023
-  // This function is currently not used but kept for a bit for illustration purposes.
-
-  // It generates all 14 files sequentially.
-
-  // This actually was the original implementation that was abandonned when it was discovered that 
-  // The production run is so slow that the lambda expires (is killed after 15 minutes: the max time a 
-  // lambda can run in AWS), and that, before the 14th file is generated.
-
-  const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-  for (const i of indices) {
-    await generateFileForDay(zuoraBearerToken, i);
-  }
-}
-
-async function generateFilesForAllDaysParallel(zuoraBearerToken: string) {
-  // Date: 29th October 2023
-  // This function is currently not used but kept for a bit for illustration purposes.
-
-  // It generates all 14 files in parallel. 
-
-  // This version was introduced to solve the problem posed by sequential run and AWS killing the lambda after 
-  // 15 mins, but it is not recommanded for regular use because apparently Zuora doesn't always behave well when running
-  // jobs in parallel.
-
-  const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-  const promises = indices.map(async (i) => {
-    return generateFileForDay(zuoraBearerToken, i);
-  });
-  await Promise.all(promises);
-}
-
 async function generateOneFileUsingCurrentTimeToDeriveDayIndex(zuoraBearerToken: string) {
 
   // Date: 29th October 2023
