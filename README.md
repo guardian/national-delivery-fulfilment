@@ -30,7 +30,17 @@ The generation of one file is an atomic operation in the sense that it's perform
 
 The lambda is set up to run each hour and it generates the next file every hour. It generates all 14 files during the first 14 hours of the day. (And, currently, there actually is two generations of files 1 to 10. For instance the first file, the file for "tomorrow", is generated at 00:30 and at 14:30)
 
-It is also possible to generate a particular file in the aws console. In this case, just provide the file index as input to the lambda. A single number, for instance 10, given as imput to the lambda is going to ensure that the file with index 10 (corresponding to 10 days in the future) is going to be generated during one run of the lambda. Note that is it not currently offered to generate more than one file per run of the lambda (actually it's perfectly possible but we simply not provide that ability, mostly because it would only really be relevant in CODE).
+It is also possible to generate a particular file in the aws console (see next section). In this case, just provide the file index as input to the lambda. A single number, for instance 10, given as imput to the lambda is going to ensure that the file with index 10 (corresponding to 10 days in the future) is going to be generated during one run of the lambda. Note that is it not currently offered to generate more than one file per run of the lambda (actually it's perfectly possible but we simply not provide that ability, mostly because it would only really be relevant in CODE).
+
+### Generate a specific file from the AWS console.
+
+To generate a specific file from the AWS console, you need to specify the day you want to run and for this you will use a day index. It's simply a integer number of days from today (1 for tomorrow, etc). To do so use an event as follow (for instance for index 3)
+
+```
+{
+  "dayIndex": 3,
+}
+```
 
 ### Local developement
 

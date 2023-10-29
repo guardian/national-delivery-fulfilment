@@ -9,15 +9,22 @@ import { Credentials } from 'aws-sdk/lib/core';
 import { getSsmValue } from "./utils/ssm";
 import { sleep } from "./utils/sleep";
 
-export const main = async (event) => {
-  console.log("main function start");
-  console.log(`event: ${JSON.stringify(event)}`);
+export const main = async (dayIndex?: number) => {
+  console.log(`main function start with dayIndex: ${dayIndex}`);
   
+  // The dayIndex is either not defined if this was a scheduled run, 
+  // or the dayIndex requested by the user from a manual run in the aws console. 
+
   const zuoraBearerToken = await fetchZuoraBearerToken2(Stage);
-  if (zuoraBearerToken) {
-    await generateOneFileUsingCurrentTimeToDeriveDayIndex(zuoraBearerToken);
+  if (!zuoraBearerToken) {
+    const message = "Could not extract a bearer token from zuora";
+    console.log(message);
+    throw message;
+  }
+  if (dayIndex) {
+    await generateFileForDay(zuoraBearerToken, dayIndex);
   } else {
-    console.log("Could not extract a bearer token from zuora")
+    await generateOneFileUsingCurrentTimeToDeriveDayIndex(zuoraBearerToken);
   }
   console.log("main function completed");
 };
