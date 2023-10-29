@@ -38,7 +38,7 @@ To generate a specific file from the AWS console, you need to specify the day yo
 
 ```
 {
-  "dayIndex": 3,
+  "dayIndex": 3
 }
 ```
 

@@ -23,7 +23,7 @@ export const handler: Handler = async (event) => {
 
     ... or a user defined event, which is expected to be like this: 
     {
-        "dayIndex": 3,
+        "dayIndex": 3
     }
     // See description in the readme for details. 
 
