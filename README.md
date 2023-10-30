@@ -3,7 +3,17 @@
 
 The national delivery fulfilment lambda generates the files used by Paperround for delivery.
 
-The files are generated in the membership account, and the two S3 buckets:
+For deployment see `MemSub::Fulfilment::NationalDelivery` in Riff-Raff.
+
+The files are generated in the membership account, by the two lambda functions
+
+```
+- membership-national-delivery-fulfilment-CODE
+- membership-national-delivery-fulfilment-PROD
+```
+
+
+and put in the two S3 buckets:
 
 ```
 - national-delivery-fulfilment-prod
