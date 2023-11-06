@@ -75,8 +75,8 @@ Playground is a directory that was used during initial development, it's going t
   
 ### Running on local
 
-- running main.ts
+It is possible to run the file generation process on local if you are investigating something simply by running `src/local.ts`. The first step is to provide a Zuora bearer token for the stage you are targetting and then run.
 
 ```
-$ npx ts-node src/main.ts
+$ npx ts-node src/local.ts
 ```
