@@ -75,8 +75,8 @@ Playground is a directory that was used during initial development, it's going t
   
 ### Running on local
 
-- running main.ts
+- running local.ts
 
 ```
-$ npx ts-node src/main.ts
+$ npx ts-node src/local.ts
 ```

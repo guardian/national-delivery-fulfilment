@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { parse } from 'csv-parse/sync';
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 /*
@@ -65,33 +65,41 @@ export interface FileRecord {
   additionalComms: string;
 }
 
+export function parseZuoraDataFile(file: string): string[][] {
+  const records: string[][] = parse(file);
+  records.shift(); // getting rid of the first record containing the columns descriptions
+  return records;
+}
+
 export function subscriptionsDataFileToSubscriptions(file: string): ZuoraSubscription[] {
-  const splitLines = str => str.split(/\r?\n/);
-  const lines = splitLines(file);
-  lines.shift();
-  const subscriptions = lines.map((line) => {
-    const elements = line.split(",");
+  const records = parseZuoraDataFile(file);
+  const subscriptions = records.map((record) => {
     return {
-      subscription_name: elements[0],
-      subscription_delivery_agent: elements[1],
-      sold_to_address1: elements[2],
-      sold_to_address2: elements[3],
-      sold_to_city: elements[4],
-      sold_to_postal_code: elements[5],
-      sold_to_first_name: elements[6],
-      sold_to_last_name: elements[7],
-      sold_to_special_delivery_instructions: elements[8],
-      quantity: elements[9]
+      subscription_name: record[0],
+      subscription_delivery_agent: record[1],
+      sold_to_address1: record[2],
+      sold_to_address2: record[3],
+      sold_to_city: record[4],
+      sold_to_postal_code: record[5],
+      sold_to_first_name: record[6],
+      sold_to_last_name: record[7],
+      sold_to_special_delivery_instructions: record[8],
+      quantity: record[9]
     }
   });
   return subscriptions;
 }
 
 export function holidayNamesDataFileToNames(file: string): string[] {
-  const splitLines = str => str.split(/\r?\n/);
+  const splitLines = (str: string) => str.split(/\r?\n/);
   const lines = splitLines(file);
   lines.shift();
   return lines;
+}
+
+function stripQuotes(str: string): string {
+  // remove double quotes if present, as the supplier's csv parser can't handle the encoded result as per 2.7 of https://datatracker.ietf.org/doc/html/rfc4180#section-2
+  return str.replace(/"/g,'');
 }
 
 function subscriptionToFileRecord(subscription: ZuoraSubscription, sentDate: string, deliveryDate: string): FileRecord {
@@ -99,14 +107,14 @@ function subscriptionToFileRecord(subscription: ZuoraSubscription, sentDate: str
     customerReference: subscription.subscription_name, 
     deliveryReference: `c7a9577c-f198-4ddf-a707-f5f526e3aba5-${subscription.subscription_name}`,
     retailerReference: subscription.subscription_delivery_agent,
-    customerFullName: `${subscription.sold_to_first_name} ${subscription.sold_to_last_name}`,
-    customerAddressLine1: subscription.sold_to_address1,
-    customerAddressLine2: subscription.sold_to_address2,
+    customerFullName: stripQuotes(`${subscription.sold_to_first_name} ${subscription.sold_to_last_name}`),
+    customerAddressLine1: stripQuotes(subscription.sold_to_address1),
+    customerAddressLine2: stripQuotes(subscription.sold_to_address2),
     customerAddressLine3: "",
-    customerTown: subscription.sold_to_city,
-    customerPostCode: subscription.sold_to_postal_code,
-    deliveryQuantity: subscription.quantity,
-    deliveryInformation: subscription.sold_to_special_delivery_instructions,
+    customerTown: stripQuotes(subscription.sold_to_city),
+    customerPostCode: stripQuotes(subscription.sold_to_postal_code),
+    deliveryQuantity: stripQuotes(subscription.quantity),
+    deliveryInformation: stripQuotes(subscription.sold_to_special_delivery_instructions),
     sentDate: sentDate,
     deliveryDate: deliveryDate,
     sourceCampaign: "",
