@@ -23,11 +23,11 @@ export const handler: Handler = async (event) => {
 
     ... or a user defined event, which is expected to be like this: 
     {
-        "dayIndex": 3
+        "indices": [3, 4, 7]
     }
     // See description in the readme for details. 
 
   */
 
-  await main(event["dayIndex"]);
+  await main(event["indices"]);
 }
