@@ -36,21 +36,31 @@ We generates 14 files starting from the day after. For instance on the 2nd of No
 
 ### Generation strategy
 
-The generation of one file is an atomic operation in the sense that it's performed by one single asynchronous function (see code for detail). We are going to retain that design principle and we can keep it as long at it remains true that a single file takes less than 15 mins to be generated. If one day that premisse cease to be true, then a small redesign will be required. At the time these line are written (Oct 2023), the generation takes few seconds in CODE and about 5 mins (300 seconds) in PROD.
+The generation of one file is an atomic operation in the sense that it's performed by one single asynchronous function (see code for detail). We are going to retain that design principle and we will keep it as long at it remains true that a single file takes less than 15 mins to be generated. If one day that premisse ceases to be true, then a small redesign of this lambda will be required. At the time these lines are written (Oct 2023), the generation takes few seconds in CODE and a couple of minutes (sometimes up to 5 mins, and in extremelly rare cases up to 10 mins) in PROD.
 
-The lambda is set up to run each hour and it generates the next file every hour. It generates all 14 files during the first 14 hours of the day. (And, currently, there actually is two generations of files 1 to 10. For instance the first file, the file for "tomorrow", is generated at 00:30 and at 14:30)
+The lambda is set up to run each hour and generates the next file every hour. It generates all 14 files during the first 14 hours of the day. And then regenerate some of the files, during the remaining hours.
 
-It is also possible to generate a particular file in the aws console (see next section). In this case, just provide the file index as input to the lambda. A single number, for instance 10, given as imput to the lambda is going to ensure that the file with index 10 (corresponding to 10 days in the future) is going to be generated during one run of the lambda. Note that is it not currently offered to generate more than one file per run of the lambda (actually it's perfectly possible but we simply not provide that ability, mostly because it would only really be relevant in CODE).
+It is also possible to manually generate a particular file (or a small number of files) in the aws console (see next section).
 
 ### Generate a specific file from the AWS console.
 
-To generate a specific file from the AWS console, you need to specify the day you want to run and for this you will use a day index. It's simply a integer number of days from today (1 for tomorrow, etc). To do so use an event as follow (for instance for index 3)
+To generate a specific file from the AWS console, you just need to specify the day you want to run. For instance to generate the file with index 3 (meaning the file at current date + 3 days), you provide 
 
 ```
 {
-  "dayIndex": 3
+  "indices": [3]
 }
 ```
+
+To generate the files with index 3, 4 and 7, you provide 
+
+```
+{
+  "indices": [3, 4, 7]
+}
+```
+
+Note that if you provide too a many indices, you may cause the lambda to exeed the maximum 15 mins run timespan, so be careful be submitting more than one index. It can be useful to just generate one file to see how fast the process is and then provide more indices. 
 
 ### Local developement
 

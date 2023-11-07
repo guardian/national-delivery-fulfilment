@@ -1,19 +1,15 @@
          
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { FileRecord, subscriptionsToFileRecords, fileRecordsToCSVFile, subscriptionsDataFileToSubscriptions, excludeHolidaySubscriptions, holidayNamesDataFileToNames, retainCorrectSubscriptions } from './libs/transforms'
+import { subscriptionsToFileRecords, fileRecordsToCSVFile, subscriptionsDataFileToSubscriptions, excludeHolidaySubscriptions, holidayNamesDataFileToNames, retainCorrectSubscriptions } from './libs/transforms'
 import { commitFileToS3_v3 } from './libs/s3'
 import { Stage } from './utils/config'
 import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora'
 import moment from 'moment';
-import { Credentials } from 'aws-sdk/lib/core';
-import { getSsmValue } from "./utils/ssm";
-import { sleep } from "./utils/sleep";
 
-export const main = async (dayIndex?: number) => {
-  console.log(`main function start with dayIndex: ${dayIndex}`);
+export const main = async (indices?: number[]) => {
+  console.log(`main function is starting with indices: ${JSON.stringify(indices)}`);
   
-  // The dayIndex is either not defined if this was a scheduled run, 
-  // or the dayIndex requested by the user from a manual run in the aws console. 
+  // The indices is either not defined if this was a scheduled run, 
+  // or are the indices requested by the user from a manual run in the aws console. 
 
   const zuoraBearerToken = await fetchZuoraBearerToken2(Stage);
   if (!zuoraBearerToken) {
@@ -21,12 +17,14 @@ export const main = async (dayIndex?: number) => {
     console.log(message);
     throw message;
   }
-  if (dayIndex) {
-    await generateFileForDay(zuoraBearerToken, dayIndex);
+  if (indices) {
+    for (const i of indices) {
+      await generateFileForDay(zuoraBearerToken, i);
+    }
   } else {
     await generateOneFileUsingCurrentTimeToDeriveDayIndex(zuoraBearerToken);
   }
-  console.log("main function completed");
+  console.log("main function has completed");
 };
 
 async function generateOneFileUsingCurrentTimeToDeriveDayIndex(zuoraBearerToken: string) {
