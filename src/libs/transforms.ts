@@ -165,8 +165,14 @@ function subscriptionIsCorrect(subscription: ZuoraSubscription): boolean {
   return subscription.subscription_delivery_agent != "";
 }
 
+function is_fraud(subscription: ZuoraSubscription): boolean {
+  const postcodes = ["tq122tl", "tq122tg"];
+  const pc = subscription.sold_to_postal_code.toLowerCase().slice(0, 7);
+  return postcodes.includes(pc);
+}
+
 export function retainCorrectSubscriptions(subscriptions: ZuoraSubscription[]): ZuoraSubscription[] {
   return subscriptions.filter(sub => {
-    return subscriptionIsCorrect(sub);
+    return subscriptionIsCorrect(sub) && !is_fraud(sub);
   });
 }
