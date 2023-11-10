@@ -50,13 +50,13 @@
 	},
 	"scripts": {
 		"build": "yarn esbuild --bundle --platform=node --target=node18 --outfile=dist/index.js src/index.ts",
+		"commitlint": "commitlint --edit",
+		"lint": "eslint src/** --ext .ts",
+		"lint-fix": "eslint src/** --ext .ts --fix",
 		"package": "cd dist; zip -qr ../cdk/national-delivery-fulfilment/national-delivery-fulfilment.zip ./*",
 		"test": "jest --coverage=false",
 		"test-coverage": "jest --coverage",
-		"lint": "eslint src/** --ext .ts",
-		"lint-fix": "eslint src/** --ext .ts --fix",
 		"type-check": "tsc --noEmit",
-		"type-watch": "tsc --noEmit -w",
-		"commitlint": "commitlint --edit"
+		"type-watch": "tsc --noEmit -w"
 	}
 }
