@@ -72,7 +72,7 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
 	console.log(file2);
 }
 
-generateFileForDay(`[Your Zuora ${stage} bearer token]`, 5).then((result) => {
+generateFileForDay(`removed`, 5).then((result) => {
 	console.log('completed');
 	console.log(result);
 });

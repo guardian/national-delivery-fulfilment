@@ -49,6 +49,8 @@
 		"package": "cd dist; zip -qr ../cdk/national-delivery-fulfilment/national-delivery-fulfilment.zip ./*",
 		"test": "cd test && ts-jest",
 		"lint": "eslint src/** --ext .ts",
-		"lint-fix": "eslint src/** --ext .ts --fix"
+		"lint-fix": "eslint src/** --ext .ts --fix",
+		"type-check": "tsc --noEmit",
+		"type-watch": "tsc --noEmit -w"
 	}
 }
