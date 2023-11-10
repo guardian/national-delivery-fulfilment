@@ -1,7 +1,13 @@
 module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
-	modulePathIgnorePatterns: ['dist/', 'cdk/', 'node_modules/'],
+	modulePathIgnorePatterns: [
+		'dist/',
+		'cdk/',
+		'node_modules/',
+		'project',
+		'target',
+	],
 	collectCoverage: true,
 	collectCoverageFrom: ['src/**/*.ts', '!**/*.test.ts'],
 	coverageThreshold: {
