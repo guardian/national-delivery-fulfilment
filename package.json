@@ -27,7 +27,7 @@
 		"@babel/preset-env": "^7.23.2",
 		"@guardian/eslint-config-typescript": "^7.0.0",
 		"@guardian/prettier": "^5.0.0",
-		"@types/jest": "^29.5.7",
+		"@types/jest": "^29.5.8",
 		"@typescript-eslint/eslint-plugin": "^6.10.0",
 		"@typescript-eslint/parser": "^6.10.0",
 		"babel-jest": "^29.7.0",
@@ -47,7 +47,8 @@
 	"scripts": {
 		"build": "yarn esbuild --bundle --platform=node --target=node18 --outfile=dist/index.js src/index.ts",
 		"package": "cd dist; zip -qr ../cdk/national-delivery-fulfilment/national-delivery-fulfilment.zip ./*",
-		"test": "cd test && ts-jest",
+		"test": "jest --coverage=false",
+		"test-coverage": "jest --coverage",
 		"lint": "eslint src/** --ext .ts",
 		"lint-fix": "eslint src/** --ext .ts --fix",
 		"type-check": "tsc --noEmit",
