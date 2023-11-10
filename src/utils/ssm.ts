@@ -1,9 +1,5 @@
-import {
-	SSMClient,
-	GetParametersByPathCommand,
-	GetParameterCommand,
-} from '@aws-sdk/client-ssm'; // ES Modules import
-import { App, Stack, Stage, Region } from './config';
+import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm'; // ES Modules import
+import { Region } from './config';
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/ssm/command/GetParametersByPathCommand/
 

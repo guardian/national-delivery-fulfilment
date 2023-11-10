@@ -1,8 +1,5 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import moment from 'moment';
-import { Credentials } from 'aws-sdk/lib/core';
 import {
-	FileRecord,
 	subscriptionsToFileRecords,
 	fileRecordsToCSVFile,
 	subscriptionsDataFileToSubscriptions,
@@ -10,11 +7,7 @@ import {
 	holidayNamesDataFileToNames,
 	retainCorrectSubscriptions,
 } from './libs/transforms';
-import { commitFileToS3_v3 } from './libs/s3';
-import { Stage } from './utils/config';
-import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora';
-import { getSsmValue } from './utils/ssm';
-import { sleep } from './utils/sleep';
+import { cycleDataFilesFromZuora } from './libs/zuora';
 
 async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
 	// This function generates one file. The date of the file that is being generated is derived from the dayIndex
@@ -46,28 +39,32 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
 		targetDate,
 		today,
 	);
+
 	const currentSubs = subscriptionsDataFileToSubscriptions(
 		zuoraDataFiles.subscriptionsFile,
 	);
+
 	const subsWithoutInvalid = retainCorrectSubscriptions(currentSubs);
+
 	const holidaySubscriptionNames = holidayNamesDataFileToNames(
 		zuoraDataFiles.holidayNamesFile,
 	);
+
 	const subsWithoutHolidayStops = excludeHolidaySubscriptions(
 		subsWithoutInvalid,
 		holidaySubscriptionNames,
 	);
+
 	const sentDate = now.format('DD/MM/YYYY');
+
 	const deliveryDate = cursor.format('DD/MM/YYYY');
+
 	const fileRecords = subscriptionsToFileRecords(
 		subsWithoutHolidayStops,
 		sentDate,
 		deliveryDate,
 	);
 	const file2 = fileRecordsToCSVFile(fileRecords);
-	const filePathKey = `fulfilment/${cursor.format('YYYY')}/${cursor.format(
-		'YYYY-MM',
-	)}/${cursor.format('YYYY-MM-DD')}.csv`;
 	console.log('file2:');
 	console.log(file2);
 }

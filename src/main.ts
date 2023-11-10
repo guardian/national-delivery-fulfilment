@@ -86,27 +86,37 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
 		targetDate,
 		today,
 	);
+
 	const currentSubs = subscriptionsDataFileToSubscriptions(
 		zuoraDataFiles.subscriptionsFile,
 	);
+
 	const subsWithoutInvalid = retainCorrectSubscriptions(currentSubs);
+
 	const holidaySubscriptionNames = holidayNamesDataFileToNames(
 		zuoraDataFiles.holidayNamesFile,
 	);
+
 	const subsWithoutHolidayStops = excludeHolidaySubscriptions(
 		subsWithoutInvalid,
 		holidaySubscriptionNames,
 	);
+
 	const sentDate = now.format('DD/MM/YYYY');
+
 	const deliveryDate = cursor.format('DD/MM/YYYY');
+
 	const fileRecords = subscriptionsToFileRecords(
 		subsWithoutHolidayStops,
 		sentDate,
 		deliveryDate,
 	);
+
 	const file2 = fileRecordsToCSVFile(fileRecords);
+
 	const filePathKey = `fulfilment/${cursor.format('YYYY')}/${cursor.format(
 		'YYYY-MM',
 	)}/${cursor.format('YYYY-MM-DD')}.csv`;
+
 	await commitFileToS3_v3(Stage, filePathKey, file2);
 }

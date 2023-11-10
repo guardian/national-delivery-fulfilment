@@ -25,6 +25,8 @@
 		"@babel/eslint-parser": "^7.23.3",
 		"@babel/eslint-plugin": "^7.22.10",
 		"@babel/preset-env": "^7.23.2",
+		"@commitlint/cli": "^18.4.0",
+		"@commitlint/config-conventional": "^18.4.0",
 		"@guardian/eslint-config-typescript": "^7.0.0",
 		"@guardian/prettier": "^5.0.0",
 		"@types/jest": "^29.5.8",
@@ -39,6 +41,7 @@
 		"eslint-plugin-n": "^16.3.1",
 		"eslint-plugin-prettier": "^5.0.1",
 		"eslint-plugin-promise": "^6.1.1",
+		"husky": "^8.0.3",
 		"jest": "^29.7.0",
 		"lint-staged": "^15.0.2",
 		"prettier": "^3.0.3",
@@ -53,6 +56,7 @@
 		"lint": "eslint src/** --ext .ts",
 		"lint-fix": "eslint src/** --ext .ts --fix",
 		"type-check": "tsc --noEmit",
-		"type-watch": "tsc --noEmit -w"
+		"type-watch": "tsc --noEmit -w",
+		"commitlint": "commitlint --edit"
 	}
 }

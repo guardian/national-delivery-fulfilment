@@ -1,4 +1,5 @@
 import { parse } from 'csv-parse/sync';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 /*
