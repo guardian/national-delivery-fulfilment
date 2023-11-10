@@ -1,4 +1,3 @@
-
 /*
 
 This section is a note for documentation and learning. The
@@ -39,7 +38,7 @@ Note that the AWS_REGION is not specifically set, so will always default to `eu-
 
 */
 
-export const App = process.env.APP ?? "national-delivery-fulfilment";
-export const Stack = process.env.STACK ?? "membership";
-export const Stage = process.env.STAGE ?? "CODE";
-export const Region = process.env.AWS_REGION ?? "eu-west-1";
+export const App = process.env.APP ?? 'national-delivery-fulfilment';
+export const Stack = process.env.STACK ?? 'membership';
+export const Stage = process.env.STAGE ?? 'CODE';
+export const Region = process.env.AWS_REGION ?? 'eu-west-1';

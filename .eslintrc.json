@@ -1,0 +1,55 @@
+{
+	"env": {
+		"es6": true,
+		"jest": true
+	},
+	"parser": "@babel/eslint-parser",
+	"globals": {},
+	"plugins": ["import", "prettier", "@babel"],
+	"rules": {
+		"new-cap": 2,
+		"quotes": 0,
+		"no-undef": 2,
+		"no-unused-vars": 2,
+		"max-depth": [2, 3],
+		"complexity": [2, 15],
+		"max-len": "off",
+		"curly": [2, "all"],
+		"eol-last": 2,
+		"semi": [2, "always"],
+		"space-infix-ops": 2,
+		"keyword-spacing": [2, {}],
+		"no-spaced-func": 2,
+		"comma-dangle": [2, "never"],
+		"no-trailing-spaces": 2
+	},
+	"overrides": [
+		{
+			"files": ["*.ts"],
+			"parser": "@typescript-eslint/parser",
+			"parserOptions": {
+				"ecmaVersion": 6,
+				"sourceType": "module"
+			},
+			"extends": [
+				"plugin:@typescript-eslint/recommended",
+				"plugin:prettier/recommended"
+			],
+			"rules": {
+				"import/order": [
+					"error",
+					{
+						"groups": [
+							"builtin",
+							"external",
+							"internal",
+							"parent",
+							"sibling",
+							"index"
+						]
+					}
+				]
+			}
+		}
+	]
+}

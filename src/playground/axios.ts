@@ -1,4 +1,3 @@
-
 // axios get
 /*
 export async function getFileFromZuora (zuoraBearerToken: string): Promise<string> {
