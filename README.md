@@ -75,13 +75,6 @@ Upon any modification of the cloud formation, the smapshot needs to be updated i
 ```
 $ npm test -- -u
 ```
-
-### Playground
-
-Playground is a directory that was used during initial development, it's going to be removed shortly after we go live.
-
-- `$ npx ts-node src/playground/s3.ts`
-- `$ npx ts-node src/playground/zuora.ts`
   
 ### Running on local
 
