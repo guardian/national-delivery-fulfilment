@@ -1,15 +1,9 @@
-# EditorConfig helps developers define and maintain consistent
-# coding styles between different editors and IDEs
-# editorconfig.org
+# .editorconfig
 
-root=true
+# Set the root to not inherit settings from higher-level files
+root = true
 
 [*]
 charset = utf-8
-indent_style = tab
-indent_size = 4
-
-[.*]
-charset = utf-8
-indent_style = tab
+indent_style = space
 indent_size = 4
