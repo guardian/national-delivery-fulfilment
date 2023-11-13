@@ -164,7 +164,6 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
 		],
 		alwaysQuote: true,
 	});
-	console.log('testing');
 	return (
 		csvStringifier.getHeaderString() +
 		csvStringifier.stringifyRecords(records)
