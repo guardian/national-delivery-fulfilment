@@ -232,12 +232,22 @@ async function checkJobStatus(
 	if (data.status === 'completed') {
 		return {
 			status: true,
-			subscriptionsFileId: data.batches.filter((item: { name: string }) => {
-				return item.name == 'national-delivery-fulfilment-subscriptions';
-			})[0].fileId,
-			holidayNamesFileId: data.batches.filter((item: { name: string }) => {
-				return item.name == 'national-delivery-fulfilment-holiday-names';
-			})[0].fileId,
+			subscriptionsFileId: data.batches.filter(
+				(item: { name: string }) => {
+					return (
+						item.name ==
+						'national-delivery-fulfilment-subscriptions'
+					);
+				},
+			)[0].fileId,
+			holidayNamesFileId: data.batches.filter(
+				(item: { name: string }) => {
+					return (
+						item.name ==
+						'national-delivery-fulfilment-holiday-names'
+					);
+				},
+			)[0].fileId,
 		};
 	} else {
 		return {
@@ -283,7 +293,12 @@ async function jobIdToFileId(
 
 	while (true) {
 		console.log(`date: ${date}; jobId: ${jobId}; awaiting for fileId`);
-		const receipt = await checkJobStatus(stage, zuoraBearerToken, jobId, date);
+		const receipt = await checkJobStatus(
+			stage,
+			zuoraBearerToken,
+			jobId,
+			date,
+		);
 		console.log(`date: ${date}; receipt: ${JSON.stringify(receipt)}`);
 		if (receipt.status) {
 			return Promise.resolve(receipt); // The receipt is obtained as a ZuoraBatchJobStatusReceipt and returned as as ZuoraDataFileIds

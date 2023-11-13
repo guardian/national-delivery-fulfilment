@@ -165,7 +165,8 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
 		alwaysQuote: true,
 	});
 	return (
-		csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(records)
+		csvStringifier.getHeaderString() +
+		csvStringifier.stringifyRecords(records)
 	);
 }
 
