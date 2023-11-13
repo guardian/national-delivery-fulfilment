@@ -1,3 +1,5 @@
-[*.{js,jsx,html,sass}]
-tab_width = 4
-indent_style = tab
+root = true
+[*.ts]
+indent_style = space
+indent_size = 4
+charset = utf-8
