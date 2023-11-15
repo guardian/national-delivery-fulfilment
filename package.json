@@ -5,7 +5,6 @@
 	"main": "index.js",
 	"license": "MIT",
 	"private": true,
-	"prettier": "@guardian/prettier",
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.391.0",
 		"@aws-sdk/client-ssm": "^3.405.0",
