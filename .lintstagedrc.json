@@ -1,7 +1,7 @@
 {
-	"*.{js,ts}": [
-		"bash -c tsc --noEmit",
-		"bash -c yarn test-coverage",
-		"bash -c yarn lint"
-	]
+    "*.{js,ts}": [
+        "bash -c tsc --noEmit",
+        "bash -c yarn test-coverage",
+        "bash -c yarn lint"
+    ]
 }
