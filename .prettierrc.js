@@ -1,4 +1,5 @@
 module.exports = {
-    ...require('@guardian/prettier'),
-    useTabs: false,
+  ...require('@guardian/prettier'),
+  tabWidth: 4,
+  useTabs: false,
 };
