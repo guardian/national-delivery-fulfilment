@@ -35,25 +35,71 @@ export const main = async (indices?: number[]) => {
     console.log('main function has completed');
 };
 
-async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
-    zuoraBearerToken: string,
-) {
-    // Date: 29th October 2023
+function getDayOffsetToGenerate(): number | null {
+    // This function is not pure, its return value depends on the time of the day.
+    // It returns ether a number or null.
+    // null signifies that a file should not be generated at this time.
+    // Otherwise the number id a day index of the file.
 
-    // Here is the current, most recent scheme for file generation. Since we cannot generate all 14 files
-    // sequentially in production, and since running them in parallel is not advised (source: John), we are
-    // simply going to spread the generation over a period of time. In this current version we simply generate the
-    // files over 14 hours
+    // Rules:
+    // - Rule 1: We generate files from index 2 to index 14 (meaning [today]+2 to [today]+14)
+    // - Rule 2: We start generation after 1am to let holiday stops finish.
+    //           In other words, we do not generate during hour 0 of the day
+    // - Rule 3: We only generate index 2 before 10am.
 
-    // dayIndex is derived from the current hour of the day
-    // Time 00:MM -> dayIndex = 1
-    // Time 01:MM -> dayIndex = 2
-    // ...
-    // Time 13:MM -> dayIndex = 14
-    // Time 14:MM -> dayIndex = 1
+    // The mapping is:
+    // Hour 00 -> dayIndex = 1 (index 1 is not generated) Rule 1 and Rule 2
+    // Hour 01 -> dayIndex = 2
+    // Hour 02 -> dayIndex = 3
+    // Hour 03 -> dayIndex = 4
+    // Hour 04 -> dayIndex = 5
+    // Hour 05 -> dayIndex = 6
+    // Hour 06 -> dayIndex = 7
+    // Hour 07 -> dayIndex = 8
+    // Hour 08 -> dayIndex = 9
+    // Hour 09 -> dayIndex = 10
+    // Hour 10 -> dayIndex = 11
+    // Hour 11 -> dayIndex = 12
+    // Hour 12 -> dayIndex = 13
+    // Hour 13 -> dayIndex = 14
+    // Hour 14 -> dayIndex = 1 (index 1 is not generated) Rule 1
+    // Hour 15 -> dayIndex = 2 (index 2 is not generated after 10am) Rule 3
+    // Hour 16 -> dayIndex = 3
+    // Hour 17 -> dayIndex = 4
+    // Hour 18 -> dayIndex = 5
     // etc...
 
     const dayIndex = 1 + (new Date().getUTCHours() % 14);
+
+    // Rule 1
+    if (dayIndex === 1) {
+        return null;
+    }
+
+    // Rule 2
+    if (new Date().getUTCHours() === 0) {
+        return null;
+    }
+
+    // Rule 3
+    if (dayIndex === 2 && new Date().getUTCHours() >= 10) {
+        return null;
+    }
+
+    return dayIndex;
+}
+
+async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
+    zuoraBearerToken: string,
+) {
+    // This function generates a file whose index is derived from the current hour of the day
+    // It is the function that is naturally triggered when the lambda runs on schedule.
+
+    const dayIndex = getDayOffsetToGenerate();
+
+    if (dayIndex === null) {
+        return;
+    }
 
     await generateFileForDay(zuoraBearerToken, dayIndex);
 }
