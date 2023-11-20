@@ -115,7 +115,7 @@ Additional Comms                                                   # reserved fo
             'Wednesday',
             'Thursday',
             'Friday',
-            'Sunday',
+            'Saturday',
         ];
         return days[index];
     };
