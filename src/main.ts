@@ -35,7 +35,7 @@ export const main = async (indices?: number[]) => {
     console.log('main function has completed');
 };
 
-function indexGenerator(): number | null {
+function getDayOffsetToGenerate(): number | null {
     // This function is not pure, its return value depends on the time of the day.
     // It returns ether a number or null.
     // null signifies that a file should not be generated at this time.
@@ -95,7 +95,7 @@ async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
     // This function generates a file whose index is derived from the current hour of the day
     // It is the function that is naturally triggered when the lambda runs on schedule.
 
-    const dayIndex = indexGenerator();
+    const dayIndex = getDayOffsetToGenerate();
 
     if (dayIndex === null) {
         return;
