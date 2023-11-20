@@ -1,0 +1,13 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore compiled JavaScript files (output of TypeScript compilation)
+/dist/
+
+# Ignore any build or temporary directories
+/build/
+/temp/
+/.cache/
+
+# Ignore configuration files (e.g., webpack.config.js, babel.config.js)
+*.config.js

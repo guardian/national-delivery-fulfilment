@@ -1,4 +1,4 @@
-name: "CI: National Delivery Fulfilment"
+name: 'CI: National Delivery Fulfilment'
 on: [push]
 jobs:
   ci:
@@ -13,10 +13,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
-          cache: "yarn"
+          cache: 'yarn'
       - run: |
           yarn install
-          yarn test
+          yarn lint
+          yarn type-check
+          yarn test-coverage
           yarn build
           yarn package
       - name: CDK synth
