@@ -38,7 +38,7 @@ We generates 14 files starting from the day after. For instance on the 2nd of No
 
 The generation of one file is an atomic operation in the sense that it's performed by one single asynchronous function (see code for detail). We are going to retain that design principle and we will keep it as long at it remains true that a single file takes less than 15 mins to be generated. If one day that premisse ceases to be true, then a small redesign of this lambda will be required. At the time these lines are written (Oct 2023), the generation takes few seconds in CODE and a couple of minutes (sometimes up to 5 mins, and in extremelly rare cases up to 10 mins) in PROD.
 
-The lambda generates all files from [today]+2 to [today]+14, and ensures that [today]+2. Moreover we do not generate any file at hour 0 (meaning between midnight and 1am) and we do not generate file index 2, eg: [today]+2, after 10am.
+The lambda generates all files from [today]+2 to [today]+14. This is not done in one excecution but happens over hours (we generate one file per hour). Moreover we do not generate any file at hour 0 (meaning between midnight and 1am) and we do not generate file index 2, eg: [today]+2, after 10am.
 
 It is possible to manually generate a particular file (or a small number of files) in the aws console (see next section).
 
