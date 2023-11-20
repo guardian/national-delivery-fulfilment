@@ -38,9 +38,9 @@ We generates 14 files starting from the day after. For instance on the 2nd of No
 
 The generation of one file is an atomic operation in the sense that it's performed by one single asynchronous function (see code for detail). We are going to retain that design principle and we will keep it as long at it remains true that a single file takes less than 15 mins to be generated. If one day that premisse ceases to be true, then a small redesign of this lambda will be required. At the time these lines are written (Oct 2023), the generation takes few seconds in CODE and a couple of minutes (sometimes up to 5 mins, and in extremelly rare cases up to 10 mins) in PROD.
 
-The lambda is set up to run each hour and generates the next file every hour. It generates all 14 files during the first 14 hours of the day. And then regenerate some of the files, during the remaining hours.
+The lambda generates all files from [today]+2 to [today]+14, and ensures that [today]+2. Moreover we do not generate any file at hour 0 (meaning between midnight and 1am) and we do not generate file index 2, eg: [today]+2, after 10am.
 
-It is also possible to manually generate a particular file (or a small number of files) in the aws console (see next section).
+It is possible to manually generate a particular file (or a small number of files) in the aws console (see next section).
 
 ### Generate a specific file from the AWS console.
 
@@ -64,9 +64,19 @@ Note that if you provide too a many indices, you may cause the lambda to exeed t
 
 ### Local developement
 
+Upon closing the repository, run:
+
 ```
 $ yarn install --frozen-lockfile
 ```
+
+To comply with the linting rules, run:
+
+```
+$ yarn lint --fix
+```
+
+before making your commits.
 
 ### Building Cloudformation
 
