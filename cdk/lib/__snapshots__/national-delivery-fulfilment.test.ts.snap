@@ -151,6 +151,9 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
             "Value": "CODE",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
@@ -579,6 +582,9 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
             "Value": "PROD",
           },
         ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
