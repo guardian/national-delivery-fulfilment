@@ -43,6 +43,7 @@ export class NationalDeliveryFulfilment extends GuStack {
 
         const dataBucket = new Bucket(this, 'DataBucket', {
             bucketName: bucketName,
+            versioned: true
         });
 
         nationalDeliveryFulfilmentLambda.addToRolePolicy(
