@@ -3,16 +3,20 @@ import { parse } from 'csv-parse/sync';
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 /*
-Subscription.Name,
-Subscription.DeliveryAgent__c,
-SoldToContact.Address1,
-SoldToContact.Address2,
-SoldToContact.City,
-SoldToContact.PostalCode,
-SoldToContact.FirstName,
-SoldToContact.LastName,
-SoldToContact.SpecialDeliveryInstructions__c,
-RateplanCharge.quantity
+Query fields:
+    Subscription.Name,
+    Subscription.DeliveryAgent__c,
+    SoldToContact.Address1,
+    SoldToContact.Address2,
+    SoldToContact.City,
+    SoldToContact.PostalCode,
+    SoldToContact.FirstName,
+    SoldToContact.LastName,
+    SoldToContact.SpecialDeliveryInstructions__c,
+    RateplanCharge.quantity,
+    RatePlanCharge.name,
+    SoldToContact.personalEmail,
+    SoldToContact.workEmail
 */
 
 interface ZuoraSubscription {
@@ -26,26 +30,28 @@ interface ZuoraSubscription {
     sold_to_last_name: string;
     sold_to_special_delivery_instructions: string;
     quantity: string;
+    personalEmail: string;
+    workEmail: string;
 }
 
 /*
-Headers and some values of the csv files we are aiming to generate
-
-Customer Reference      : A-S6813425                               # Subscription.Name
-Delivery Reference      : 41285784                                 # (generate randomly)
-Retailer Reference      : 36                                       # Subscription.DeliveryAgent__c
-Customer Full Name      : FirstName LastName                       # SoldToContact.FirstName, SoldToContact.LastName
-Customer Address Line 1 : 15 London Road                           # SoldToContact.Address1
-Customer Address Line 2                                            # SoldToContact.Address1
-Customer Address Line 3                                            # (not defined)
-Customer Town           : Bristol                                  # SoldToContact.City
-Customer PostCode       : SW1A 2AA                                 # SoldToContact.PostalCode
-Delivery Quantity       : 1                                        # RateplanCharge.quantity
-Delivery Information    : Dark green door, post through letterbox  # SoldToContact.SpecialDeliveryInstructions__c
-Sent Date               : 10/07/2023                               # initially equal to Delivery Date, but investigate the meaning
-Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
-Source campaign                                                    # reserved for future use
-Additional Comms                                                   # reserved for future use
+Headers and some values of the csv files we are aiming to generate:
+    Customer Reference      : A-S6813425                               # Subscription.Name
+    Delivery Reference      : 41285784                                 # (generate randomly)
+    Retailer Reference      : 36                                       # Subscription.DeliveryAgent__c
+    Customer Full Name      : FirstName LastName                       # SoldToContact.FirstName, SoldToContact.LastName
+    Customer Address Line 1 : 15 London Road                           # SoldToContact.Address1
+    Customer Address Line 2                                            # SoldToContact.Address1
+    Customer Address Line 3                                            # (not defined)
+    Customer Town           : Bristol                                  # SoldToContact.City
+    Customer PostCode       : SW1A 2AA                                 # SoldToContact.PostalCode
+    Delivery Quantity       : 1                                        # RateplanCharge.quantity
+    Delivery Information    : Dark green door, post through letterbox  # SoldToContact.SpecialDeliveryInstructions__c
+    Sent Date               : 10/07/2023                               # initially equal to Delivery Date, but investigate the meaning
+    Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
+    Source campaign                                                    # reserved for future use
+    Additional Comms                                                   # reserved for future use
+    Email                   : luke.skywalker@theresistance.org         # SoldToContact.personalEmail || SoldToContact.workEmail
 */
 
 export interface FileRecord {
@@ -64,6 +70,7 @@ export interface FileRecord {
     deliveryDate: string;
     sourceCampaign: string;
     additionalComms: string;
+    email: string;
 }
 
 export function parseZuoraDataFile(file: string): string[][] {
@@ -88,6 +95,8 @@ export function subscriptionsDataFileToSubscriptions(
             sold_to_last_name: record[7],
             sold_to_special_delivery_instructions: record[8],
             quantity: record[9],
+            personalEmail: record[10],
+            workEmail: record[11],
         };
     });
     return subscriptions;
@@ -130,6 +139,7 @@ function subscriptionToFileRecord(
         deliveryDate: deliveryDate,
         sourceCampaign: '',
         additionalComms: '',
+        email: subscription.personalEmail || subscription.workEmail,
     };
 }
 
@@ -161,6 +171,7 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
             { id: 'deliveryDate', title: 'Delivery Date' },
             { id: 'sourceCampaign', title: 'Source Campaign' },
             { id: 'additionalComms', title: 'Additional Comms' },
+            { id: 'email', title: 'Email' },
         ],
         alwaysQuote: true,
     });

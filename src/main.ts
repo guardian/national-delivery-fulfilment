@@ -133,6 +133,8 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
         today,
     );
 
+    console.log(zuoraDataFiles.subscriptionsFile);
+
     const currentSubs = subscriptionsDataFileToSubscriptions(
         zuoraDataFiles.subscriptionsFile,
     );
