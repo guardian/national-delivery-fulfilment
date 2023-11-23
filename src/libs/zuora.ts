@@ -77,34 +77,34 @@ function zuoraBatchQueries(date: string, today: string) {
     // https://knowledgecenter.zuora.com/Zuora_Central_Platform/Query/Export_ZOQL
 
     /*
-Subscription.Name,
-Subscription.DeliveryAgent__c,
-SoldToContact.Address1,
-SoldToContact.Address2,
-SoldToContact.City,
-SoldToContact.PostalCode,
-SoldToContact.FirstName,
-SoldToContact.LastName,
-SoldToContact.SpecialDeliveryInstructions__c,
-RateplanCharge.quantity
+    Query fields:
+        Subscription.Name,
+        Subscription.DeliveryAgent__c,
+        SoldToContact.Address1,
+        SoldToContact.Address2,
+        SoldToContact.City,
+        SoldToContact.PostalCode,
+        SoldToContact.FirstName,
+        SoldToContact.LastName,
+        SoldToContact.SpecialDeliveryInstructions__c,
+        RateplanCharge.quantity
 
-Headers and some values of the csv files we are aiming to generate
-
-Customer Reference      : A-S6813425                               # Subscription.Name
-Delivery Reference      : 41285784                                 # (generate randomly)
-Retailer Reference      : 36                                       # Subscription.DeliveryAgent__c
-Customer Full Name      : FirstName LastName                       # SoldToContact.FirstName, SoldToContact.LastName
-Customer Address Line 1 : 15 London Road                           # SoldToContact.Address1
-Customer Address Line 2                                            # SoldToContact.Address1
-Customer Address Line 3                                            # (not defined)
-Customer Town           : Bristol                                  # SoldToContact.City
-Customer PostCode       : SW1A 2AA                                 # SoldToContact.PostalCode
-Delivery Quantity       : 1                                        # RateplanCharge.quantity
-Delivery Information    : Dark green door, post through letterbox  # SoldToContact.SpecialDeliveryInstructions__c
-Sent Date               : 10/07/2023                               # initially equal to Delivery Date, but investigate the meaning
-Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
-Source campaign                                                    # reserved for future use
-Additional Comms                                                   # reserved for future use
+    Headers and some values of the csv files we are aiming to generate:
+        Customer Reference      : A-S6813425                               # Subscription.Name
+        Delivery Reference      : 41285784                                 # (generate randomly)
+        Retailer Reference      : 36                                       # Subscription.DeliveryAgent__c
+        Customer Full Name      : FirstName LastName                       # SoldToContact.FirstName, SoldToContact.LastName
+        Customer Address Line 1 : 15 London Road                           # SoldToContact.Address1
+        Customer Address Line 2                                            # SoldToContact.Address1
+        Customer Address Line 3                                            # (not defined)
+        Customer Town           : Bristol                                  # SoldToContact.City
+        Customer PostCode       : SW1A 2AA                                 # SoldToContact.PostalCode
+        Delivery Quantity       : 1                                        # RateplanCharge.quantity
+        Delivery Information    : Dark green door, post through letterbox  # SoldToContact.SpecialDeliveryInstructions__c
+        Sent Date               : 10/07/2023                               # initially equal to Delivery Date, but investigate the meaning
+        Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
+        Source campaign                                                    # reserved for future use
+        Additional Comms                                                   # reserved for future use
 */
 
     const dayMapping = (index: number): string => {
