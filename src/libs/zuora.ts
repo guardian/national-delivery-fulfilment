@@ -77,7 +77,7 @@ function zuoraBatchQueries(date: string, today: string) {
     // https://knowledgecenter.zuora.com/Zuora_Central_Platform/Query/Export_ZOQL
 
     /*
-    Query fields:    
+    Query fields:
         Subscription.Name,
         Subscription.DeliveryAgent__c,
         SoldToContact.Address1,
