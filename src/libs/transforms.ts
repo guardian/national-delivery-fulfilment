@@ -15,7 +15,6 @@ Query fields:
     SoldToContact.SpecialDeliveryInstructions__c,
     RateplanCharge.quantity,
     RatePlanCharge.name,
-    SoldToContact.personalEmail,
     SoldToContact.workEmail
 */
 
@@ -30,7 +29,6 @@ interface ZuoraSubscription {
     sold_to_last_name: string;
     sold_to_special_delivery_instructions: string;
     quantity: string;
-    personalEmail: string;
     workEmail: string;
 }
 
@@ -51,7 +49,7 @@ Headers and some values of the csv files we are aiming to generate:
     Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
     Source campaign                                                    # reserved for future use
     Additional Comms                                                   # reserved for future use
-    Email                   : luke.skywalker@theresistance.org         # SoldToContact.personalEmail || SoldToContact.workEmail
+    Email                   : luke.skywalker@theresistance.org         # SoldToContact.workEmail
 */
 
 export interface FileRecord {
@@ -85,18 +83,18 @@ export function subscriptionsDataFileToSubscriptions(
     const records = parseZuoraDataFile(file);
     const subscriptions = records.map((record) => {
         return {
-            subscription_name: record[0],
-            subscription_delivery_agent: record[1],
-            sold_to_address1: record[2],
-            sold_to_address2: record[3],
-            sold_to_city: record[4],
-            sold_to_postal_code: record[5],
-            sold_to_first_name: record[6],
-            sold_to_last_name: record[7],
-            sold_to_special_delivery_instructions: record[8],
-            quantity: record[9],
-            personalEmail: record[10],
-            workEmail: record[11],
+            subscription_name: record[0], // Subscription.Name
+            subscription_delivery_agent: record[1], // Subscription.DeliveryAgent__c
+            sold_to_address1: record[2], // SoldToContact.Address1
+            sold_to_address2: record[3], // SoldToContact.Address2
+            sold_to_city: record[4], // SoldToContact.City
+            sold_to_postal_code: record[5], // SoldToContact.PostalCode
+            sold_to_first_name: record[6], // SoldToContact.FirstName
+            sold_to_last_name: record[7], // SoldToContact.LastName
+            sold_to_special_delivery_instructions: record[8], // SoldToContact.SpecialDeliveryInstructions__c
+            quantity: record[9], // RateplanCharge.quantity
+            // RatePlanCharge.name
+            workEmail: record[11], // SoldToContact.workEmail
         };
     });
     return subscriptions;
@@ -139,7 +137,7 @@ function subscriptionToFileRecord(
         deliveryDate: deliveryDate,
         sourceCampaign: '',
         additionalComms: '',
-        email: subscription.personalEmail || subscription.workEmail,
+        email: subscription.workEmail,
     };
 }
 
