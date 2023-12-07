@@ -11,6 +11,11 @@ export interface SalesforceSSMConfig {
     queryBaseUrl: string; // used to run the query
 }
 
+export interface SalesforceBearerInformation {
+    access_token: string;
+    instance_url: string;
+}
+
 export async function makeSalesforceSSMConfig(
     stage: string,
 ): Promise<SalesforceSSMConfig> {
@@ -46,9 +51,9 @@ export async function makeSalesforceSSMConfig(
     });
 }
 
-async function getSalesforceBearerToken(
+async function getSalesforceBearerInformation(
     saleforceSSMConfig: SalesforceSSMConfig,
-): Promise<string> {
+): Promise<SalesforceBearerInformation> {
     console.log('Querying bearer token from Salesforce');
 
     const requestBody =
@@ -58,11 +63,7 @@ async function getSalesforceBearerToken(
         `&username=${saleforceSSMConfig.username}` +
         `&password=${saleforceSSMConfig.password}${saleforceSSMConfig.token}`;
 
-    console.log(requestBody);
-
     const url = `${saleforceSSMConfig.authenticationBaseUrl}/services/oauth2/token`;
-
-    console.log(url);
 
     try {
         const params = {
@@ -71,7 +72,7 @@ async function getSalesforceBearerToken(
             },
         };
         const response = await axios.post(url, requestBody, params);
-        return (await response.data)['access_token'] as string;
+        return (await response.data) as SalesforceBearerInformation;
     } catch (error) {
         throw new Error(
             `error while retrieving salesforce bearer token: ${error}`,
@@ -79,9 +80,26 @@ async function getSalesforceBearerToken(
     }
 }
 
-async function runPhoneBookQuery(bearerToken: string): Promise<string> {
-    bearerToken;
-    return '';
+async function runPhoneBookQuery(
+    saleforceSSMConfig: SalesforceSSMConfig,
+    bearerInformation: SalesforceBearerInformation,
+): Promise<string> {
+    console.log('Running phone book query');
+
+    const query =
+        "SELECT Name, Buyer__r.Phone FROM SF_Subscription__c WHERE Product__c = 'Newspaper - National Delivery'";
+    const url = `${
+        bearerInformation.instance_url
+    }/services/data/v46.0/query/?q=${encodeURIComponent(query)}`;
+    console.log(url);
+    const params = {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${bearerInformation.access_token}`,
+        },
+    };
+    const response = await axios.get(url, params);
+    return await response.data;
 }
 
 function phoneBookFileToRecords(file: string): PhoneBook {
@@ -99,9 +117,13 @@ export type PhoneBook = PhoneRecord[];
 export async function getPhoneBook(
     saleforceSSMConfig: SalesforceSSMConfig,
 ): Promise<PhoneBook> {
-    const bearerToken = await getSalesforceBearerToken(saleforceSSMConfig);
-    console.log(`bearerToken: ${bearerToken}`);
-    const phoneBookFile = await runPhoneBookQuery(bearerToken);
+    const bearerToken =
+        await getSalesforceBearerInformation(saleforceSSMConfig);
+    const phoneBookFile = await runPhoneBookQuery(
+        saleforceSSMConfig,
+        bearerToken,
+    );
+    console.log(phoneBookFile);
     const phoneBook = phoneBookFileToRecords(phoneBookFile);
     return phoneBook;
 }
