@@ -10,7 +10,11 @@ import {
 import { commitFileToS3_v3 } from './libs/s3';
 import { Stage } from './utils/config';
 import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora';
-import { getPhoneBook, makeSalesforceSSMConfig } from './libs/saleforce';
+import {
+    SalesforceSSMConfig,
+    getPhoneBook,
+    makeSalesforceSSMConfig,
+} from './libs/saleforce';
 
 export const main = async (indices?: number[]) => {
     console.log(
@@ -34,16 +38,15 @@ export const main = async (indices?: number[]) => {
         throw message;
     }
 
-    console.log(
-        `salesforce ssm config: ${JSON.stringify(salesforceSSMConfig)}`,
-    );
-
     if (indices) {
         for (const i of indices) {
-            await generateFileForDay(zuoraBearerToken, i);
+            await generateFileForDay(zuoraBearerToken, salesforceSSMConfig, i);
         }
     } else {
-        await generateOneFileUsingCurrentTimeToDeriveDayIndex(zuoraBearerToken);
+        await generateOneFileUsingCurrentTimeToDeriveDayIndex(
+            zuoraBearerToken,
+            salesforceSSMConfig,
+        );
     }
     console.log('main function has completed');
 };
@@ -104,6 +107,7 @@ function getDayOffsetToGenerate(): number | null {
 
 async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
     zuoraBearerToken: string,
+    salesforceSSMConfig: SalesforceSSMConfig,
 ) {
     // This function generates a file whose index is derived from the current hour of the day
     // It is the function that is naturally triggered when the lambda runs on schedule.
@@ -114,10 +118,14 @@ async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
         return;
     }
 
-    await generateFileForDay(zuoraBearerToken, dayIndex);
+    await generateFileForDay(zuoraBearerToken, salesforceSSMConfig, dayIndex);
 }
 
-async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
+async function generateFileForDay(
+    zuoraBearerToken: string,
+    salesforceSSMConfig: SalesforceSSMConfig,
+    dayIndex: number,
+) {
     // This function generates one file. The date of the file that is being generated is derived from the dayIndex
     // dayIndex = 1 -> tomorrow
     // dayIndex = 2 -> two days from now, etc...
@@ -165,7 +173,7 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
 
     const deliveryDate = cursor.format('DD/MM/YYYY');
 
-    const salesforcePhoneBook = await getPhoneBook();
+    const salesforcePhoneBook = await getPhoneBook(salesforceSSMConfig);
 
     const fileRecords = subscriptionsToFileRecords(
         subsWithoutHolidayStops,
