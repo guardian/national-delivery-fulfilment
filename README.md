@@ -73,6 +73,7 @@ $ yarn install --frozen-lockfile
 To comply with the linting rules, run:
 
 ```
+$ yarn lint
 $ yarn lint --fix
 ```
 

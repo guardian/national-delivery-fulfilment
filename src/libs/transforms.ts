@@ -153,9 +153,12 @@ function phoneNumberLookUp(
 ): Option<string> {
     // Look up the subscription name in the phoneBook and return the phone number if there was one,
     // otherwise return null;
-    phoneBook;
-    subscriptionName;
-    return '555-123';
+    for (const record of phoneBook) {
+        if (record.subscriptionName == subscriptionName) {
+            return record.phoneNumber;
+        }
+    }
+    return null;
 }
 
 export function subscriptionsToFileRecords(
