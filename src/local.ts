@@ -63,6 +63,7 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
         subsWithoutHolidayStops,
         sentDate,
         deliveryDate,
+        [],
     );
     const file2 = fileRecordsToCSVFile(fileRecords);
     console.log('file2:');

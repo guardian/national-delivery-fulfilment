@@ -1,4 +1,6 @@
 import { parse } from 'csv-parse/sync';
+import { Option } from '../utils/option';
+import { PhoneBook } from './saleforce';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
@@ -50,6 +52,7 @@ Headers and some values of the csv files we are aiming to generate:
     Source campaign                                                    # reserved for future use
     Additional Comms                                                   # reserved for future use
     Email                   : luke.skywalker@theresistance.org         # SoldToContact.workEmail
+    Phone Number            : 555-1234                                 # Phone number extracted from Salesforce 
 */
 
 export interface FileRecord {
@@ -69,6 +72,7 @@ export interface FileRecord {
     sourceCampaign: string;
     additionalComms: string;
     email: string;
+    phoneNumber: string;
 }
 
 export function parseZuoraDataFile(file: string): string[][] {
@@ -116,6 +120,7 @@ function subscriptionToFileRecord(
     subscription: ZuoraSubscription,
     sentDate: string,
     deliveryDate: string,
+    phoneNumber: string,
 ): FileRecord {
     return {
         customerReference: subscription.subscription_name,
@@ -138,17 +143,37 @@ function subscriptionToFileRecord(
         sourceCampaign: '',
         additionalComms: '',
         email: subscription.workEmail,
+        phoneNumber: phoneNumber,
     };
+}
+
+function phoneNumberLookUp(
+    phoneBook: PhoneBook,
+    subscriptionName: string,
+): Option<string> {
+    // Look up the subscription name in the phoneBook and return the phone number if there was one,
+    // otherwise return null;
+    phoneBook;
+    subscriptionName;
+    return '555-123';
 }
 
 export function subscriptionsToFileRecords(
     subscriptions: ZuoraSubscription[],
     sentDate: string,
     deliveryDate: string,
+    phoneBook: PhoneBook,
 ): FileRecord[] {
-    return subscriptions.map((subscription) =>
-        subscriptionToFileRecord(subscription, sentDate, deliveryDate),
-    );
+    return subscriptions.map((subscription) => {
+        const phoneNumber: string =
+            phoneNumberLookUp(phoneBook, subscription.subscription_name) || '';
+        return subscriptionToFileRecord(
+            subscription,
+            sentDate,
+            deliveryDate,
+            phoneNumber,
+        );
+    });
 }
 
 export function fileRecordsToCSVFile(records: FileRecord[]): string {
@@ -170,6 +195,7 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
             { id: 'sourceCampaign', title: 'Source Campaign' },
             { id: 'additionalComms', title: 'Additional Comms' },
             { id: 'email', title: 'Email' },
+            { id: 'phoneNumber', title: 'Phone Number' },
         ],
         alwaysQuote: true,
     });

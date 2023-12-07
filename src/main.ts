@@ -10,6 +10,7 @@ import {
 import { commitFileToS3_v3 } from './libs/s3';
 import { Stage } from './utils/config';
 import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora';
+import { getPhoneBook } from './libs/saleforce';
 
 export const main = async (indices?: number[]) => {
     console.log(
@@ -152,10 +153,13 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
 
     const deliveryDate = cursor.format('DD/MM/YYYY');
 
+    const salesforcePhoneBook = await getPhoneBook();
+
     const fileRecords = subscriptionsToFileRecords(
         subsWithoutHolidayStops,
         sentDate,
         deliveryDate,
+        salesforcePhoneBook,
     );
 
     const file2 = fileRecordsToCSVFile(fileRecords);
