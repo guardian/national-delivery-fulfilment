@@ -10,7 +10,7 @@ import {
 import { commitFileToS3_v3 } from './libs/s3';
 import { Stage } from './utils/config';
 import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora';
-import { getPhoneBook } from './libs/saleforce';
+import { getPhoneBook, makeSalesforceSSMConfig } from './libs/saleforce';
 
 export const main = async (indices?: number[]) => {
     console.log(
@@ -26,6 +26,18 @@ export const main = async (indices?: number[]) => {
         console.log(message);
         throw message;
     }
+
+    const salesforceSSMConfig = await makeSalesforceSSMConfig(Stage);
+    if (!zuoraBearerToken) {
+        const message = 'Could not extract salesforce ssm config';
+        console.log(message);
+        throw message;
+    }
+
+    console.log(
+        `salesforce ssm config: ${JSON.stringify(salesforceSSMConfig)}`,
+    );
+
     if (indices) {
         for (const i of indices) {
             await generateFileForDay(zuoraBearerToken, i);
