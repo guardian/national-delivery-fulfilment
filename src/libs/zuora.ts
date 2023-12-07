@@ -303,7 +303,7 @@ async function jobIdToFileId(
         if (receipt.status) {
             return Promise.resolve(receipt); // The receipt is obtained as a ZuoraBatchJobStatusReceipt and returned as as ZuoraDataFileIds
         }
-        await sleep(1 * 1000); // sleeping for 1 seconds
+        await sleep(10 * 1000); // sleeping for 10 seconds
     }
 }
 
