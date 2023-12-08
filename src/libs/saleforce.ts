@@ -115,7 +115,7 @@ export async function getPhoneBook(
     const bearerInformation =
         await getSalesforceBearerInformation(saleforceSSMConfig);
     const phoneBookFile = await runPhoneBookQuery(bearerInformation);
-    console.log(phoneBookFile);
+    console.log(JSON.stringify(phoneBookFile));
     const phoneBook = phoneBookFileToRecords(phoneBookFile);
     return phoneBook;
 }
