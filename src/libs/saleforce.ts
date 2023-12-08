@@ -81,7 +81,6 @@ async function getSalesforceBearerInformation(
 }
 
 async function runPhoneBookQuery(
-    saleforceSSMConfig: SalesforceSSMConfig,
     bearerInformation: SalesforceBearerInformation,
 ): Promise<string> {
     console.log('Running phone book query');
@@ -117,12 +116,9 @@ export type PhoneBook = PhoneRecord[];
 export async function getPhoneBook(
     saleforceSSMConfig: SalesforceSSMConfig,
 ): Promise<PhoneBook> {
-    const bearerToken =
+    const bearerInformation =
         await getSalesforceBearerInformation(saleforceSSMConfig);
-    const phoneBookFile = await runPhoneBookQuery(
-        saleforceSSMConfig,
-        bearerToken,
-    );
+    const phoneBookFile = await runPhoneBookQuery(bearerInformation);
     console.log(phoneBookFile);
     const phoneBook = phoneBookFileToRecords(phoneBookFile);
     return phoneBook;
