@@ -156,12 +156,8 @@ export async function getPhoneBook(
     const bearerInformation =
         await getSalesforceBearerInformation(saleforceSSMConfig);
     const phoneBookQueryAnswerData = await runPhoneBookQuery(bearerInformation);
-    console.log(
-        `phoneBookQueryAnswerData: ${JSON.stringify(phoneBookQueryAnswerData)}`,
-    );
     const phoneBook = phoneBookQueryAnswerDataToPhoneBookRecords(
         phoneBookQueryAnswerData,
     );
-    console.log(`phoneBook: ${JSON.stringify(phoneBook)}`);
     return phoneBook;
 }

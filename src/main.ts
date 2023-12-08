@@ -6,11 +6,14 @@ import {
     excludeHolidaySubscriptions,
     holidayNamesDataFileToNames,
     retainCorrectSubscriptions,
+    ZuoraSubscription,
+    FileRecord,
 } from './libs/transforms';
 import { commitFileToS3_v3 } from './libs/s3';
 import { Stage } from './utils/config';
 import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora';
 import {
+    PhoneBook,
     SalesforceSSMConfig,
     getPhoneBook,
     makeSalesforceSSMConfig,
@@ -154,28 +157,35 @@ async function generateFileForDay(
         today,
     );
 
-    const currentSubs = subscriptionsDataFileToSubscriptions(
-        zuoraDataFiles.subscriptionsFile,
-    );
+    const currentSubs: ZuoraSubscription[] =
+        subscriptionsDataFileToSubscriptions(zuoraDataFiles.subscriptionsFile);
 
-    const subsWithoutInvalid = retainCorrectSubscriptions(currentSubs);
+    const subsWithoutInvalid: ZuoraSubscription[] =
+        retainCorrectSubscriptions(currentSubs);
 
-    const holidaySubscriptionNames = holidayNamesDataFileToNames(
+    const holidaySubscriptionNames: string[] = holidayNamesDataFileToNames(
         zuoraDataFiles.holidayNamesFile,
     );
 
-    const subsWithoutHolidayStops = excludeHolidaySubscriptions(
-        subsWithoutInvalid,
-        holidaySubscriptionNames,
-    );
+    const subsWithoutHolidayStops: ZuoraSubscription[] =
+        excludeHolidaySubscriptions(
+            subsWithoutInvalid,
+            holidaySubscriptionNames,
+        );
 
-    const sentDate = now.format('DD/MM/YYYY');
+    const sentDate: string = now.format('DD/MM/YYYY');
 
-    const deliveryDate = cursor.format('DD/MM/YYYY');
+    const deliveryDate: string = cursor.format('DD/MM/YYYY');
 
-    const salesforcePhoneBook = await getPhoneBook(salesforceSSMConfig);
+    const salesforcePhoneBook: PhoneBook =
+        await getPhoneBook(salesforceSSMConfig);
 
-    const fileRecords = subscriptionsToFileRecords(
+    console.log(`salesforcePhoneBook: ${JSON.stringify(salesforcePhoneBook)}`);
+
+    // This one is async because to make a file record
+    // There is the decision of whether or not to include the phone number from the phone book and that
+    // operation is async because of the IdAPI lookup
+    const fileRecords: FileRecord[] = await subscriptionsToFileRecords(
         subsWithoutHolidayStops,
         sentDate,
         deliveryDate,
@@ -189,4 +199,6 @@ async function generateFileForDay(
     )}/${cursor.format('YYYY-MM-DD')}.csv`;
 
     await commitFileToS3_v3(Stage, filePathKey, file2);
+
+    console.log(`Generated file for targetDate: ${targetDate}`);
 }

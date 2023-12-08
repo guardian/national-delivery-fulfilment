@@ -1,6 +1,7 @@
 import { parse } from 'csv-parse/sync';
 import { Option } from '../utils/option';
 import { PhoneBook } from './saleforce';
+import { validateSubscriptionForPhoneNumberInclusion } from './identity';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
@@ -20,7 +21,7 @@ Query fields:
     SoldToContact.workEmail
 */
 
-interface ZuoraSubscription {
+export interface ZuoraSubscription {
     subscription_name: string;
     subscription_delivery_agent: string;
     sold_to_address1: string;
@@ -161,22 +162,59 @@ function phoneNumberLookUp(
     return null;
 }
 
-export function subscriptionsToFileRecords(
+async function subscriptionToOptionalPhoneNumber(
+    phoneBook: PhoneBook,
+    subscription: ZuoraSubscription,
+): Promise<string> {
+    if (
+        await validateSubscriptionForPhoneNumberInclusion(
+            subscription.subscription_name,
+        )
+    ) {
+        return (
+            phoneNumberLookUp(phoneBook, subscription.subscription_name) || ''
+        );
+    } else {
+        return '';
+    }
+}
+
+async function subscriptionToFileRecordWithOptionalPhoneNumber(
+    sentDate: string,
+    deliveryDate: string,
+    phoneBook: PhoneBook,
+    subscription: ZuoraSubscription,
+): Promise<FileRecord> {
+    const phoneNumber = await subscriptionToOptionalPhoneNumber(
+        phoneBook,
+        subscription,
+    );
+    return subscriptionToFileRecord(
+        subscription,
+        sentDate,
+        deliveryDate,
+        phoneNumber,
+    );
+}
+
+export async function subscriptionsToFileRecords(
     subscriptions: ZuoraSubscription[],
     sentDate: string,
     deliveryDate: string,
     phoneBook: PhoneBook,
-): FileRecord[] {
-    return subscriptions.map((subscription) => {
-        const phoneNumber: string =
-            phoneNumberLookUp(phoneBook, subscription.subscription_name) || '';
-        return subscriptionToFileRecord(
-            subscription,
-            sentDate,
-            deliveryDate,
-            phoneNumber,
-        );
-    });
+): Promise<FileRecord[]> {
+    const data = [];
+    for (const subscription of subscriptions) {
+        const fileRecord =
+            await subscriptionToFileRecordWithOptionalPhoneNumber(
+                sentDate,
+                deliveryDate,
+                phoneBook,
+                subscription,
+            );
+        data.push(fileRecord);
+    }
+    return data;
 }
 
 export function fileRecordsToCSVFile(records: FileRecord[]): string {

@@ -59,7 +59,8 @@ async function generateFileForDay(zuoraBearerToken: string, dayIndex: number) {
 
     const deliveryDate = cursor.format('DD/MM/YYYY');
 
-    const fileRecords = subscriptionsToFileRecords(
+    // This one is async because to make a file record a phone
+    const fileRecords = await subscriptionsToFileRecords(
         subsWithoutHolidayStops,
         sentDate,
         deliveryDate,
