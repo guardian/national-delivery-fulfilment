@@ -8,7 +8,6 @@ export interface SalesforceSSMConfig {
     password: string;
     token: string; // used in complete to the password when retriving the bearer token
     authenticationBaseUrl: string; // used to retrive the bearer token
-    queryBaseUrl: string; // used to run the query
 }
 
 export interface SalesforceBearerInformation {
@@ -28,15 +27,13 @@ export async function makeSalesforceSSMConfig(
         stage,
         'salesforceAuthenticationBaseUrl',
     );
-    const queryBaseUrl = await getSsmValue(stage, 'salesforceQueryBaseUrl');
     if (
         clientId === undefined ||
         clientSecret === undefined ||
         username === undefined ||
         password === undefined ||
         token === undefined ||
-        authenticationBaseUrl == undefined ||
-        queryBaseUrl == undefined
+        authenticationBaseUrl == undefined
     ) {
         throw 'Could not retrive the salesforce ssm config';
     }
@@ -47,7 +44,6 @@ export async function makeSalesforceSSMConfig(
         password,
         token,
         authenticationBaseUrl,
-        queryBaseUrl,
     });
 }
 
