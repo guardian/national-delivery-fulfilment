@@ -15,6 +15,24 @@ export interface SalesforceBearerInformation {
     instance_url: string;
 }
 
+interface PhoneBookQueryAnswerItem {
+    Name: string;
+    Buyer__r: {
+        Phone: string | null;
+    };
+}
+
+interface PhoneBookQueryAnswerData {
+    records: PhoneBookQueryAnswerItem[];
+}
+
+interface PhoneRecord {
+    subscriptionName: string;
+    phoneNumber: string | null;
+}
+
+export type PhoneBook = PhoneRecord[];
+
 export async function makeSalesforceSSMConfig(
     stage: string,
 ): Promise<SalesforceSSMConfig> {
@@ -78,7 +96,7 @@ async function getSalesforceBearerInformation(
 
 async function runPhoneBookQuery(
     bearerInformation: SalesforceBearerInformation,
-): Promise<string> {
+): Promise<PhoneBookQueryAnswerData> {
     console.log('Running phone book query');
 
     const query =
@@ -94,28 +112,56 @@ async function runPhoneBookQuery(
         },
     };
     const response = await axios.get(url, params);
-    return await response.data;
+    /*
+        response.data is a
+            {
+                "totalSize": 131,
+                "done": true,
+                "records": Item[]
+            }
+
+        where:
+            Item = {
+                "attributes": {
+                    "type": "SF_Subscription__c",
+                    "url": "/services/data/v46.0/sobjects/SF_Subscription__c/[removed]"
+                },
+                "Name": "A-S00125315",
+                "Buyer__r": {
+                    "attributes": {
+                        "type": "Contact",
+                        "url": "/services/data/v46.0/sobjects/Contact/[removed]"
+                    },
+                    "Phone": phone number or null
+                }
+            } 
+    */
+    return (await response.data) as PhoneBookQueryAnswerData;
 }
 
-function phoneBookFileToRecords(file: string): PhoneBook {
-    file;
-    return [];
+function phoneBookQueryAnswerDataToPhoneBookRecords(
+    data: PhoneBookQueryAnswerData,
+): PhoneBook {
+    return data.records.map((item) => {
+        return {
+            subscriptionName: item.Name,
+            phoneNumber: item.Buyer__r.Phone,
+        };
+    });
 }
-
-interface PhoneRecord {
-    subscriptionName: string;
-    phoneNumber: string;
-}
-
-export type PhoneBook = PhoneRecord[];
 
 export async function getPhoneBook(
     saleforceSSMConfig: SalesforceSSMConfig,
 ): Promise<PhoneBook> {
     const bearerInformation =
         await getSalesforceBearerInformation(saleforceSSMConfig);
-    const phoneBookFile = await runPhoneBookQuery(bearerInformation);
-    console.log(JSON.stringify(phoneBookFile));
-    const phoneBook = phoneBookFileToRecords(phoneBookFile);
+    const phoneBookQueryAnswerData = await runPhoneBookQuery(bearerInformation);
+    console.log(
+        `phoneBookQueryAnswerData: ${JSON.stringify(phoneBookQueryAnswerData)}`,
+    );
+    const phoneBook = phoneBookQueryAnswerDataToPhoneBookRecords(
+        phoneBookQueryAnswerData,
+    );
+    console.log(`phoneBook: ${JSON.stringify(phoneBook)}`);
     return phoneBook;
 }
