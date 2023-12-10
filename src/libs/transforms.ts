@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse/sync';
 import { Option } from '../utils/option';
 import { PhoneBook } from './saleforce';
-import { validateSubscriptionForPhoneNumberInclusion } from './identity';
+import { validateIdentityIdForPhoneNumberInclusion } from './identity';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
@@ -148,6 +148,20 @@ function subscriptionToFileRecord(
     };
 }
 
+function identityIdLookUp(
+    phoneBook: PhoneBook,
+    subscriptionName: string,
+): Option<string> {
+    // Look up the subscription name in the phoneBook and return the phone number if there was one,
+    // otherwise return null;
+    for (const record of phoneBook) {
+        if (record.subscriptionName == subscriptionName) {
+            return record.identityId;
+        }
+    }
+    return null;
+}
+
 function phoneNumberLookUp(
     phoneBook: PhoneBook,
     subscriptionName: string,
@@ -163,12 +177,24 @@ function phoneNumberLookUp(
 }
 
 async function subscriptionToOptionalPhoneNumber(
+    stage: string,
     phoneBook: PhoneBook,
     subscription: ZuoraSubscription,
+    identityAPIBearerToken: string,
 ): Promise<string> {
+    const identityId = identityIdLookUp(
+        phoneBook,
+        subscription.subscription_name,
+    );
+    // If we could not determine an identityId, then there will be no phone number
+    if (identityId === null || identityId == '') {
+        return '';
+    }
     if (
-        await validateSubscriptionForPhoneNumberInclusion(
-            subscription.subscription_name,
+        await validateIdentityIdForPhoneNumberInclusion(
+            stage,
+            identityId,
+            identityAPIBearerToken,
         )
     ) {
         return (
@@ -180,14 +206,18 @@ async function subscriptionToOptionalPhoneNumber(
 }
 
 async function subscriptionToFileRecordWithOptionalPhoneNumber(
+    stage: string,
     sentDate: string,
     deliveryDate: string,
     phoneBook: PhoneBook,
     subscription: ZuoraSubscription,
+    identityAPIBearerToken: string,
 ): Promise<FileRecord> {
     const phoneNumber = await subscriptionToOptionalPhoneNumber(
+        stage,
         phoneBook,
         subscription,
+        identityAPIBearerToken,
     );
     return subscriptionToFileRecord(
         subscription,
@@ -198,19 +228,23 @@ async function subscriptionToFileRecordWithOptionalPhoneNumber(
 }
 
 export async function subscriptionsToFileRecords(
+    stage: string,
     subscriptions: ZuoraSubscription[],
     sentDate: string,
     deliveryDate: string,
     phoneBook: PhoneBook,
+    identityAPIBearerToken: string,
 ): Promise<FileRecord[]> {
     const data = [];
     for (const subscription of subscriptions) {
         const fileRecord =
             await subscriptionToFileRecordWithOptionalPhoneNumber(
+                stage,
                 sentDate,
                 deliveryDate,
                 phoneBook,
                 subscription,
+                identityAPIBearerToken,
             );
         data.push(fileRecord);
     }

@@ -19,6 +19,7 @@ interface PhoneBookQueryAnswerItem {
     Name: string;
     Buyer__r: {
         Phone: string | null;
+        IdentityID__c: string | null;
     };
 }
 
@@ -29,6 +30,7 @@ interface PhoneBookQueryAnswerData {
 interface PhoneRecord {
     subscriptionName: string;
     phoneNumber: string | null;
+    identityId: string | null;
 }
 
 export type PhoneBook = PhoneRecord[];
@@ -100,7 +102,7 @@ async function runPhoneBookQuery(
     console.log('Running phone book query');
 
     const query =
-        "SELECT Name, Buyer__r.Phone FROM SF_Subscription__c WHERE Product__c = 'Newspaper - National Delivery'";
+        "SELECT Name, Buyer__r.IdentityID__c, Buyer__r.Phone FROM SF_Subscription__c WHERE Product__c = 'Newspaper - National Delivery'";
     const url = `${
         bearerInformation.instance_url
     }/services/data/v46.0/query/?q=${encodeURIComponent(query)}`;
@@ -121,21 +123,23 @@ async function runPhoneBookQuery(
             }
 
         where:
-            Item = {
-                "attributes": {
-                    "type": "SF_Subscription__c",
-                    "url": "/services/data/v46.0/sobjects/SF_Subscription__c/[removed]"
-                },
-                "Name": "A-S00125315",
-                "Buyer__r": {
+            Item = 
+                {
                     "attributes": {
-                        "type": "Contact",
-                        "url": "/services/data/v46.0/sobjects/Contact/[removed]"
+                        "type": "SF_Subscription__c",
+                        "url": "/services/data/v46.0/sobjects/SF_Subscription__c/a2F9E000007TOk3UAG"
                     },
-                    "Phone": phone number or null
+                    "Name": "A-S00648323",
+                    "Buyer__r": {
+                        "attributes": {
+                            "type": "Contact",
+                            "url": "/services/data/v46.0/sobjects/Contact/0039E00001nw7LKQAY"
+                        },
+                        "IdentityID__c": "200138950",
+                        "Phone": null
+                    }
                 }
-            } 
-    */
+            */
     return (await response.data) as PhoneBookQueryAnswerData;
 }
 
@@ -146,6 +150,7 @@ function phoneBookQueryAnswerDataToPhoneBookRecords(
         return {
             subscriptionName: item.Name,
             phoneNumber: item.Buyer__r.Phone,
+            identityId: item.Buyer__r.IdentityID__c,
         };
     });
 }
@@ -156,6 +161,9 @@ export async function getPhoneBook(
     const bearerInformation =
         await getSalesforceBearerInformation(saleforceSSMConfig);
     const phoneBookQueryAnswerData = await runPhoneBookQuery(bearerInformation);
+    console.log(
+        `phoneBookQueryAnswerData: ${JSON.stringify(phoneBookQueryAnswerData)}`,
+    );
     const phoneBook = phoneBookQueryAnswerDataToPhoneBookRecords(
         phoneBookQueryAnswerData,
     );

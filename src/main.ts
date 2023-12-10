@@ -18,6 +18,7 @@ import {
     getPhoneBook,
     makeSalesforceSSMConfig,
 } from './libs/saleforce';
+import { fetchIdentityAPIToken } from './libs/identity';
 
 export const main = async (indices?: number[]) => {
     console.log(
@@ -41,14 +42,27 @@ export const main = async (indices?: number[]) => {
         throw message;
     }
 
+    const identityAPIBearerToken = await fetchIdentityAPIToken(Stage);
+    if (!identityAPIBearerToken) {
+        const message = 'Could not extract identityAPIBearerToken';
+        console.log(message);
+        throw message;
+    }
+
     if (indices) {
         for (const i of indices) {
-            await generateFileForDay(zuoraBearerToken, salesforceSSMConfig, i);
+            await generateFileForDay(
+                zuoraBearerToken,
+                salesforceSSMConfig,
+                identityAPIBearerToken,
+                i,
+            );
         }
     } else {
         await generateOneFileUsingCurrentTimeToDeriveDayIndex(
             zuoraBearerToken,
             salesforceSSMConfig,
+            identityAPIBearerToken,
         );
     }
     console.log('main function has completed');
@@ -111,6 +125,7 @@ function getDayOffsetToGenerate(): number | null {
 async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
     zuoraBearerToken: string,
     salesforceSSMConfig: SalesforceSSMConfig,
+    identityAPIBearerToken: string,
 ) {
     // This function generates a file whose index is derived from the current hour of the day
     // It is the function that is naturally triggered when the lambda runs on schedule.
@@ -121,12 +136,18 @@ async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
         return;
     }
 
-    await generateFileForDay(zuoraBearerToken, salesforceSSMConfig, dayIndex);
+    await generateFileForDay(
+        zuoraBearerToken,
+        salesforceSSMConfig,
+        identityAPIBearerToken,
+        dayIndex,
+    );
 }
 
 async function generateFileForDay(
     zuoraBearerToken: string,
     salesforceSSMConfig: SalesforceSSMConfig,
+    identityAPIBearerToken: string,
     dayIndex: number,
 ) {
     // This function generates one file. The date of the file that is being generated is derived from the dayIndex
@@ -186,10 +207,12 @@ async function generateFileForDay(
     // There is the decision of whether or not to include the phone number from the phone book and that
     // operation is async because of the IdAPI lookup
     const fileRecords: FileRecord[] = await subscriptionsToFileRecords(
+        Stage,
         subsWithoutHolidayStops,
         sentDate,
         deliveryDate,
         salesforcePhoneBook,
+        identityAPIBearerToken,
     );
 
     const file2 = fileRecordsToCSVFile(fileRecords);
