@@ -54,6 +54,8 @@ We must generate the [today]+2 file before 10am, but to avoid being in a race co
 
 We must try to generate the files for the next couple of working days before 10am, including when if they occur after a long week and and extra public holidays. (This is a Guardian recommendation.)
 
+Note that the above timings should be independant to UK daylight savings. AWS times are always in UTC (I think), but generation before 10am is always local time.
+
 It is possible to manually generate a particular file (or a small number of files) in the aws console (see next section).
 
 ### Generate a specific file from the AWS console.
