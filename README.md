@@ -36,9 +36,23 @@ We generates 14 files starting from the day after. For instance on the 2nd of No
 
 ### Generation strategy
 
-The generation of one file is an atomic operation in the sense that it's performed by one single asynchronous function (see code for detail). We are going to retain that design principle and we will keep it as long at it remains true that a single file takes less than 15 mins to be generated. If one day that premisse ceases to be true, then a small redesign of this lambda will be required. At the time these lines are written (Oct 2023), the generation takes few seconds in CODE and a couple of minutes (sometimes up to 5 mins, and in extremelly rare cases up to 10 mins) in PROD.
+**Rule 1**: How do we generate the files ? 
 
-The lambda generates all files from [today]+2 to [today]+14. This is not done in one excecution but happens over hours (we generate one file per hour). Moreover we do not generate any file at hour 0 (meaning between midnight and 1am) and we do not generate file index 2, eg: [today]+2, after 10am.
+The generation of one file is an atomic operation in the sense that it's performed by one single asynchronous function (see code for detail). We are going to retain that design principle and we will keep it as long at it remains true that a single file takes less than 15 mins to be generated. If one day that premisse ceases to be true, then a small redesign of this lambda will be required. At the time these lines are written (Oct 2023), the generation takes few seconds in CODE and a couple of minutes (sometimes up to 5 mins, and in extremelly rare cases up to 10 mins -- which seem to coincide with Zuora being busy in some early hours of the day) in PROD.
+
+The lambda is set up to generate one file per hour.
+
+**Rule 2**: Which files are we generating ?
+
+The lambda generates all files from [today]+2 to [today]+14. (We do not generate the file for the same day, [today]+0, but we do not generate tomorrow's file [today]+1 either. This was agreed with PPR.)
+
+**Rule 3**: When are we generating the files ?
+
+We do not generate any file at hour 0 (meaning between midnight and 1am). There are various overnight processes that start a mid-night that we do not want to be in a race condition with. (This is a Guardian recommendation.)
+
+We must generate the [today]+2 file before 10am, but to avoid being in a race condition with PPR, we must not (regenerate) it after 10am. (This is part of the specs agreed with PPR.)
+
+We must try to generate the files for the next couple of working days before 10am, including when if they occur after a long week and and extra public holidays. (This is a Guardian recommendation.)
 
 It is possible to manually generate a particular file (or a small number of files) in the aws console (see next section).
 
