@@ -1,6 +1,6 @@
 import { parse } from 'csv-parse/sync';
 import { Option } from '../utils/option';
-import { PhoneBook } from './saleforce';
+import { PhoneBook } from './salesforce';
 import { validateIdentityIdForPhoneNumberInclusion } from './identity';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;

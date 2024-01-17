@@ -1,6 +1,6 @@
 import { describe, expect, jest, test } from '@jest/globals';
 import { identityIdLookUp, parseZuoraDataFile, phoneNumberLookUp } from '../../src/libs/transforms'
-import { PhoneBook, PhoneRecord } from '../../src/libs/saleforce';
+import { PhoneBook, PhoneRecord } from '../../src/libs/salesforce';
 
 describe('region', () => {
 

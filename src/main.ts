@@ -17,7 +17,7 @@ import {
     SalesforceSSMConfig,
     getPhoneBook,
     makeSalesforceSSMConfig,
-} from './libs/saleforce';
+} from './libs/salesforce';
 import { fetchIdentityAPIToken } from './libs/identity';
 
 export const main = async (indices?: number[]) => {
