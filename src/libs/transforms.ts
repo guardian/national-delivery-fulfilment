@@ -298,20 +298,10 @@ function subscriptionIsCorrect(subscription: ZuoraSubscription): boolean {
     return subscription.subscription_delivery_agent != '';
 }
 
-function postcodesExclusion(subscription: ZuoraSubscription): boolean {
-    // This function was introduced on 8 Nov 2023, to exclude a couple of postcodes
-    // that we estimated corresponded to subscriptions that delivery should not happen for.
-    // For all intent and purpose this is temporary code, and therefore can be removed
-    // later on...
-    const postcodes = ['tq122tl', 'tq122tg'];
-    const pc = subscription.sold_to_postal_code.toLowerCase().slice(0, 7);
-    return postcodes.includes(pc);
-}
-
 export function retainCorrectSubscriptions(
     subscriptions: ZuoraSubscription[],
 ): ZuoraSubscription[] {
     return subscriptions.filter((sub) => {
-        return subscriptionIsCorrect(sub) && !postcodesExclusion(sub);
+        return subscriptionIsCorrect(sub);
     });
 }

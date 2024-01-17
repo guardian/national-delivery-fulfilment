@@ -181,7 +181,7 @@ async function generateFileForDay(
     const currentSubs: ZuoraSubscription[] =
         subscriptionsDataFileToSubscriptions(zuoraDataFiles.subscriptionsFile);
 
-    const subsWithoutInvalid: ZuoraSubscription[] =
+    const correctSubs: ZuoraSubscription[] =
         retainCorrectSubscriptions(currentSubs);
 
     const holidaySubscriptionNames: string[] = holidayNamesDataFileToNames(
@@ -189,10 +189,7 @@ async function generateFileForDay(
     );
 
     const subsWithoutHolidayStops: ZuoraSubscription[] =
-        excludeHolidaySubscriptions(
-            subsWithoutInvalid,
-            holidaySubscriptionNames,
-        );
+        excludeHolidaySubscriptions(correctSubs, holidaySubscriptionNames);
 
     const sentDate: string = now.format('DD/MM/YYYY');
 
@@ -203,9 +200,7 @@ async function generateFileForDay(
 
     console.log(`salesforcePhoneBook: ${JSON.stringify(salesforcePhoneBook)}`);
 
-    // This one is async because to make a file record
-    // There is the decision of whether or not to include the phone number from the phone book and that
-    // operation is async because of the IdAPI lookup
+    // Originally this was a pure function but it is now async because of the IDAPI lookup
     const fileRecords: FileRecord[] = await subscriptionsToFileRecords(
         Stage,
         subsWithoutHolidayStops,
