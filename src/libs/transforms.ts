@@ -301,7 +301,5 @@ function subscriptionIsCorrect(subscription: ZuoraSubscription): boolean {
 export function retainCorrectSubscriptions(
     subscriptions: ZuoraSubscription[],
 ): ZuoraSubscription[] {
-    return subscriptions.filter((sub) => {
-        return subscriptionIsCorrect(sub);
-    });
+    return subscriptions.filter((sub) => subscriptionIsCorrect(sub));
 }
