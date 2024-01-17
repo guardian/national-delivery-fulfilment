@@ -95,6 +95,14 @@ $ yarn lint --fix
 
 before making your commits.
 
+You might also want to run
+
+```
+$ yarn test-coverage
+```
+
+To check if testing is within requirements
+
 ### Building Cloudformation
 
 Upon any modification of the cloud formation, the smapshot needs to be updated in the source code. For this, move to the `cdk` folder and run.

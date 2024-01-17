@@ -27,7 +27,7 @@ interface PhoneBookQueryAnswerData {
     records: PhoneBookQueryAnswerItem[];
 }
 
-interface PhoneRecord {
+export interface PhoneRecord {
     subscriptionName: string;
     phoneNumber: string | null;
     identityId: string | null;

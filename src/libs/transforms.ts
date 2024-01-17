@@ -148,7 +148,7 @@ function subscriptionToFileRecord(
     };
 }
 
-function identityIdLookUp(
+export function identityIdLookUp(
     phoneBook: PhoneBook,
     subscriptionName: string,
 ): Option<string> {
@@ -162,7 +162,7 @@ function identityIdLookUp(
     return null;
 }
 
-function phoneNumberLookUp(
+export function phoneNumberLookUp(
     phoneBook: PhoneBook,
     subscriptionName: string,
 ): Option<string> {
