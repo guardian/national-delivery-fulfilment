@@ -42,6 +42,14 @@ The generation of one file is an atomic operation in the sense that it's perform
 
 The lambda is set up to generate one file per hour.
 
+We are generating the fulfilment files using two queries to Zuora, which retrieve the main datafiles we use to generate the fulfilment records. The main datafile contains the subscriptions and the second contains holiday information that we use to filter some subscriptions away. We then perform a query to Saleforce to retrieve phone numbers that are going to be used to build a PhoneBook from which phone numbers are read and optionaly added to a fulfilment record.
+
+So in essence we use two queries from Zuora and one from Saleforce. 
+
+With that said we also need to query the Identity API to check that the user has given consent to use their phone numbers in this way. For this we need to check that the user's `phone_optout` consent is set to `false`.
+
+The need to query the IDAPI for each record might be re-engineered in the future, but for the moment that's how it is implemented (came with [new fields in fulfilment files: email and phone number](https://github.com/guardian/national-delivery-fulfilment/pull/29)).
+
 **Rule 2**: Which files are we generating ?
 
 The lambda generates all files from [today]+2 to [today]+14. (We do not generate the file for the same day, [today]+0, but we do not generate tomorrow's file [today]+1 either. This was agreed with PPR.)
