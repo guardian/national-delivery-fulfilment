@@ -3,6 +3,14 @@ import { getSsmValue } from '../utils/ssm';
 
 interface IdAPIUserConsent {
     status: string;
+    user: {
+        consents: [
+            {
+                id: string;
+                consented: boolean;
+            },
+        ];
+    };
 }
 
 export async function fetchIdentityAPIToken(stage: string) {
@@ -46,26 +54,10 @@ async function queryUserDetailsFromIdAPI(
                     [....],
                     {
                         "actor": "user",
-                        "id": "your_support_onboarding",
+                        "id": "phone_optout",
                         "version": 0,
-                        "consented": true,
-                        "timestamp": "2023-10-23T14:15:04Z",
-                        "privacyPolicyVersion": 1
-                    },
-                    {
-                        "actor": "user",
-                        "id": "similar_guardian_products",
-                        "version": 0,
-                        "consented": true,
-                        "timestamp": "2023-10-23T14:15:04Z",
-                        "privacyPolicyVersion": 1
-                    },
-                    {
-                        "actor": "user",
-                        "id": "supporter_newsletter",
-                        "version": 0,
-                        "consented": true,
-                        "timestamp": "2023-10-23T14:15:04Z",
+                        "consented": false,
+                        "timestamp": "2018-12-03T10:22:45Z",
                         "privacyPolicyVersion": 1
                     }
                 ],
@@ -90,8 +82,29 @@ export async function validateIdentityIdForPhoneNumberInclusion(
             identityId,
             identityAPIBearerToken,
         );
-        userDetailsFromIdAPI;
-        return true; // TODO: !!
+        if (userDetailsFromIdAPI.status !== 'ok') {
+            return false;
+        }
+        const consent = userDetailsFromIdAPI.user.consents.find(
+            (consent) => consent.id == 'phone_optout',
+        );
+        /*
+            consent is now either underfined or 
+            {
+                "actor": "user",
+                "id": "phone_optout",
+                "version": 0,
+                "consented": false,
+                "timestamp": "2018-12-03T10:22:45Z",
+                "privacyPolicyVersion": 1
+            }
+        */
+        if (consent !== undefined) {
+            return consent.consented === false; // `false` is the value that we are looking for
+            // Means that the user has not consented out of the phone use
+        } else {
+            return false;
+        }
     } catch (err) {
         console.error(err);
         return false; // We isolate any caller from any failure of connecting to the identityAPI, by returning a proper boolean, `false` in this case
