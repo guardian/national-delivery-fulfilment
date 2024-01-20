@@ -38,6 +38,7 @@ export type PhoneBook = PhoneRecord[];
 export async function makeSalesforceSSMConfig(
     stage: string,
 ): Promise<SalesforceSSMConfig> {
+    console.log(`make salesforce config for stage: ${stage}`);
     const clientId = await getSsmValue(stage, 'salesforceClientId');
     const clientSecret = await getSsmValue(stage, 'salesforceClientSecret');
     const username = await getSsmValue(stage, 'salesforceUsername');

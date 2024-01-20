@@ -14,6 +14,7 @@ interface IdAPIUserConsent {
 }
 
 export async function fetchIdentityAPIToken(stage: string) {
+    console.log(`fetch identity api token for stage: ${stage}`);
     return await getSsmValue(stage, 'IdAPI-BearerToken');
 }
 
