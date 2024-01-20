@@ -197,10 +197,21 @@ async function subscriptionToOptionalPhoneNumber(
             identityAPIBearerToken,
         )
     ) {
-        return (
-            phoneNumberLookUp(phoneBook, subscription.subscription_name) || ''
+        console.log(
+            `authorised to perform phone number look up for identity id: ${identityId}`,
         );
+        const number = phoneNumberLookUp(
+            phoneBook,
+            subscription.subscription_name,
+        );
+        if (number) {
+            console.log(`found number: ${number}`);
+        }
+        return number || '';
     } else {
+        console.log(
+            `not authorised to perform phone number look up for identity id: ${identityId}`,
+        );
         return '';
     }
 }

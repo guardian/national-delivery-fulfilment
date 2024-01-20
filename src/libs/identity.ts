@@ -21,13 +21,15 @@ async function queryUserDetailsFromIdAPI(
     identityId: string,
     identityAPIBearerToken: string,
 ): Promise<IdAPIUserConsent> {
-    console.log(
-        `Query IdAPI for identityId ${identityId} with token ${identityAPIBearerToken}`,
-    );
+    //console.log(
+    //    `Querying IdAPI for identityId ${identityId} with token ${identityAPIBearerToken}`,
+    //);
+
+    console.log(`Querying IdAPI for identityId ${identityId}`);
 
     const url = `https://idapi.theguardian.com/user/${identityId}`;
 
-    console.log(`url: ${url}`);
+    //console.log(`url: ${url}`);
 
     const params = {
         method: 'GET',
