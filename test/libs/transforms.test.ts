@@ -1,5 +1,6 @@
 import { describe, expect, jest, test } from '@jest/globals';
-import { parseZuoraDataFile } from '../../src/libs/transforms'
+import { identityIdLookUp, parseZuoraDataFile, phoneNumberLookUp } from '../../src/libs/transforms'
+import { PhoneBook, PhoneRecord } from '../../src/libs/salesforce';
 
 describe('region', () => {
 
@@ -51,6 +52,26 @@ A-ecabd840,1648,"The Grand Cottage, City Road",Bristol,West Midlands,000 7FO,"S.
 
         expect(parseZuoraDataFile(file)).toEqual(expected);
     });
+
+    test('check phonebook lookup', () => {
+      const phoneRecord1: PhoneRecord = {
+        subscriptionName: "name1",
+        phoneNumber: "555-123",
+        identityId: "12345",
+      }
+      const phoneBook: PhoneBook = [phoneRecord1]
+      expect(phoneNumberLookUp(phoneBook, "name1")).toEqual("555-123");
+  });
+
+  test('check identityId lookup', () => {
+    const phoneRecord1: PhoneRecord = {
+      subscriptionName: "name1",
+      phoneNumber: "555-123",
+      identityId: "12345",
+    }
+    const phoneBook: PhoneBook = [phoneRecord1]
+    expect(identityIdLookUp(phoneBook, "name1")).toEqual("12345");
+  });
 
 });
 

@@ -87,7 +87,9 @@ function zuoraBatchQueries(date: string, today: string) {
         SoldToContact.FirstName,
         SoldToContact.LastName,
         SoldToContact.SpecialDeliveryInstructions__c,
-        RateplanCharge.quantity
+        RateplanCharge.quantity,
+        RatePlanCharge.name,
+        SoldToContact.workEmail
 
     Headers and some values of the csv files we are aiming to generate:
         Customer Reference      : A-S6813425                               # Subscription.Name
@@ -105,7 +107,8 @@ function zuoraBatchQueries(date: string, today: string) {
         Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
         Source campaign                                                    # reserved for future use
         Additional Comms                                                   # reserved for future use
-*/
+        Email                   : luke.skywalker@theresistance.org         # SoldToContact.workEmail
+    */
 
     const dayMapping = (index: number): string => {
         const days = [
@@ -137,7 +140,8 @@ function zuoraBatchQueries(date: string, today: string) {
       SoldToContact.LastName,
       SoldToContact.SpecialDeliveryInstructions__c,
       RateplanCharge.quantity,
-      RatePlanCharge.name
+      RatePlanCharge.name,
+      SoldToContact.workEmail
     FROM
       RatePlanCharge
     WHERE

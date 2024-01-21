@@ -1,4 +1,7 @@
 import { parse } from 'csv-parse/sync';
+import { Option } from '../utils/option';
+import { PhoneBook } from './salesforce';
+import { validateIdentityIdForPhoneNumberInclusion } from './identity';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
@@ -13,10 +16,12 @@ Query fields:
     SoldToContact.FirstName,
     SoldToContact.LastName,
     SoldToContact.SpecialDeliveryInstructions__c,
-    RateplanCharge.quantity
+    RateplanCharge.quantity,
+    RatePlanCharge.name,
+    SoldToContact.workEmail
 */
 
-interface ZuoraSubscription {
+export interface ZuoraSubscription {
     subscription_name: string;
     subscription_delivery_agent: string;
     sold_to_address1: string;
@@ -27,6 +32,7 @@ interface ZuoraSubscription {
     sold_to_last_name: string;
     sold_to_special_delivery_instructions: string;
     quantity: string;
+    workEmail: string;
 }
 
 /*
@@ -46,6 +52,8 @@ Headers and some values of the csv files we are aiming to generate:
     Delivery Date           : 11/07/2023                               # (generate according to the contextual date)
     Source campaign                                                    # reserved for future use
     Additional Comms                                                   # reserved for future use
+    Email                   : luke.skywalker@theresistance.org         # SoldToContact.workEmail
+    Phone Number            : 555-1234                                 # Phone number extracted from Salesforce 
 */
 
 export interface FileRecord {
@@ -64,6 +72,8 @@ export interface FileRecord {
     deliveryDate: string;
     sourceCampaign: string;
     additionalComms: string;
+    email: string;
+    phoneNumber: string;
 }
 
 export function parseZuoraDataFile(file: string): string[][] {
@@ -78,16 +88,18 @@ export function subscriptionsDataFileToSubscriptions(
     const records = parseZuoraDataFile(file);
     const subscriptions = records.map((record) => {
         return {
-            subscription_name: record[0],
-            subscription_delivery_agent: record[1],
-            sold_to_address1: record[2],
-            sold_to_address2: record[3],
-            sold_to_city: record[4],
-            sold_to_postal_code: record[5],
-            sold_to_first_name: record[6],
-            sold_to_last_name: record[7],
-            sold_to_special_delivery_instructions: record[8],
-            quantity: record[9],
+            subscription_name: record[0], // Subscription.Name
+            subscription_delivery_agent: record[1], // Subscription.DeliveryAgent__c
+            sold_to_address1: record[2], // SoldToContact.Address1
+            sold_to_address2: record[3], // SoldToContact.Address2
+            sold_to_city: record[4], // SoldToContact.City
+            sold_to_postal_code: record[5], // SoldToContact.PostalCode
+            sold_to_first_name: record[6], // SoldToContact.FirstName
+            sold_to_last_name: record[7], // SoldToContact.LastName
+            sold_to_special_delivery_instructions: record[8], // SoldToContact.SpecialDeliveryInstructions__c
+            quantity: record[9], // RateplanCharge.quantity
+            // RatePlanCharge.name
+            workEmail: record[11], // SoldToContact.workEmail
         };
     });
     return subscriptions;
@@ -109,6 +121,7 @@ function subscriptionToFileRecord(
     subscription: ZuoraSubscription,
     sentDate: string,
     deliveryDate: string,
+    phoneNumber: string,
 ): FileRecord {
     return {
         customerReference: subscription.subscription_name,
@@ -130,17 +143,123 @@ function subscriptionToFileRecord(
         deliveryDate: deliveryDate,
         sourceCampaign: '',
         additionalComms: '',
+        email: subscription.workEmail,
+        phoneNumber: phoneNumber,
     };
 }
 
-export function subscriptionsToFileRecords(
+export function identityIdLookUp(
+    phoneBook: PhoneBook,
+    subscriptionName: string,
+): Option<string> {
+    // Look up the subscription name in the phoneBook and return the phone number if there was one,
+    // otherwise return null;
+    for (const record of phoneBook) {
+        if (record.subscriptionName == subscriptionName) {
+            return record.identityId;
+        }
+    }
+    return null;
+}
+
+export function phoneNumberLookUp(
+    phoneBook: PhoneBook,
+    subscriptionName: string,
+): Option<string> {
+    // Look up the subscription name in the phoneBook and return the phone number if there was one,
+    // otherwise return null;
+    for (const record of phoneBook) {
+        if (record.subscriptionName == subscriptionName) {
+            return record.phoneNumber;
+        }
+    }
+    return null;
+}
+
+async function subscriptionToOptionalPhoneNumber(
+    stage: string,
+    phoneBook: PhoneBook,
+    subscription: ZuoraSubscription,
+    identityAPIBearerToken: string,
+): Promise<string> {
+    const identityId = identityIdLookUp(
+        phoneBook,
+        subscription.subscription_name,
+    );
+    // If we could not determine an identityId, then there will be no phone number
+    if (identityId === null || identityId == '') {
+        return '';
+    }
+    if (
+        await validateIdentityIdForPhoneNumberInclusion(
+            stage,
+            identityId,
+            identityAPIBearerToken,
+        )
+    ) {
+        console.log(
+            `authorised to perform phone number look up for identity id: ${identityId}`,
+        );
+        const number = phoneNumberLookUp(
+            phoneBook,
+            subscription.subscription_name,
+        );
+        if (number) {
+            console.log(`found number: ${number}`);
+        }
+        return number || '';
+    } else {
+        console.log(
+            `not authorised to perform phone number look up for identity id: ${identityId}`,
+        );
+        return '';
+    }
+}
+
+async function subscriptionToFileRecordWithOptionalPhoneNumber(
+    stage: string,
+    sentDate: string,
+    deliveryDate: string,
+    phoneBook: PhoneBook,
+    subscription: ZuoraSubscription,
+    identityAPIBearerToken: string,
+): Promise<FileRecord> {
+    const phoneNumber = await subscriptionToOptionalPhoneNumber(
+        stage,
+        phoneBook,
+        subscription,
+        identityAPIBearerToken,
+    );
+    return subscriptionToFileRecord(
+        subscription,
+        sentDate,
+        deliveryDate,
+        phoneNumber,
+    );
+}
+
+export async function subscriptionsToFileRecords(
+    stage: string,
     subscriptions: ZuoraSubscription[],
     sentDate: string,
     deliveryDate: string,
-): FileRecord[] {
-    return subscriptions.map((subscription) =>
-        subscriptionToFileRecord(subscription, sentDate, deliveryDate),
-    );
+    phoneBook: PhoneBook,
+    identityAPIBearerToken: string,
+): Promise<FileRecord[]> {
+    const data = [];
+    for (const subscription of subscriptions) {
+        const fileRecord =
+            await subscriptionToFileRecordWithOptionalPhoneNumber(
+                stage,
+                sentDate,
+                deliveryDate,
+                phoneBook,
+                subscription,
+                identityAPIBearerToken,
+            );
+        data.push(fileRecord);
+    }
+    return data;
 }
 
 export function fileRecordsToCSVFile(records: FileRecord[]): string {
@@ -161,6 +280,8 @@ export function fileRecordsToCSVFile(records: FileRecord[]): string {
             { id: 'deliveryDate', title: 'Delivery Date' },
             { id: 'sourceCampaign', title: 'Source Campaign' },
             { id: 'additionalComms', title: 'Additional Comms' },
+            { id: 'email', title: 'Email' },
+            { id: 'phoneNumber', title: 'Phone Number' },
         ],
         alwaysQuote: true,
     });
