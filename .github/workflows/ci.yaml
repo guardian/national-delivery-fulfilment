@@ -37,6 +37,7 @@ jobs:
       - name: Upload to riff-raff
         uses: guardian/actions-riff-raff@v4
         with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
           configPath: cdk/cdk.out/riff-raff.yaml
           projectName: MemSub::Fulfilment::NationalDelivery
           buildNumberOffset: 60
