@@ -39,7 +39,6 @@ jobs:
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           roleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
-          aws-region: eu-west-1
           configPath: cdk/cdk.out/riff-raff.yaml
           projectName: MemSub::Fulfilment::NationalDelivery
           buildNumberOffset: 60
