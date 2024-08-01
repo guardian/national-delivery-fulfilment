@@ -74,50 +74,25 @@ function getDayOffsetToGenerate(): number | null {
     // null signifies that a file should not be generated at this time.
     // Otherwise the number id a day index of the file.
 
-    // Rules:
-    // - Rule 1: We generate files from index 2 to index 14 (meaning [today]+2 to [today]+14)
-    // - Rule 2: We start generation after 1am to let holiday stops finish.
-    //           In other words, we do not generate during hour 0 of the day
-    // - Rule 3: We only generate index 2 before 10am.
+    const dayIndexesForHour:Record<number, number> = {
+        5: 2, // used if all working days
+        6: 3, // used on thursday for sunday
+        7: 4, // used on thursday for monday
+        8: 5, // used on thursday for tuesday (if monday is a bank holiday)
+        9: 6, // used on wednesday for tuesday (if its easter weekend)
+        10: 7, // preview
+        11: 8, // preview
+        12: 9, // preview
+        13: 10, // preview
+        14: 11, // preview
+        15: 12, // preview
+        16: 13, // preview
+        17: 14, // preview
+    };
 
-    // The mapping is:
-    // Hour 00 -> dayIndex = 1 (index 1 is not generated) Rule 1 and Rule 2
-    // Hour 01 -> dayIndex = 2
-    // Hour 02 -> dayIndex = 3
-    // Hour 03 -> dayIndex = 4
-    // Hour 04 -> dayIndex = 5
-    // Hour 05 -> dayIndex = 6
-    // Hour 06 -> dayIndex = 7
-    // Hour 07 -> dayIndex = 8
-    // Hour 08 -> dayIndex = 9
-    // Hour 09 -> dayIndex = 10
-    // Hour 10 -> dayIndex = 11
-    // Hour 11 -> dayIndex = 12
-    // Hour 12 -> dayIndex = 13
-    // Hour 13 -> dayIndex = 14
-    // Hour 14 -> dayIndex = 1 (index 1 is not generated) Rule 1
-    // Hour 15 -> dayIndex = 2 (index 2 is not generated after 10am) Rule 3
-    // Hour 16 -> dayIndex = 3
-    // Hour 17 -> dayIndex = 4
-    // Hour 18 -> dayIndex = 5
-    // etc...
+    let currentHour: number = new Date().getUTCHours();
 
-    const dayIndex = 1 + (new Date().getUTCHours() % 14);
-
-    // Rule 1
-    if (dayIndex === 1) {
-        return null;
-    }
-
-    // Rule 2
-    if (new Date().getUTCHours() === 0) {
-        return null;
-    }
-
-    // Rule 3
-    if (dayIndex === 2 && new Date().getUTCHours() >= 10) {
-        return null;
-    }
+    const dayIndex: number | null = dayIndexesForHour[currentHour] || null;
 
     return dayIndex;
 }
