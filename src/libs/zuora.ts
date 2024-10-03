@@ -281,7 +281,7 @@ async function readDataFileFromZuora(
             'Content-Type': 'application/json',
         },
     });
-    return await response.json();
+    return await response.text();
 }
 
 async function jobIdToFileId(
