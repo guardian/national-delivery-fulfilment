@@ -54,6 +54,9 @@ async function fetchZuoraBearerToken1(
     const client_id = await getSsmValue(stage, 'zuora-client-id');
     const client_secret = await getSsmValue(stage, 'zuora-client-secret');
 
+    if (!client_id) throw new Error('Zuora client_id not found');
+    if (!client_secret) throw new Error('Zuora client_secret not found');
+
     const data = {
         client_id: client_id,
         client_secret: client_secret,
@@ -62,12 +65,12 @@ async function fetchZuoraBearerToken1(
 
     const response = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: new URLSearchParams(data),
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
     });
-    console.log(JSON.stringify(response));
+
     return await response.json();
 }
 
