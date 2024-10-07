@@ -84,7 +84,7 @@ async function getSalesforceBearerInformation(
     try {
         const response = await fetch(url, {
             method: 'POST',
-            body: JSON.stringify(requestBody),
+            body: new URLSearchParams(requestBody),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
