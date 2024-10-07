@@ -53,6 +53,7 @@ async function fetchZuoraBearerToken1(
     const url = authTokenQueryUrl(stage);
     const client_id = await getSsmValue(stage, 'zuora-client-id');
     const client_secret = await getSsmValue(stage, 'zuora-client-secret');
+
     const data = {
         client_id: client_id,
         client_secret: client_secret,
@@ -66,6 +67,7 @@ async function fetchZuoraBearerToken1(
             'Content-Type': 'application/x-www-form-urlencoded',
         },
     });
+    console.log(JSON.stringify(response));
     return await response.json();
 }
 
