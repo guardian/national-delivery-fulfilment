@@ -1,4 +1,3 @@
-import axios from 'axios';
 import moment from 'moment';
 import { getSsmValue } from '../utils/ssm';
 import { sleep } from '../utils/sleep';
@@ -59,13 +58,15 @@ async function fetchZuoraBearerToken1(
         client_secret: client_secret,
         grant_type: 'client_credentials',
     };
-    const params = {
+
+    const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-    };
-    const response = await axios.post(url, data, params);
-    return await response.data;
+    });
+    return await response.json();
 }
 
 export async function fetchZuoraBearerToken2(stage: string): Promise<string> {
@@ -205,14 +206,17 @@ async function submitQueryToZuora(
     console.log(`date: ${date}; submitting batch queries to zuora`);
     const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/`;
     const data = zuoraBatchQueries(date, today);
-    const params = {
+
+    const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(data),
         headers: {
             Authorization: `Bearer ${zuoraBearerToken}`,
             'Content-Type': 'application/json',
         },
-    };
-    const response = await axios.post(url, data, params);
-    return (await response.data) as ZuoraBatchSubmissionReceipt;
+    });
+
+    return (await response.json()) as ZuoraBatchSubmissionReceipt;
 }
 
 async function checkJobStatus(
@@ -223,14 +227,16 @@ async function checkJobStatus(
 ): Promise<ZuoraBatchJobStatusReceipt> {
     console.log(`date: ${date}; check job status: jobId: ${jobId}`);
     const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/jobs/${jobId}`;
-    const params = {
+
+    const response = await fetch(url, {
+        method: 'GET',
         headers: {
             Authorization: `Bearer ${zuoraBearerToken}`,
             'Content-Type': 'application/json',
         },
-    };
-    const response = await axios.get(url, params);
-    const data = await response.data;
+    });
+
+    const data = await response.json();
     console.log(`date: ${date}; checkJobStatus: data: ${JSON.stringify(data)}`);
 
     if (data.status === 'completed') {
@@ -268,15 +274,14 @@ async function readDataFileFromZuora(
     fileId: string,
 ): Promise<string> {
     const url = `${zuoraServerUrl(stage)}/apps/api/batch-query/file/${fileId}`;
-    const params = {
+    const response = await fetch(url, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${zuoraBearerToken}`,
             'Content-Type': 'application/json',
         },
-    };
-    const response = await axios.get(url, params);
-    return await response.data;
+    });
+    return await response.json();
 }
 
 async function jobIdToFileId(

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getSsmValue } from '../utils/ssm';
 
 export interface SalesforceSSMConfig {
@@ -83,13 +82,14 @@ async function getSalesforceBearerInformation(
     const url = `${saleforceSSMConfig.authenticationBaseUrl}/services/oauth2/token`;
 
     try {
-        const params = {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-        };
-        const response = await axios.post(url, requestBody, params);
-        return (await response.data) as SalesforceBearerInformation;
+        });
+        return (await response.json()) as SalesforceBearerInformation;
     } catch (error) {
         throw new Error(
             `error while retrieving salesforce bearer token: ${error}`,
@@ -108,13 +108,13 @@ async function runPhoneBookQuery(
         bearerInformation.instance_url
     }/services/data/v46.0/query/?q=${encodeURIComponent(query)}`;
     console.log(url);
-    const params = {
+
+    const response = await fetch(url, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${bearerInformation.access_token}`,
         },
-    };
-    const response = await axios.get(url, params);
+    });
     /*
         response.data is a
             {
@@ -141,7 +141,7 @@ async function runPhoneBookQuery(
                     }
                 }
             */
-    return (await response.data) as PhoneBookQueryAnswerData;
+    return (await response.json()) as PhoneBookQueryAnswerData;
 }
 
 function phoneBookQueryAnswerDataToPhoneBookRecords(
