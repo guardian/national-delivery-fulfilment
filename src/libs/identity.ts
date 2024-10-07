@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getSsmValue } from '../utils/ssm';
 
 interface IdAPIUserConsent {
@@ -32,14 +31,13 @@ async function queryUserDetailsFromIdAPI(
 
     //console.log(`url: ${url}`);
 
-    const params = {
+    const response = await fetch(url, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${identityAPIBearerToken}`,
         },
-    };
+    });
 
-    const response = await axios.get(url, params);
     /*
         response.data is a
         {
@@ -68,7 +66,7 @@ async function queryUserDetailsFromIdAPI(
             }
         }
     */
-    return (await response.data) as IdAPIUserConsent;
+    return (await response.json()) as IdAPIUserConsent;
 }
 
 export async function validateIdentityIdForPhoneNumberInclusion(
