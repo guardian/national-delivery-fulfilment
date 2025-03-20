@@ -132,7 +132,12 @@ export class NationalDeliveryFulfilment extends GuStack {
             namespace: 'AWS/Lambda',
             metricName: 'Errors',
             statistic: 'Sum',
+            dimensionsMap: {
+                FunctionName: `membership-national-delivery-fulfilment-${this.stage}`,
+            }
         });
+
+        const isProd = this.stage === 'PROD';
 
         new GuAlarm(this, 'ErrorExecutionAlarm', {
             app,
@@ -143,6 +148,7 @@ export class NationalDeliveryFulfilment extends GuStack {
             comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
             threshold: 0,
             evaluationPeriods: 1,
+            actionsEnabled: isProd,
         });
 
     }
