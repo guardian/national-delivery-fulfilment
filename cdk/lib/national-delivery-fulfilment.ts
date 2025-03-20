@@ -125,8 +125,6 @@ export class NationalDeliveryFulfilment extends GuStack {
                 }
             )
         );
-
-        const snsTopicName = `alarms-handler-topic-${this.stage}`;
     
         const errorMetric = new Metric({
             namespace: 'AWS/Lambda',
@@ -137,6 +135,7 @@ export class NationalDeliveryFulfilment extends GuStack {
             }
         });
 
+        const snsTopicName = `alarms-handler-topic-${this.stage}`;
         const isProd = this.stage === 'PROD';
 
         new GuAlarm(this, 'ErrorExecutionAlarm', {
