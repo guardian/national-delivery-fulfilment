@@ -2,9 +2,9 @@ import { Handler } from 'aws-lambda';
 import { main } from './main';
 
 export const handler: Handler = async (event) => {
-    /*
+  /*
 
-  We receive two kinds of events, either the event sent by AWS during the scheduled run, which looks like this:
+    We receive two kinds of events, either the event sent by AWS during the scheduled run, which looks like this:
     {
         "version": "0",
         "id": "f53402cc-287b-663b-f734-31ea35f66df9",
@@ -27,5 +27,5 @@ export const handler: Handler = async (event) => {
 
   */
 
-    await main(event['indices']);
+  await main(event['indices']);
 };
