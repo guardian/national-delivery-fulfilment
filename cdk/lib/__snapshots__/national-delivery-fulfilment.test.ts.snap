@@ -161,7 +161,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
     },
     "ErrorExecutionAlarm9DD60FED": {
       "Properties": {
-        "ActionsEnabled": true,
+        "ActionsEnabled": false,
         "AlarmActions": [
           {
             "Fn::Join": [
@@ -183,6 +183,12 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
         "AlarmDescription": "national-delivery-fulfilment: error while executing lambda",
         "AlarmName": "national-delivery-fulfilment: error",
         "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": "membership-national-delivery-fulfilment-CODE",
+          },
+        ],
         "EvaluationPeriods": 1,
         "MetricName": "Errors",
         "Namespace": "AWS/Lambda",
@@ -648,6 +654,12 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
         "AlarmDescription": "national-delivery-fulfilment: error while executing lambda",
         "AlarmName": "national-delivery-fulfilment: error",
         "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": "membership-national-delivery-fulfilment-PROD",
+          },
+        ],
         "EvaluationPeriods": 1,
         "MetricName": "Errors",
         "Namespace": "AWS/Lambda",
