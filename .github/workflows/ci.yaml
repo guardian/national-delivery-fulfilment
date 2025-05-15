@@ -45,13 +45,12 @@ jobs:
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           roleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
-          configPath: cdk/cdk.out/riff-raff.yaml
+          configPath: riff-raff.yaml
           projectName: MemSub::Fulfilment::NationalDelivery
           buildNumberOffset: 60
           contentDirectories: |
             cdk.out:
               - cdk/cdk.out/NationalDeliveryFulfilment-CODE.template.json
               - cdk/cdk.out/NationalDeliveryFulfilment-PROD.template.json
-              - cdk/cdk.out/riff-raff.yaml
             national-delivery-fulfilment:
               - cdk/national-delivery-fulfilment/national-delivery-fulfilment.zip

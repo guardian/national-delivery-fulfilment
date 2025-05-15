@@ -1,5 +1,4 @@
 import "source-map-support/register";
-// https://github.com/guardian/cdk/blob/main/src/experimental/riff-raff-yaml-file/README.md 
 
 import { NationalDeliveryFulfilment } from "../lib/national-delivery-fulfilment";
 import { App } from 'aws-cdk-lib';
