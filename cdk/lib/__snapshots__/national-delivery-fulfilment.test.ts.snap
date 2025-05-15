@@ -159,7 +159,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "ErrorExecutionAlarm9DD60FED": {
+    "ErrorExecutionAlarmCODED12BD0AB": {
       "Properties": {
         "ActionsEnabled": false,
         "AlarmActions": [
@@ -651,7 +651,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "ErrorExecutionAlarm9DD60FED": {
+    "ErrorExecutionAlarmPROD894897E4": {
       "Properties": {
         "ActionsEnabled": true,
         "AlarmActions": [
