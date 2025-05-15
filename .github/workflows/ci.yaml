@@ -35,11 +35,6 @@ jobs:
         with:
           role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
           aws-region: eu-west-1
-      - name: List directories
-        run: |
-          echo "Listing directories"
-          ls -la cdk
-          ls -la cdk/cdk.out
       - name: Upload to riff-raff
         uses: guardian/actions-riff-raff@v4
         with:
