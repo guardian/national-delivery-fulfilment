@@ -159,7 +159,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "ErrorExecutionAlarmCODED12BD0AB": {
+    "ErrorExecutionAlarm9DD60FED": {
       "Properties": {
         "ActionsEnabled": false,
         "AlarmActions": [
@@ -181,7 +181,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
           },
         ],
         "AlarmDescription": "national-delivery-fulfilment: error while executing lambda",
-        "AlarmName": "national-delivery-fulfilment: error",
+        "AlarmName": "national-delivery-fulfilment: error-CODE",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
           {
@@ -651,7 +651,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "ErrorExecutionAlarmPROD894897E4": {
+    "ErrorExecutionAlarm9DD60FED": {
       "Properties": {
         "ActionsEnabled": true,
         "AlarmActions": [
@@ -673,7 +673,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
           },
         ],
         "AlarmDescription": "national-delivery-fulfilment: error while executing lambda",
-        "AlarmName": "national-delivery-fulfilment: error",
+        "AlarmName": "national-delivery-fulfilment: error-PROD",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
           {
