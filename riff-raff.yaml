@@ -1,0 +1,48 @@
+allowedStages:
+  - CODE
+  - PROD
+deployments:
+  lambda-upload-eu-west-1-membership-national-delivery-fulfilment:
+    type: aws-lambda
+    stacks:
+      - membership
+    regions:
+      - eu-west-1
+    app: national-delivery-fulfilment
+    contentDirectory: national-delivery-fulfilment
+    parameters:
+      bucketSsmLookup: true
+      lookupByTags: true
+      fileName: national-delivery-fulfilment.zip
+    actions:
+      - uploadLambda
+  cfn-eu-west-1-membership-national-delivery-fulfilment:
+    type: cloud-formation
+    regions:
+      - eu-west-1
+    stacks:
+      - membership
+    app: national-delivery-fulfilment
+    contentDirectory: cdk.out
+    parameters:
+      templateStagePaths:
+        CODE: NationalDeliveryFulfilment-CODE.template.json
+        PROD: NationalDeliveryFulfilment-PROD.template.json
+    dependencies:
+      - lambda-upload-eu-west-1-membership-national-delivery-fulfilment
+  lambda-update-eu-west-1-membership-national-delivery-fulfilment:
+    type: aws-lambda
+    stacks:
+      - membership
+    regions:
+      - eu-west-1
+    app: national-delivery-fulfilment
+    contentDirectory: national-delivery-fulfilment
+    parameters:
+      bucketSsmLookup: true
+      lookupByTags: true
+      fileName: national-delivery-fulfilment.zip
+    actions:
+      - updateLambda
+    dependencies:
+      - cfn-eu-west-1-membership-national-delivery-fulfilment
