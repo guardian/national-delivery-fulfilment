@@ -117,10 +117,10 @@ export class NationalDeliveryFulfilment extends GuStack {
 		const snsTopicName = `alarms-handler-topic-${this.stage}`;
 		const isProd = this.stage === 'PROD';
 
-		new GuAlarm(this, `ErrorExecutionAlarm-${this.stage}`, {
+		new GuAlarm(this, 'ErrorExecutionAlarm', {
 			app,
 			snsTopicName: snsTopicName,
-			alarmName: `${app}: error`,
+			alarmName: `${app}: error-${this.stage}`,
 			alarmDescription: `${app}: error while executing lambda`,
 			metric: errorMetric,
 			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
