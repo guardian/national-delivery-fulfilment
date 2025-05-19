@@ -40,7 +40,7 @@ jobs:
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           roleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
-          configPath: cdk/cdk.out/riff-raff.yaml
+          configPath: riff-raff.yaml
           projectName: MemSub::Fulfilment::NationalDelivery
           buildNumberOffset: 60
           contentDirectories: |

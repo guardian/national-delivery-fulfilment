@@ -181,7 +181,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
           },
         ],
         "AlarmDescription": "national-delivery-fulfilment: error while executing lambda",
-        "AlarmName": "national-delivery-fulfilment: error",
+        "AlarmName": "national-delivery-fulfilment: error-CODE",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
           {
@@ -194,6 +194,24 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
         "Namespace": "AWS/Lambda",
         "Period": 300,
         "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "CODE",
+          },
+        ],
         "Threshold": 0,
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -220,6 +238,9 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
         },
         "FunctionName": "membership-national-delivery-fulfilment-CODE",
         "Handler": "national-delivery-fulfilment/index.handler",
+        "LoggingConfig": {
+          "LogFormat": "JSON",
+        },
         "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
@@ -227,7 +248,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs18.x",
+        "Runtime": "nodejs20.x",
         "Tags": [
           {
             "Key": "App",
@@ -652,7 +673,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
           },
         ],
         "AlarmDescription": "national-delivery-fulfilment: error while executing lambda",
-        "AlarmName": "national-delivery-fulfilment: error",
+        "AlarmName": "national-delivery-fulfilment: error-PROD",
         "ComparisonOperator": "GreaterThanThreshold",
         "Dimensions": [
           {
@@ -665,6 +686,24 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
         "Namespace": "AWS/Lambda",
         "Period": 300,
         "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "PROD",
+          },
+        ],
         "Threshold": 0,
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -691,6 +730,9 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
         },
         "FunctionName": "membership-national-delivery-fulfilment-PROD",
         "Handler": "national-delivery-fulfilment/index.handler",
+        "LoggingConfig": {
+          "LogFormat": "JSON",
+        },
         "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
@@ -698,7 +740,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs18.x",
+        "Runtime": "nodejs20.x",
         "Tags": [
           {
             "Key": "App",
