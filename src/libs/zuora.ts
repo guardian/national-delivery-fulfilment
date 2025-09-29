@@ -161,7 +161,13 @@ function zuoraBatchQueries(date: string, today: string) {
           RatePlanCharge.EffectiveEndDate >= '${today}' AND
           Subscription.Status = 'Active' AND
           Subscription.AutoRenew = true AND
-          (RatePlan.AmendmentType IS NULL OR RatePlan.AmendmentType != 'RemoveProduct')
+          ( 
+            RatePlan.AmendmentType IS NULL OR 
+            ( 
+                RatePlan.AmendmentType != 'RemoveProduct' AND 
+                RatePlan.AmendmentType != 'UpdateProduct' 
+            ) 
+          )
         )
       )
   `;
