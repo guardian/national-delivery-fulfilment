@@ -11,6 +11,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       "GuAllowPolicy",
       "GuAllowPolicy",
       "GuAlarm",
+      "GuAlarm",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -158,6 +159,152 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
+    },
+    "DataQualityCompositeAlarmCFADC057": {
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:sns:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":alarms-handler-topic-CODE",
+              ],
+            ],
+          },
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "CRITICAL: National Delivery fulfilment data has quality issues that may prevent newspaper delivery!
+
+To investigate:
+1. Check CloudWatch Metrics to see error counts:
+   - Go to: https://console.aws.amazon.com/cloudwatch/home?region=",
+              {
+                "Ref": "AWS::Region",
+              },
+              "#metricsV2:graph=~();query=~'*7bnational-delivery-fulfilment*2cStage*2cErrorType*7d*20CODE
+
+2. Find affected subscriptions in CloudWatch Logs:
+   - Log Group: /aws/lambda/membership-national-delivery-fulfilment-CODE
+   - Search: "VALIDATION ERROR" to see all issues with subscription details
+   - AWS CLI: aws logs filter-log-events --log-group-name /aws/lambda/membership-national-delivery-fulfilment-CODE --filter-pattern "VALIDATION ERROR" --profile membership --start-time $(($(echo $(date +%s) - 3600 | bc)))000
+
+3. Fix in Zuora:
+   - Search for subscription ID (A-S########)
+   - Update missing fields (address, city, postcode, etc.)
+
+Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit",
+            ],
+          ],
+        },
+        "AlarmName": "URGENT 9-5 - CODE National Delivery Data Quality Issues Detected",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "m1 + m2 + m3",
+            "Id": "expr_1",
+            "Label": "Total Data Quality Errors",
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ErrorType",
+                    "Value": "MissingAddress",
+                  },
+                  {
+                    "Name": "Stage",
+                    "Value": "CODE",
+                  },
+                ],
+                "MetricName": "ValidationError",
+                "Namespace": "national-delivery-fulfilment",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "m2",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ErrorType",
+                    "Value": "MissingCity",
+                  },
+                  {
+                    "Name": "Stage",
+                    "Value": "CODE",
+                  },
+                ],
+                "MetricName": "ValidationError",
+                "Namespace": "national-delivery-fulfilment",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "m3",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ErrorType",
+                    "Value": "MissingPostcode",
+                  },
+                  {
+                    "Name": "Stage",
+                    "Value": "CODE",
+                  },
+                ],
+                "MetricName": "ValidationError",
+                "Namespace": "national-delivery-fulfilment",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "CODE",
+          },
+        ],
+        "Threshold": 0,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ErrorExecutionAlarm9DD60FED": {
       "Properties": {
@@ -439,6 +586,11 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 1`] = `
               "Effect": "Allow",
               "Resource": "*",
             },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -502,6 +654,7 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       "GuAllowPolicy",
       "GuAllowPolicy",
       "GuAllowPolicy",
+      "GuAlarm",
       "GuAlarm",
     ],
     "gu:cdk:version": "TEST",
@@ -650,6 +803,152 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
+    },
+    "DataQualityCompositeAlarmCFADC057": {
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:sns:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":alarms-handler-topic-PROD",
+              ],
+            ],
+          },
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "CRITICAL: National Delivery fulfilment data has quality issues that may prevent newspaper delivery!
+
+To investigate:
+1. Check CloudWatch Metrics to see error counts:
+   - Go to: https://console.aws.amazon.com/cloudwatch/home?region=",
+              {
+                "Ref": "AWS::Region",
+              },
+              "#metricsV2:graph=~();query=~'*7bnational-delivery-fulfilment*2cStage*2cErrorType*7d*20PROD
+
+2. Find affected subscriptions in CloudWatch Logs:
+   - Log Group: /aws/lambda/membership-national-delivery-fulfilment-PROD
+   - Search: "VALIDATION ERROR" to see all issues with subscription details
+   - AWS CLI: aws logs filter-log-events --log-group-name /aws/lambda/membership-national-delivery-fulfilment-PROD --filter-pattern "VALIDATION ERROR" --profile membership --start-time $(($(echo $(date +%s) - 3600 | bc)))000
+
+3. Fix in Zuora:
+   - Search for subscription ID (A-S########)
+   - Update missing fields (address, city, postcode, etc.)
+
+Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit",
+            ],
+          ],
+        },
+        "AlarmName": "URGENT 9-5 - PROD National Delivery Data Quality Issues Detected",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "m1 + m2 + m3",
+            "Id": "expr_1",
+            "Label": "Total Data Quality Errors",
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ErrorType",
+                    "Value": "MissingAddress",
+                  },
+                  {
+                    "Name": "Stage",
+                    "Value": "PROD",
+                  },
+                ],
+                "MetricName": "ValidationError",
+                "Namespace": "national-delivery-fulfilment",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "m2",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ErrorType",
+                    "Value": "MissingCity",
+                  },
+                  {
+                    "Name": "Stage",
+                    "Value": "PROD",
+                  },
+                ],
+                "MetricName": "ValidationError",
+                "Namespace": "national-delivery-fulfilment",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "m3",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ErrorType",
+                    "Value": "MissingPostcode",
+                  },
+                  {
+                    "Name": "Stage",
+                    "Value": "PROD",
+                  },
+                ],
+                "MetricName": "ValidationError",
+                "Namespace": "national-delivery-fulfilment",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/national-delivery-fulfilment",
+          },
+          {
+            "Key": "Stack",
+            "Value": "membership",
+          },
+          {
+            "Key": "Stage",
+            "Value": "PROD",
+          },
+        ],
+        "Threshold": 0,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ErrorExecutionAlarm9DD60FED": {
       "Properties": {
@@ -928,6 +1227,11 @@ exports[`The NationalDeliveryFulfilment stack matches the snapshot 2`] = `
             },
             {
               "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
               "Effect": "Allow",
               "Resource": "*",
             },
