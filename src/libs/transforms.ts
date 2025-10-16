@@ -2,6 +2,7 @@ import { parse } from 'csv-parse/sync';
 import { Option } from '../utils/option';
 import { PhoneBook } from './salesforce';
 import { validateIdentityIdForPhoneNumberInclusion } from './identity';
+import { putValidationError, putRowsProcessed } from '../utils/cloudwatch';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
@@ -246,8 +247,40 @@ export async function subscriptionsToFileRecords(
     phoneBook: PhoneBook,
     identityAPIBearerToken: string,
 ): Promise<FileRecord[]> {
+    // Validation counters for CloudWatch metrics
+    let totalRowsProcessed = 0;
+    let missingAddressCount = 0;
+    let missingCityCount = 0;
+    let missingPostcodeCount = 0;
+
     const data = [];
     for (const subscription of subscriptions) {
+        totalRowsProcessed++;
+
+        // Validate critical fields (incident-driven)
+        const customerName = `${subscription.sold_to_first_name} ${subscription.sold_to_last_name}`.trim();
+
+        if (!subscription.sold_to_address1 || subscription.sold_to_address1.trim() === '') {
+            missingAddressCount++;
+            console.warn(
+                `VALIDATION ERROR: Missing address | Subscription: ${subscription.subscription_name} | Customer: ${customerName} | City: ${subscription.sold_to_city || 'N/A'} | Postcode: ${subscription.sold_to_postal_code || 'N/A'}`,
+            );
+        }
+
+        if (!subscription.sold_to_city || subscription.sold_to_city.trim() === '') {
+            missingCityCount++;
+            console.warn(
+                `VALIDATION ERROR: Missing city | Subscription: ${subscription.subscription_name} | Customer: ${customerName} | Address: ${subscription.sold_to_address1 || 'N/A'} | Postcode: ${subscription.sold_to_postal_code || 'N/A'}`,
+            );
+        }
+
+        if (!subscription.sold_to_postal_code || subscription.sold_to_postal_code.trim() === '') {
+            missingPostcodeCount++;
+            console.warn(
+                `VALIDATION ERROR: Missing postcode | Subscription: ${subscription.subscription_name} | Customer: ${customerName} | Address: ${subscription.sold_to_address1 || 'N/A'} | City: ${subscription.sold_to_city || 'N/A'}`,
+            );
+        }
+
         const fileRecord =
             await subscriptionToFileRecordWithOptionalPhoneNumber(
                 stage,
@@ -259,6 +292,26 @@ export async function subscriptionsToFileRecords(
             );
         data.push(fileRecord);
     }
+
+    // Publish CloudWatch metrics
+    console.log(
+        `Publishing metrics: ${totalRowsProcessed} rows processed, ` +
+            `${missingAddressCount} missing addresses, ` +
+            `${missingCityCount} missing cities, ` +
+            `${missingPostcodeCount} missing postcodes`,
+    );
+    await putRowsProcessed(totalRowsProcessed);
+
+    if (missingAddressCount > 0) {
+        await putValidationError('MissingAddress', missingAddressCount);
+    }
+    if (missingCityCount > 0) {
+        await putValidationError('MissingCity', missingCityCount);
+    }
+    if (missingPostcodeCount > 0) {
+        await putValidationError('MissingPostcode', missingPostcodeCount);
+    }
+
     return data;
 }
 

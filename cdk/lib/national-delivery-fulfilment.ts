@@ -9,7 +9,11 @@ import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { ComparisonOperator, Metric } from 'aws-cdk-lib/aws-cloudwatch';
+import {
+	ComparisonOperator,
+	MathExpression,
+	Metric,
+} from 'aws-cdk-lib/aws-cloudwatch';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { GuAlarm } from '@guardian/cdk/lib/constructs/cloudwatch';
 
@@ -62,6 +66,14 @@ export class NationalDeliveryFulfilment extends GuStack {
 		nationalDeliveryFulfilmentLambda.addToRolePolicy(
 			new PolicyStatement({
 				actions: ['ssm:GetParameter'],
+				effect: Effect.ALLOW,
+				resources: ['*'],
+			}),
+		);
+
+		nationalDeliveryFulfilmentLambda.addToRolePolicy(
+			new PolicyStatement({
+				actions: ['cloudwatch:PutMetricData'],
 				effect: Effect.ALLOW,
 				resources: ['*'],
 			}),
@@ -127,6 +139,79 @@ export class NationalDeliveryFulfilment extends GuStack {
 			threshold: 0,
 			evaluationPeriods: 1,
 			actionsEnabled: isProd,
+		});
+
+		// Data Quality Composite Alarm - monitors address, city, and postcode validation
+		const missingAddressMetric = new Metric({
+			namespace: 'national-delivery-fulfilment',
+			metricName: 'ValidationError',
+			statistic: 'Sum',
+			dimensionsMap: {
+				Stage: this.stage,
+				ErrorType: 'MissingAddress',
+			},
+			period: Duration.minutes(5),
+		});
+
+		const missingCityMetric = new Metric({
+			namespace: 'national-delivery-fulfilment',
+			metricName: 'ValidationError',
+			statistic: 'Sum',
+			dimensionsMap: {
+				Stage: this.stage,
+				ErrorType: 'MissingCity',
+			},
+			period: Duration.minutes(5),
+		});
+
+		const missingPostcodeMetric = new Metric({
+			namespace: 'national-delivery-fulfilment',
+			metricName: 'ValidationError',
+			statistic: 'Sum',
+			dimensionsMap: {
+				Stage: this.stage,
+				ErrorType: 'MissingPostcode',
+			},
+			period: Duration.minutes(5),
+		});
+
+		// Use MathExpression to combine all validation metrics
+		const totalValidationErrors = new MathExpression({
+			expression: 'm1 + m2 + m3',
+			usingMetrics: {
+				m1: missingAddressMetric,
+				m2: missingCityMetric,
+				m3: missingPostcodeMetric,
+			},
+			label: 'Total Data Quality Errors',
+			period: Duration.minutes(5),
+		});
+
+		new GuAlarm(this, 'DataQualityCompositeAlarm', {
+			app,
+			snsTopicName: snsTopicName,
+			alarmName: `URGENT 9-5 - ${this.stage} National Delivery Data Quality Issues Detected`,
+			alarmDescription: `CRITICAL: National Delivery fulfilment data has quality issues that may prevent newspaper delivery!
+
+To investigate:
+1. Check CloudWatch Metrics to see error counts:
+   - Go to: https://console.aws.amazon.com/cloudwatch/home?region=${this.region}#metricsV2:graph=~();query=~'*7bnational-delivery-fulfilment*2cStage*2cErrorType*7d*20${this.stage}
+
+2. Find affected subscriptions in CloudWatch Logs:
+   - Log Group: /aws/lambda/membership-${app}-${this.stage}
+   - Search: "VALIDATION ERROR" to see all issues with subscription details
+   - AWS CLI: aws logs filter-log-events --log-group-name /aws/lambda/membership-${app}-${this.stage} --filter-pattern "VALIDATION ERROR" --profile membership --start-time $(($(echo $(date +%s) - 3600 | bc)))000
+
+3. Fix in Zuora:
+   - Search for subscription ID (A-S########)
+   - Update missing fields (address, city, postcode, etc.)
+
+Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit`,
+			metric: totalValidationErrors,
+			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+			threshold: 0,
+			evaluationPeriods: 1,
+			actionsEnabled: true, // Enable for both CODE and PROD
 		});
 	}
 }
