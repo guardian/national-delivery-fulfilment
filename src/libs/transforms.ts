@@ -252,6 +252,7 @@ export async function subscriptionsToFileRecords(
     let missingAddressCount = 0;
     let missingCityCount = 0;
     let missingPostcodeCount = 0;
+    let missingDeliveryAgentCount = 0;
 
     const data = [];
     for (const subscription of subscriptions) {
@@ -281,6 +282,13 @@ export async function subscriptionsToFileRecords(
             );
         }
 
+        if (!subscription.subscription_delivery_agent || subscription.subscription_delivery_agent.trim() === '') {
+            missingDeliveryAgentCount++;
+            console.warn(
+                `VALIDATION ERROR: Missing delivery agent (Retailer Reference) | Subscription: ${subscription.subscription_name} | Customer: ${customerName} | Address: ${subscription.sold_to_address1 || 'N/A'} | City: ${subscription.sold_to_city || 'N/A'}`,
+            );
+        }
+
         const fileRecord =
             await subscriptionToFileRecordWithOptionalPhoneNumber(
                 stage,
@@ -298,7 +306,8 @@ export async function subscriptionsToFileRecords(
         `Publishing metrics: ${totalRowsProcessed} rows processed, ` +
             `${missingAddressCount} missing addresses, ` +
             `${missingCityCount} missing cities, ` +
-            `${missingPostcodeCount} missing postcodes`,
+            `${missingPostcodeCount} missing postcodes, ` +
+            `${missingDeliveryAgentCount} missing delivery agents`,
     );
     await putRowsProcessed(totalRowsProcessed);
 
@@ -310,6 +319,9 @@ export async function subscriptionsToFileRecords(
     }
     if (missingPostcodeCount > 0) {
         await putValidationError('MissingPostcode', missingPostcodeCount);
+    }
+    if (missingDeliveryAgentCount > 0) {
+        await putValidationError('MissingDeliveryAgent', missingDeliveryAgentCount);
     }
 
     return data;

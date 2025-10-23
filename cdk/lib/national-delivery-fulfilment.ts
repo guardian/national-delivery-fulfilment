@@ -141,7 +141,7 @@ export class NationalDeliveryFulfilment extends GuStack {
 			actionsEnabled: isProd,
 		});
 
-		// Data Quality Composite Alarm - monitors address, city, and postcode validation
+		// Data Quality Composite Alarm - monitors address, city, postcode, and delivery agent validation
 		const missingAddressMetric = new Metric({
 			namespace: 'national-delivery-fulfilment',
 			metricName: 'ValidationError',
@@ -175,13 +175,25 @@ export class NationalDeliveryFulfilment extends GuStack {
 			period: Duration.minutes(5),
 		});
 
+		const missingDeliveryAgentMetric = new Metric({
+			namespace: 'national-delivery-fulfilment',
+			metricName: 'ValidationError',
+			statistic: 'Sum',
+			dimensionsMap: {
+				Stage: this.stage,
+				ErrorType: 'MissingDeliveryAgent',
+			},
+			period: Duration.minutes(5),
+		});
+
 		// Use MathExpression to combine all validation metrics
 		const totalValidationErrors = new MathExpression({
-			expression: 'm1 + m2 + m3',
+			expression: 'm1 + m2 + m3 + m4',
 			usingMetrics: {
 				m1: missingAddressMetric,
 				m2: missingCityMetric,
 				m3: missingPostcodeMetric,
+				m4: missingDeliveryAgentMetric,
 			},
 			label: 'Total Data Quality Errors',
 			period: Duration.minutes(5),
@@ -204,7 +216,7 @@ To investigate:
 
 3. Fix in Zuora:
    - Search for subscription ID (A-S########)
-   - Update missing fields (address, city, postcode, etc.)
+   - Update missing fields (address, city, postcode, delivery agent/retailer reference, etc.)
 
 Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit`,
 			metric: totalValidationErrors,
@@ -212,6 +224,55 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
 			threshold: 0,
 			evaluationPeriods: 1,
 			actionsEnabled: true, // Enable for both CODE and PROD
+		});
+
+		// Individual alarms for specific error types (PROD only)
+		new GuAlarm(this, 'MissingAddressAlarm', {
+			app,
+			snsTopicName: snsTopicName,
+			alarmName: `URGENT 9-5 - ${this.stage} National Delivery has missing address information`,
+			alarmDescription: 'Impact - Customers may not receive their newspapers due to missing address. Investigate fulfilment data ASAP! Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit',
+			metric: missingAddressMetric,
+			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+			threshold: 0,
+			evaluationPeriods: 1,
+			actionsEnabled: isProd,
+		});
+
+		new GuAlarm(this, 'MissingCityAlarm', {
+			app,
+			snsTopicName: snsTopicName,
+			alarmName: `URGENT 9-5 - ${this.stage} National Delivery has missing city information`,
+			alarmDescription: 'Impact - Customers may not receive their newspapers due to missing city. Investigate fulfilment data ASAP! Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit',
+			metric: missingCityMetric,
+			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+			threshold: 0,
+			evaluationPeriods: 1,
+			actionsEnabled: isProd,
+		});
+
+		new GuAlarm(this, 'MissingPostcodeAlarm', {
+			app,
+			snsTopicName: snsTopicName,
+			alarmName: `URGENT 9-5 - ${this.stage} National Delivery has missing postcode information`,
+			alarmDescription: 'Impact - Customers may not receive their newspapers due to missing postcode. Investigate fulfilment data ASAP! Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit',
+			metric: missingPostcodeMetric,
+			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+			threshold: 0,
+			evaluationPeriods: 1,
+			actionsEnabled: isProd,
+		});
+
+		new GuAlarm(this, 'MissingDeliveryAgentAlarm', {
+			app,
+			snsTopicName: snsTopicName,
+			alarmName: `URGENT 9-5 - ${this.stage} National Delivery has missing delivery agent information`,
+			alarmDescription: 'Impact - Customers may not receive their newspapers due to missing delivery agent (Retailer Reference). Investigate fulfilment data ASAP! Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmdG2e919zCLvmcFCLOYAk/edit',
+			metric: missingDeliveryAgentMetric,
+			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+			threshold: 0,
+			evaluationPeriods: 1,
+			actionsEnabled: isProd,
 		});
 	}
 }
