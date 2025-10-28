@@ -2,6 +2,12 @@ import { describe, expect, jest, test } from '@jest/globals';
 import { identityIdLookUp, parseZuoraDataFile, phoneNumberLookUp } from '../../src/libs/transforms'
 import { PhoneBook, PhoneRecord } from '../../src/libs/salesforce';
 
+// Mock CloudWatch to prevent actual AWS calls during tests
+jest.mock('../../src/utils/cloudwatch', () => ({
+    putValidationError: jest.fn(),
+    putRowsProcessed: jest.fn(),
+}));
+
 describe('region', () => {
 
     test('check the correct parsing of the zuora data file', () => {
