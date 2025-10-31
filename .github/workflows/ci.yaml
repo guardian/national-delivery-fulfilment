@@ -14,21 +14,35 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: 'yarn'
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install pnpm
+        run: corepack prepare pnpm@9.11.0 --activate
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - run: |
-          yarn install
-          yarn lint
-          yarn type-check
-          yarn test-coverage
-          yarn build
-          yarn package
+          pnpm install
+          pnpm lint
+          pnpm type-check
+          pnpm test-coverage
+          pnpm build
+          pnpm package
       - name: CDK synth
         run: |
-          yarn install
-          yarn tsc
-          yarn lint
-          yarn test
-          yarn synth
+          pnpm install
+          pnpm tsc
+          pnpm lint
+          pnpm test
+          pnpm synth
         working-directory: cdk
       - name: AWS Auth
         uses: aws-actions/configure-aws-credentials@v5
