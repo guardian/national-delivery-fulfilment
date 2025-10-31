@@ -10,25 +10,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.11.0
+          run_install: false
       - name: Setup node
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: 'yarn'
+          cache: 'pnpm'
       - run: |
-          yarn install
-          yarn lint
-          yarn type-check
-          yarn test-coverage
-          yarn build
-          yarn package
+          pnpm install
+          pnpm lint
+          pnpm type-check
+          pnpm test-coverage
+          pnpm build
+          pnpm package
       - name: CDK synth
         run: |
-          yarn install
-          yarn tsc
-          yarn lint
-          yarn test
-          yarn synth
+          pnpm install
+          pnpm tsc
+          pnpm lint
+          pnpm test
+          pnpm synth
         working-directory: cdk
       - name: AWS Auth
         uses: aws-actions/configure-aws-credentials@v5

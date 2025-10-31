@@ -5,6 +5,7 @@
     "main": "index.js",
     "license": "MIT",
     "private": true,
+    "packageManager": "pnpm@9.11.0",
     "dependencies": {
         "@aws-sdk/client-cloudwatch": "^3.911.0",
         "@aws-sdk/client-s3": "^3.899.0",
@@ -28,6 +29,7 @@
         "@commitlint/config-conventional": "^20.0.0",
         "@guardian/eslint-config-typescript": "^12.0.0",
         "@guardian/prettier": "^8.0.1",
+        "@jest/globals": "^30.2.0",
         "@types/jest": "^30.0.0",
         "@typescript-eslint/eslint-plugin": "^8.45.0",
         "@typescript-eslint/parser": "^8.45.0",
@@ -48,7 +50,7 @@
         "typescript": "^5.9.3"
     },
     "scripts": {
-        "build": "yarn esbuild --bundle --platform=node --target=node20 --outfile=dist/index.js src/index.ts",
+        "build": "pnpm esbuild --bundle --platform=node --target=node20 --outfile=dist/index.js src/index.ts",
         "commitlint": "commitlint --edit",
         "lint": "eslint",
         "lint-fix": "eslint --fix",
