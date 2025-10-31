@@ -220,7 +220,6 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
             "Expression": "m1 + m2 + m3 + m4",
             "Id": "expr_1",
             "Label": "Total Data Quality Errors",
-            "ReturnData": true,
           },
           {
             "Id": "m1",
@@ -878,28 +877,6 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
       "Properties": {
         "ScheduleExpression": "cron(30 * * * ? *)",
         "State": "ENABLED",
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "national-delivery-fulfilment",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/national-delivery-fulfilment",
-          },
-          {
-            "Key": "Stack",
-            "Value": "membership",
-          },
-          {
-            "Key": "Stage",
-            "Value": "CODE",
-          },
-        ],
         "Targets": [
           {
             "Arn": {
@@ -1157,7 +1134,6 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
             "Expression": "m1 + m2 + m3 + m4",
             "Id": "expr_1",
             "Label": "Total Data Quality Errors",
-            "ReturnData": true,
           },
           {
             "Id": "m1",
@@ -1815,28 +1791,6 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
       "Properties": {
         "ScheduleExpression": "cron(30 * * * ? *)",
         "State": "ENABLED",
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "national-delivery-fulfilment",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/national-delivery-fulfilment",
-          },
-          {
-            "Key": "Stack",
-            "Value": "membership",
-          },
-          {
-            "Key": "Stage",
-            "Value": "PROD",
-          },
-        ],
         "Targets": [
           {
             "Arn": {
