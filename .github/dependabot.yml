@@ -12,6 +12,8 @@ updates:
     groups:
       all:
         patterns: ["*"]
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "npm"
     directory: "/"
@@ -30,4 +32,5 @@ updates:
     groups:
       all:
         patterns: ["*"]
-
+    cooldown:
+      default-days: 7
