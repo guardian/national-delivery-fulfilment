@@ -665,7 +665,7 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
             "Arn",
           ],
         },
-        "Runtime": "nodejs20.x",
+        "Runtime": "nodejs22.x",
         "Tags": [
           {
             "Key": "App",
@@ -1579,7 +1579,7 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
             "Arn",
           ],
         },
-        "Runtime": "nodejs20.x",
+        "Runtime": "nodejs22.x",
         "Tags": [
           {
             "Key": "App",
