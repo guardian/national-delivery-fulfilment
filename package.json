@@ -48,7 +48,8 @@
         "typescript": "5.9.3"
     },
     "resolutions": {
-        "glob": "^10.5.0"
+        "glob": "^10.5.0",
+        "test-exclude": "^7.0.1"
     },
     "scripts": {
         "build": "yarn esbuild --bundle --platform=node --target=node20 --outfile=dist/index.js src/index.ts",
