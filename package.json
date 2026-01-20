@@ -47,6 +47,9 @@
         "ts-jest": "29.4.6",
         "typescript": "5.9.3"
     },
+    "resolutions": {
+        "glob": "^10.5.0"
+    },
     "scripts": {
         "build": "yarn esbuild --bundle --platform=node --target=node20 --outfile=dist/index.js src/index.ts",
         "commitlint": "commitlint --edit",
