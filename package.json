@@ -43,6 +43,7 @@
         "husky": "9.1.7",
         "jest": "30.2.0",
         "lint-staged": "16.2.7",
+        "minimatch": "^9.0.0",
         "prettier": "3.7.3",
         "ts-jest": "29.4.6",
         "typescript": "5.9.3"
@@ -50,7 +51,8 @@
     "resolutions": {
         "fast-xml-parser": "^5.3.5",
         "glob": "^10.5.0",
-        "test-exclude": "^7.0.1"
+        "test-exclude": "^7.0.1",
+        "minimatch": "^9.0.0"
     },
     "scripts": {
         "build": "yarn esbuild --bundle --platform=node --target=node20 --outfile=dist/index.js src/index.ts",
