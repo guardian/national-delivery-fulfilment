@@ -41,6 +41,9 @@
       "./jest.setup.js"
     ]
   },
+  "resolutions": {
+    "handlebars": "^4.7.9"
+  },
   "eslintConfig": {
     "root": true,
     "env": {
