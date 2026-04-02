@@ -42,7 +42,11 @@
     ]
   },
   "resolutions": {
-    "handlebars": "^4.7.9"
+    "handlebars": "^4.7.9",
+    "minimatch": "^9.0.7",
+    "yaml": "^1.10.3",
+    "@eslint/plugin-kit": "^0.3.4",
+    "brace-expansion": "^2.0.3"
   },
   "eslintConfig": {
     "root": true,
