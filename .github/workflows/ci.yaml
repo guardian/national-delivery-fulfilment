@@ -30,11 +30,6 @@ jobs:
           yarn test
           yarn synth
         working-directory: cdk
-      - name: AWS Auth
-        uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
-          aws-region: eu-west-1
       - name: Upload to riff-raff
         uses: guardian/actions-riff-raff@v4.3.0
         with:
