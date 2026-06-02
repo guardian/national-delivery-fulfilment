@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
       - name: Setup node
         uses: actions/setup-node@v6
         with:
@@ -31,7 +31,7 @@ jobs:
           yarn synth
         working-directory: cdk
       - name: Upload to riff-raff
-        uses: guardian/actions-riff-raff@v4.3.0
+        uses: guardian/actions-riff-raff@v4.3.3
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           roleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
