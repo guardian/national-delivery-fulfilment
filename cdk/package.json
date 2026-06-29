@@ -18,7 +18,7 @@
     "@types/jest": "^29.5.3",
     "@types/node": "20.4.5",
     "@types/parse-path": "7.0.0",
-    "aws-cdk": "2.246.0",
+    "aws-cdk": "2.1014.0",
     "aws-cdk-lib": "2.246.0",
     "constructs": "10.5.0",
     "eslint": "^8.57.0",
