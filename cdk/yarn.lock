@@ -2,23 +2,31 @@
 # yarn lockfile v1
 
 
-"@aws-cdk/asset-awscli-v1@^2.2.229":
-  version "2.2.259"
-  resolved "https://registry.npmjs.org/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.259.tgz"
-  integrity sha512-+FRt70Ekh/aV4Ewux4DTctnxSHFg9M7AeirLLsDDVwtbIOIltgEBE8V0NDIOoJX026gBnrCGOv7TyXf22LuKVA==
+"@aws-cdk/asset-awscli-v1@2.2.263":
+  version "2.2.263"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.263.tgz#dd47eea2a730fad02cc405b5b6b6b58db44d2fb6"
+  integrity sha512-X9JvcJhYcb7PHs8R7m4zMablO5C9PGb/hYfLnxds9h/rKJu6l7MiXE/SabCibuehxPnuO/vk+sVVJiUWrccarQ==
 
-"@aws-cdk/asset-node-proxy-agent-v6@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/@aws-cdk/asset-node-proxy-agent-v6/-/asset-node-proxy-agent-v6-2.1.0.tgz"
-  integrity sha512-7bY3J8GCVxLupn/kNmpPc5VJz8grx+4RKfnnJiO1LG+uxkZfANZG3RMHhE+qQxxwkyQ9/MfPtTpf748UhR425A==
+"@aws-cdk/asset-node-proxy-agent-v6@^2.1.1":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-node-proxy-agent-v6/-/asset-node-proxy-agent-v6-2.1.2.tgz#71733894b092032309523cfcba24dc2bb3e7fd84"
+  integrity sha512-pDiuqH+qY3zM9lhhLjbKJ1tnKOHzQ2V4Wr/3qsxyKeKAkuPMI/BVGvZG1PbrikUw949cGVTfVEt4ETKKYnrj0Q==
 
-"@aws-cdk/cloud-assembly-schema@^41.2.0":
-  version "41.2.0"
-  resolved "https://registry.npmjs.org/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-41.2.0.tgz"
-  integrity sha512-JaulVS6z9y5+u4jNmoWbHZRs9uGOnmn/ktXygNWKNu1k6lF3ad4so3s18eRu15XCbUIomxN9WPYT6Ehh7hzONw==
+"@aws-cdk/cloud-assembly-api@^2.2.0":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloud-assembly-api/-/cloud-assembly-api-2.2.5.tgz#049be7f61ac2022321d6acf4faeb38ee181533bf"
+  integrity sha512-RrjdgAgOjc0rMSGhMmIq1IKRI2lSYEK5XLu+863pQjecxNaNQkrQCyI62Z3JClFnQnjBeFSfDoY78apS9Aa9tA==
   dependencies:
-    jsonschema "~1.4.1"
-    semver "^7.7.1"
+    jsonschema "^1.5.0"
+    semver "^7.8.0"
+
+"@aws-cdk/cloud-assembly-schema@^53.0.0":
+  version "53.28.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-53.28.0.tgz#b7e344f0058b63b1dea8a6563999f20f3c899b4e"
+  integrity sha512-pZS+9bLGv2tCqcgxfA0WD3XjcqT3yE4ICvKeJEicw6aTdCxBl8FQ/AUsorY/6f2JrMS3kUQgvhXxA30MWcji0A==
+  dependencies:
+    jsonschema "^1.5.0"
+    semver "^7.8.0"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.27.1":
   version "7.27.1"
@@ -1202,25 +1210,26 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-aws-cdk-lib@^2.195.0:
-  version "2.195.0"
-  resolved "https://registry.npmjs.org/aws-cdk-lib/-/aws-cdk-lib-2.195.0.tgz"
-  integrity sha512-AYLysgSjSnSjkal/AmR86DqvOVqy0VjeWmXR+ucIIGSOzJsevsYuNWCeVnf4v9x+vd2ysVcO8fXndG426vGZ/w==
+aws-cdk-lib@^2.246.0:
+  version "2.246.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.246.0.tgz#77cbcdd367e3ed96b42fec9e89a6fd498b04ff93"
+  integrity sha512-7OtF95mss9dWohopCNQKAlNFrMJwgOIvNTNgoOWWcKhULBf6UxKCaf6ATlnuysIWRGf2DHgcval/4+yySOKRBw==
   dependencies:
-    "@aws-cdk/asset-awscli-v1" "^2.2.229"
-    "@aws-cdk/asset-node-proxy-agent-v6" "^2.1.0"
-    "@aws-cdk/cloud-assembly-schema" "^41.2.0"
+    "@aws-cdk/asset-awscli-v1" "2.2.263"
+    "@aws-cdk/asset-node-proxy-agent-v6" "^2.1.1"
+    "@aws-cdk/cloud-assembly-api" "^2.2.0"
+    "@aws-cdk/cloud-assembly-schema" "^53.0.0"
     "@balena/dockerignore" "^1.0.2"
     case "1.6.3"
-    fs-extra "^11.3.0"
+    fs-extra "^11.3.3"
     ignore "^5.3.2"
     jsonschema "^1.5.0"
     mime-types "^2.1.35"
-    minimatch "^3.1.2"
+    minimatch "^10.2.3"
     punycode "^2.3.1"
-    semver "^7.7.1"
+    semver "^7.7.4"
     table "^6.9.0"
-    yaml "1.10.2"
+    yaml "1.10.3"
 
 aws-cdk@2.1014.0:
   version "2.1014.0"
@@ -2329,10 +2338,10 @@ fs-extra@^10.1.0:
     jsonfile "^6.0.1"
     universalify "^2.0.0"
 
-fs-extra@^11.3.0:
-  version "11.3.0"
-  resolved "https://registry.npmjs.org/fs-extra/-/fs-extra-11.3.0.tgz"
-  integrity sha512-Z4XaCL6dUDHfP/jT25jJKMmtxvuwbkrD1vNSMFlo9lNLY2c5FHYSQgHPRZUjAB26TpDEoW9HCOgplrdbaPV/ew==
+fs-extra@^11.3.3:
+  version "11.3.5"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-11.3.5.tgz#07a44eff40bea53e719909a532f91a23bf0769ff"
+  integrity sha512-eKpRKAovdpZtR1WopLHxlBWvAgPny3c4gX1G5Jhwmmw4XJj0ifSD5qB5TOo8hmA0wlRKDAOAhEE1yVPgs6Fgcg==
   dependencies:
     graceful-fs "^4.2.0"
     jsonfile "^6.0.1"
@@ -3459,11 +3468,6 @@ jsonschema@^1.5.0:
   resolved "https://registry.npmjs.org/jsonschema/-/jsonschema-1.5.0.tgz"
   integrity sha512-K+A9hhqbn0f3pJX17Q/7H6yQfD/5OXgdrR5UE12gMXCiN9D5Xq2o5mddV2QEcX/bjla99ASsAAQUyMCCRWAEhw==
 
-jsonschema@~1.4.1:
-  version "1.4.1"
-  resolved "https://registry.npmjs.org/jsonschema/-/jsonschema-1.4.1.tgz"
-  integrity sha512-S6cATIPVv1z0IlxdN+zUk5EPjkGCdnhN4wVSBlvoUO1tOLJootbo9CquNJmbIh4yikWHiUedhRYrNPn1arpEmQ==
-
 keyv@^4.5.4:
   version "4.5.4"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.5.4.tgz#a879a99e29452f942439f2a405e3af8b31d4de93"
@@ -3626,7 +3630,7 @@ mimic-fn@^2.1.0:
   resolved "https://registry.npmjs.org/mimic-fn/-/mimic-fn-2.1.0.tgz"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
-minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2, minimatch@^5.0.1, minimatch@^9.0.4, minimatch@^9.0.7:
+minimatch@^10.2.3, minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2, minimatch@^5.0.1, minimatch@^9.0.4, minimatch@^9.0.7:
   version "9.0.9"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.9.tgz#9b0cb9fcb78087f6fd7eababe2511c4d3d60574e"
   integrity sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==
@@ -4195,10 +4199,10 @@ semver@^6.3.0, semver@^6.3.1:
   resolved "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.3.7, semver@^7.5.3, semver@^7.5.4, semver@^7.7.1, semver@^7.7.3:
-  version "7.7.3"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.3.tgz#4b5f4143d007633a8dc671cd0a6ef9147b8bb946"
-  integrity sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==
+semver@^7.3.7, semver@^7.5.3, semver@^7.5.4, semver@^7.7.3, semver@^7.7.4, semver@^7.8.0:
+  version "7.8.4"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.8.4.tgz#c73eceebae0616934be8dff28a7fd70757c8e696"
+  integrity sha512-rUCObTnP32Q08R2uuIrt7r9PlEonuTmtuXYcW6s5kjdlj3xbnwe+21yXptAUYcMAABLkYYTtnmzb3w3EDZfueA==
 
 send@^1.1.0, send@^1.2.0:
   version "1.2.1"
@@ -4948,7 +4952,7 @@ yallist@^3.0.2:
   resolved "https://registry.npmjs.org/yallist/-/yallist-3.1.1.tgz"
   integrity sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==
 
-yaml@1.10.2, yaml@^1.10.3:
+yaml@1.10.3, yaml@^1.10.3:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.3.tgz#76e407ed95c42684fb8e14641e5de62fe65bbcb3"
   integrity sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA==
