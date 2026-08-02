@@ -47,7 +47,7 @@
     "minimatch": "^9.0.7",
     "yaml": "^1.10.3",
     "@eslint/plugin-kit": "^0.3.4",
-    "brace-expansion": "^2.0.3"
+    "brace-expansion": "^2.1.4"
   },
   "eslintConfig": {
     "root": true,
