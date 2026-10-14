@@ -15,6 +15,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: 'yarn'
+      - name: Enable Corepack for Yarn v4
+        run: corepack enable
       - run: |
           yarn install
           yarn lint
