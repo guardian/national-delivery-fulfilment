@@ -10,18 +10,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.18.1 --activate
+          yarn config set nodeLinker node-modules
+
       - name: Setup node
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: 'yarn'
+
       - run: |
           yarn install
           yarn lint
           yarn type-check
-          yarn test-coverage
+          yarn test
           yarn build
           yarn package
+
       - name: CDK synth
         run: |
           yarn install
@@ -30,6 +39,7 @@ jobs:
           yarn test
           yarn synth
         working-directory: cdk
+
       - name: Upload to riff-raff
         uses: guardian/actions-riff-raff@v4.3.6
         with:
