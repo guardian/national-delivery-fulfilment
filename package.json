@@ -49,6 +49,7 @@
         "typescript": "7.0.2"
     },
     "resolutions": {
+        "typescript": "npm:@typescript/typescript6@^6.0.3",
         "fast-xml-parser": "^5.5.7",
         "glob": "^10.5.0",
         "test-exclude": "^7.0.1",
