@@ -46,6 +46,7 @@
         "minimatch": "^10.2.6",
         "prettier": "3.9.9",
         "ts-jest": "^29.4.14",
+        "tslib": "^2.8.1",
         "typescript": "7.0.2"
     },
     "resolutions": {
@@ -54,8 +55,6 @@
         "glob": "^10.5.0",
         "test-exclude": "^7.0.1",
         "minimatch": "^10.2.6",
-        "**/micromatch/picomatch": "^2.3.2",
-        "**/anymatch/picomatch": "^2.3.2",
         "brace-expansion": "^2.0.1"
     },
     "scripts": {
