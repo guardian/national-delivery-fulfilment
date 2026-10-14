@@ -18,4 +18,7 @@ module.exports = {
             statements: 5,
         },
     },
+    transform: {
+        '^.+\\.tsx?$': 'babel-jest',
+    },
 };
