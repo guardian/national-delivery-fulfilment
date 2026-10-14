@@ -43,6 +43,7 @@
     ]
   },
   "resolutions": {
+    "@guardian/eslint-config-typescript/typescript": "~5.0.0",
     "handlebars": "^4.7.10",
     "minimatch": "^9.0.7",
     "yaml": "^1.10.3",
