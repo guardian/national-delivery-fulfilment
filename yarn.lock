@@ -54,6 +54,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/client-secrets-manager@npm:3.1156.0":
+  version: 3.1156.0
+  resolution: "@aws-sdk/client-secrets-manager@npm:3.1156.0"
+  dependencies:
+    "@aws-sdk/core": "npm:^3.978.5"
+    "@aws-sdk/credential-provider-node": "npm:^3.972.88"
+    "@aws-sdk/types": "npm:^3.975.0"
+    "@smithy/core": "npm:^3.36.1"
+    "@smithy/fetch-http-handler": "npm:^5.8.0"
+    "@smithy/node-http-handler": "npm:^4.12.1"
+    "@smithy/types": "npm:^4.19.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/a8f5245d76e085388091b87cd4f942a1fe5427b871aac490adec189dcff5a4e8b67a08bcd635ff50643bc62ed8a00d3b5aba594713056ac9a5d4e2afb9a6c40f
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/client-ssm@npm:3.1156.0":
   version: 3.1156.0
   resolution: "@aws-sdk/client-ssm@npm:3.1156.0"
@@ -7482,6 +7498,7 @@ __metadata:
   dependencies:
     "@aws-sdk/client-cloudwatch": "npm:3.1156.0"
     "@aws-sdk/client-s3": "npm:3.1156.0"
+    "@aws-sdk/client-secrets-manager": "npm:3.1156.0"
     "@aws-sdk/client-ssm": "npm:3.1156.0"
     "@babel/core": "npm:8.0.9"
     "@babel/eslint-parser": "npm:8.0.7"

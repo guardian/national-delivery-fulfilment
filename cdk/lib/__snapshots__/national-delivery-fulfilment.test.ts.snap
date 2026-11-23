@@ -649,6 +649,7 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
         "Environment": {
           "Variables": {
             "APP": "national-delivery-fulfilment",
+            "SECRET_NAME_CONNECTED_APP": "CODE/Salesforce/ConnectedApp/PrintFulfilment",
             "STACK": "membership",
             "STAGE": "CODE",
           },
@@ -829,6 +830,26 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
                       "Ref": "AWS::AccountId",
                     },
                     ":parameter/CODE/membership/national-delivery-fulfilment/*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:secretsmanager:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":secret:CODE/Salesforce/ConnectedApp/PrintFulfilment-*",
                   ],
                 ],
               },
@@ -1563,6 +1584,7 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
         "Environment": {
           "Variables": {
             "APP": "national-delivery-fulfilment",
+            "SECRET_NAME_CONNECTED_APP": "PROD/Salesforce/ConnectedApp/PrintFulfilment",
             "STACK": "membership",
             "STAGE": "PROD",
           },
@@ -1743,6 +1765,26 @@ Follow the runbook: https://docs.google.com/document/d/1_3El3cly9d7u_jPgTcRjLxmd
                       "Ref": "AWS::AccountId",
                     },
                     ":parameter/PROD/membership/national-delivery-fulfilment/*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:secretsmanager:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":secret:PROD/Salesforce/ConnectedApp/PrintFulfilment-*",
                   ],
                 ],
               },

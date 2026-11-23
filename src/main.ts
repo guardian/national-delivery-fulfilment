@@ -14,9 +14,9 @@ import { Stage } from './utils/config';
 import { cycleDataFilesFromZuora, fetchZuoraBearerToken2 } from './libs/zuora';
 import {
     PhoneBook,
-    SalesforceSSMConfig,
+    SalesforceConfig,
     getPhoneBook,
-    makeSalesforceSSMConfig,
+    makeSalesforceConfig,
 } from './libs/salesforce';
 import { fetchIdentityAPIToken } from './libs/identity';
 
@@ -35,12 +35,11 @@ export const main = async (indices?: number[]) => {
         throw message;
     }
 
-    const salesforceSSMConfig = await makeSalesforceSSMConfig(Stage);
-    if (!zuoraBearerToken) {
-        const message = 'Could not extract salesforce ssm config';
-        console.log(message);
-        throw message;
+    const salesforceSecretName = process.env.SECRET_NAME_CONNECTED_APP;
+    if (!salesforceSecretName) {
+        throw new Error('SECRET_NAME_CONNECTED_APP is not configured');
     }
+    const salesforceConfig = await makeSalesforceConfig(salesforceSecretName);
 
     const identityAPIBearerToken = await fetchIdentityAPIToken(Stage);
     if (!identityAPIBearerToken) {
@@ -53,7 +52,7 @@ export const main = async (indices?: number[]) => {
         for (const i of indices) {
             await generateFileForDay(
                 zuoraBearerToken,
-                salesforceSSMConfig,
+                salesforceConfig,
                 identityAPIBearerToken,
                 i,
             );
@@ -61,7 +60,7 @@ export const main = async (indices?: number[]) => {
     } else {
         await generateOneFileUsingCurrentTimeToDeriveDayIndex(
             zuoraBearerToken,
-            salesforceSSMConfig,
+            salesforceConfig,
             identityAPIBearerToken,
         );
     }
@@ -99,7 +98,7 @@ function getDayOffsetToGenerate(): number | null {
 
 async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
     zuoraBearerToken: string,
-    salesforceSSMConfig: SalesforceSSMConfig,
+    salesforceConfig: SalesforceConfig,
     identityAPIBearerToken: string,
 ) {
     // This function generates a file whose index is derived from the current hour of the day
@@ -113,7 +112,7 @@ async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
 
     await generateFileForDay(
         zuoraBearerToken,
-        salesforceSSMConfig,
+        salesforceConfig,
         identityAPIBearerToken,
         dayIndex,
     );
@@ -121,7 +120,7 @@ async function generateOneFileUsingCurrentTimeToDeriveDayIndex(
 
 async function generateFileForDay(
     zuoraBearerToken: string,
-    salesforceSSMConfig: SalesforceSSMConfig,
+    salesforceConfig: SalesforceConfig,
     identityAPIBearerToken: string,
     dayIndex: number,
 ) {
@@ -171,7 +170,7 @@ async function generateFileForDay(
     const deliveryDate: string = cursor.format('DD/MM/YYYY');
 
     const salesforcePhoneBook: PhoneBook =
-        await getPhoneBook(salesforceSSMConfig);
+        await getPhoneBook(salesforceConfig);
 
     console.log(`salesforcePhoneBook: ${JSON.stringify(salesforcePhoneBook)}`);
 
