@@ -22,6 +22,14 @@ export class NationalDeliveryFulfilment extends GuStack {
 		super(scope, id, props);
 
 		const app = 'national-delivery-fulfilment';
+		const salesforceSecretName = `${this.stage}/Salesforce/ConnectedApp/PrintFulfilment`;
+		const salesforceCredentialsPolicy = new PolicyStatement({
+			actions: ['secretsmanager:GetSecretValue'],
+			effect: Effect.ALLOW,
+			resources: [
+				`arn:aws:secretsmanager:${this.region}:${this.account}:secret:${salesforceSecretName}-*`,
+			],
+		});
 
 		const nationalDeliveryFulfilmentLambda = new GuScheduledLambda(
 			this,
@@ -45,6 +53,9 @@ export class NationalDeliveryFulfilment extends GuStack {
 				],
 				monitoringConfiguration: { noMonitoring: true },
 				timeout: Duration.seconds(15 * 60), // overriding the default duration which is not 15 minutes
+				environment: {
+					SECRET_NAME_CONNECTED_APP: salesforceSecretName,
+				},
 			},
 		);
 
@@ -54,6 +65,10 @@ export class NationalDeliveryFulfilment extends GuStack {
 			bucketName: bucketName,
 			versioned: true,
 		});
+
+		nationalDeliveryFulfilmentLambda.addToRolePolicy(
+			salesforceCredentialsPolicy,
+		);
 
 		nationalDeliveryFulfilmentLambda.addToRolePolicy(
 			new PolicyStatement({

@@ -1,12 +1,9 @@
-import { getSsmValue } from '../utils/ssm';
+import { getSecret } from '../utils/secretsManager';
 
-export interface SalesforceSSMConfig {
+export interface SalesforceConfig {
+    authUrl: string;
     clientId: string;
     clientSecret: string;
-    username: string;
-    password: string;
-    token: string; // used in complete to the password when retriving the bearer token
-    authenticationBaseUrl: string; // used to retrive the bearer token
 }
 
 export interface SalesforceBearerInformation {
@@ -34,67 +31,69 @@ export interface PhoneRecord {
 
 export type PhoneBook = PhoneRecord[];
 
-export async function makeSalesforceSSMConfig(
-    stage: string,
-): Promise<SalesforceSSMConfig> {
-    console.log(`make salesforce config for stage: ${stage}`);
-    const clientId = await getSsmValue(stage, 'salesforceClientId');
-    const clientSecret = await getSsmValue(stage, 'salesforceClientSecret');
-    const username = await getSsmValue(stage, 'salesforceUsername');
-    const password = await getSsmValue(stage, 'salesforcePassword');
-    const token = await getSsmValue(stage, 'salesforceToken');
-    const authenticationBaseUrl = await getSsmValue(
-        stage,
-        'salesforceAuthenticationBaseUrl',
-    );
+function isNonEmptyString(value: unknown): value is string {
+    return typeof value === 'string' && value.length > 0;
+}
+
+export function parseSalesforceConfig(secret: unknown): SalesforceConfig {
     if (
-        clientId === undefined ||
-        clientSecret === undefined ||
-        username === undefined ||
-        password === undefined ||
-        token === undefined ||
-        authenticationBaseUrl == undefined
+        typeof secret !== 'object' ||
+        secret === null ||
+        !('authUrl' in secret) ||
+        !isNonEmptyString(secret.authUrl) ||
+        !('clientId' in secret) ||
+        !isNonEmptyString(secret.clientId) ||
+        !('clientSecret' in secret) ||
+        !isNonEmptyString(secret.clientSecret)
     ) {
-        throw 'Could not retrive the salesforce ssm config';
+        throw new Error(
+            'Salesforce connected app secret must contain non-empty authUrl, clientId and clientSecret fields',
+        );
     }
-    return Promise.resolve({
-        clientId,
-        clientSecret,
-        username,
-        password,
-        token,
-        authenticationBaseUrl,
+
+    return {
+        authUrl: secret.authUrl,
+        clientId: secret.clientId,
+        clientSecret: secret.clientSecret,
+    };
+}
+
+export async function makeSalesforceConfig(
+    secretName: string,
+): Promise<SalesforceConfig> {
+    return parseSalesforceConfig(await getSecret(secretName));
+}
+
+export function buildSalesforceAuthBody(
+    salesforceConfig: SalesforceConfig,
+): URLSearchParams {
+    return new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: salesforceConfig.clientId,
+        client_secret: salesforceConfig.clientSecret,
     });
 }
 
-async function getSalesforceBearerInformation(
-    saleforceSSMConfig: SalesforceSSMConfig,
+export async function getSalesforceBearerInformation(
+    salesforceConfig: SalesforceConfig,
 ): Promise<SalesforceBearerInformation> {
     console.log('Querying bearer token from Salesforce');
 
-    const requestBody =
-        `grant_type=password` +
-        `&client_id=${saleforceSSMConfig.clientId}` +
-        `&client_secret=${saleforceSSMConfig.clientSecret}` +
-        `&username=${saleforceSSMConfig.username}` +
-        `&password=${saleforceSSMConfig.password}${saleforceSSMConfig.token}`;
+    const response = await fetch(salesforceConfig.authUrl, {
+        method: 'POST',
+        body: buildSalesforceAuthBody(salesforceConfig),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    });
 
-    const url = `${saleforceSSMConfig.authenticationBaseUrl}/services/oauth2/token`;
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            body: new URLSearchParams(requestBody),
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
-        return (await response.json()) as SalesforceBearerInformation;
-    } catch (error) {
+    if (!response.ok) {
         throw new Error(
-            `error while retrieving salesforce bearer token: ${error}`,
+            `Salesforce authentication failed with status ${response.status}`,
         );
     }
+
+    return (await response.json()) as SalesforceBearerInformation;
 }
 
 async function runPhoneBookQuery(
@@ -157,10 +156,10 @@ function phoneBookQueryAnswerDataToPhoneBookRecords(
 }
 
 export async function getPhoneBook(
-    saleforceSSMConfig: SalesforceSSMConfig,
+    salesforceConfig: SalesforceConfig,
 ): Promise<PhoneBook> {
     const bearerInformation =
-        await getSalesforceBearerInformation(saleforceSSMConfig);
+        await getSalesforceBearerInformation(salesforceConfig);
     const phoneBookQueryAnswerData = await runPhoneBookQuery(bearerInformation);
     console.log(
         `phoneBookQueryAnswerData: ${JSON.stringify(phoneBookQueryAnswerData)}`,
